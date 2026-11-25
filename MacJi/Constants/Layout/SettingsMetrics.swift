@@ -11,7 +11,7 @@ import CoreGraphics
 enum SettingsMetrics {
     // Window: fixed width, resizable height only
     static let width: CGFloat = 480
-    static let initialHeight: CGFloat = 640
+    static let initialHeight: CGFloat = 720
     static let minHeight: CGFloat = 420
     static let maxHeight: CGFloat = 1400
 
