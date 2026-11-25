@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+._*
+
+# Xcode / Swift Package Manager
+**/xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+DerivedData/
+.build/
+.swiftpm/
+
+# Build and release output
+build/
+*.app
+*.xcarchive
+*.dSYM
+*.dmg
+*.zip
+release-output/
+
+# Local signing and secrets (never commit)
+Config/LocalSigning.xcconfig
+.env
+.env.*
+*.p12
+*.p8
+*.pem
+*.key
+*.cer
+*.certSigningRequest
+*.mobileprovision
+*.provisionprofile
+sparkle_private_key*
+ed25519*
+
+# Editors and tooling
+*.swp
+*~
+.vscode/
+.idea/
+scripts/__pycache__/
+*.log
+
+# The one-shot build prompt this repo was created from
+MACJI_PROMPT.md
+macji-app-one-shot-prompt.md
