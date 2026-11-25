@@ -1,0 +1,425 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4D4A00000000000000000101 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 4D4A00000000000000000601 /* KeyboardShortcuts */; };
+		4D4A00000000000000000102 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 4D4A00000000000000000602 /* Sparkle */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4D4A00000000000000000201 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D4A00000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D4A00000000000000000401;
+			remoteInfo = MacJi;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4D4A00000000000000000301 /* MacJi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacJi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D4A00000000000000000302 /* MacJiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MacJiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D4A00000000000000000303 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4D4A00000000000000000351 /* Exceptions for "MacJi" folder in "MacJi" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Info.plist,
+			);
+			target = 4D4A00000000000000000401 /* MacJi */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		4D4A00000000000000000361 /* MacJi */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4D4A00000000000000000351 /* Exceptions for "MacJi" folder in "MacJi" target */,
+			);
+			path = MacJi;
+			sourceTree = "<group>";
+		};
+		4D4A00000000000000000362 /* MacJiTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MacJiTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4D4A00000000000000000371 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D4A00000000000000000101 /* KeyboardShortcuts in Frameworks */,
+				4D4A00000000000000000102 /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4D4A00000000000000000372 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4D4A00000000000000000381 = {
+			isa = PBXGroup;
+			children = (
+				4D4A00000000000000000361 /* MacJi */,
+				4D4A00000000000000000362 /* MacJiTests */,
+				4D4A00000000000000000383 /* Config */,
+				4D4A00000000000000000382 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4D4A00000000000000000382 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4D4A00000000000000000301 /* MacJi.app */,
+				4D4A00000000000000000302 /* MacJiTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4D4A00000000000000000383 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				4D4A00000000000000000303 /* Base.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4D4A00000000000000000401 /* MacJi */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4D4A00000000000000000903 /* Build configuration list for PBXNativeTarget "MacJi" */;
+			buildPhases = (
+				4D4A00000000000000000501 /* Sources */,
+				4D4A00000000000000000371 /* Frameworks */,
+				4D4A00000000000000000511 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4D4A00000000000000000361 /* MacJi */,
+			);
+			name = MacJi;
+			packageProductDependencies = (
+				4D4A00000000000000000601 /* KeyboardShortcuts */,
+				4D4A00000000000000000602 /* Sparkle */,
+			);
+			productName = MacJi;
+			productReference = 4D4A00000000000000000301 /* MacJi.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4D4A00000000000000000402 /* MacJiTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4D4A00000000000000000904 /* Build configuration list for PBXNativeTarget "MacJiTests" */;
+			buildPhases = (
+				4D4A00000000000000000502 /* Sources */,
+				4D4A00000000000000000372 /* Frameworks */,
+				4D4A00000000000000000512 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4D4A00000000000000000701 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4D4A00000000000000000362 /* MacJiTests */,
+			);
+			name = MacJiTests;
+			packageProductDependencies = (
+			);
+			productName = MacJiTests;
+			productReference = 4D4A00000000000000000302 /* MacJiTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4D4A00000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					4D4A00000000000000000401 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					4D4A00000000000000000402 = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 4D4A00000000000000000401;
+					};
+				};
+			};
+			buildConfigurationList = 4D4A00000000000000000901 /* Build configuration list for PBXProject "MacJi" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4D4A00000000000000000381;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4D4A00000000000000000611 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				4D4A00000000000000000612 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 4D4A00000000000000000382 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4D4A00000000000000000401 /* MacJi */,
+				4D4A00000000000000000402 /* MacJiTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4D4A00000000000000000511 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4D4A00000000000000000512 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4D4A00000000000000000501 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4D4A00000000000000000502 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4D4A00000000000000000701 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D4A00000000000000000401 /* MacJi */;
+			targetProxy = 4D4A00000000000000000201 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4D4A00000000000000000801 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D4A00000000000000000303 /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4D4A00000000000000000802 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D4A00000000000000000303 /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		4D4A00000000000000000811 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MacJi/Resources/MacJi.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MacJi/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MacJi;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Mayank Baral. MIT licence.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4D4A00000000000000000812 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MacJi/Resources/MacJi.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MacJi/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MacJi;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Mayank Baral. MIT licence.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4D4A00000000000000000821 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MACJI_BUNDLE_ID).tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MacJi.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MacJi";
+			};
+			name = Debug;
+		};
+		4D4A00000000000000000822 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MACJI_BUNDLE_ID).tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MacJi.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MacJi";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4D4A00000000000000000901 /* Build configuration list for PBXProject "MacJi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D4A00000000000000000801 /* Debug */,
+				4D4A00000000000000000802 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4D4A00000000000000000903 /* Build configuration list for PBXNativeTarget "MacJi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D4A00000000000000000811 /* Debug */,
+				4D4A00000000000000000812 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4D4A00000000000000000904 /* Build configuration list for PBXNativeTarget "MacJiTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D4A00000000000000000821 /* Debug */,
+				4D4A00000000000000000822 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4D4A00000000000000000611 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.0;
+			};
+		};
+		4D4A00000000000000000612 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4D4A00000000000000000601 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4D4A00000000000000000611 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+		4D4A00000000000000000602 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4D4A00000000000000000612 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 4D4A00000000000000000001 /* Project object */;
+}

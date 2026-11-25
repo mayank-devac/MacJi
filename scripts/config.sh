@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+#  config.sh
+#  MacJi
+#
+#  Created: 2026-11-26
+#  Shared values for every MacJi script. Source it; never copy these values into a script.
+#  Python scripts read the same values from scripts/config.py.
+#
+
+####################
+#### Project identity
+### The bundle ID and certificate name are permanent after the first release:
+### the Accessibility grant and login item stay valid only while both stay the same.
+
+MACJI_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MACJI_APP_NAME="MacJi"
+MACJI_SCHEME="MacJi"
+MACJI_PROJECT="$MACJI_ROOT/MacJi.xcodeproj"
+MACJI_BUNDLE_ID="io.github.mayank-devac.macji"
+MACJI_DEBUG_BUNDLE_ID="$MACJI_BUNDLE_ID.debug"
+MACJI_SIGNING_IDENTITY="MacJi Release"
+MACJI_SPARKLE_KEY_ACCOUNT="macji"
+
+#### Keep in sync with Config/Base.xcconfig (MACJI_BUNDLE_ID) and scripts/config.py.
+##################
+
+####################
+#### Paths and repositories
+
+MACJI_DERIVED_DATA="${DERIVED_DATA:-$MACJI_ROOT/.build/DerivedData}"
+MACJI_RELEASE_DIR="$MACJI_ROOT/.build/release"
+MACJI_XCCONFIG="$MACJI_ROOT/Config/Base.xcconfig"
+MACJI_APPICON_DIR="$MACJI_ROOT/MacJi/Resources/Assets.xcassets/AppIcon.appiconset"
+MACJI_SOURCE_REPO="mayank-devac/macji"
+MACJI_DIST_REPO="mayank-devac/macji-dist"
+MACJI_OCTOPUS_PATH="$MACJI_ROOT/Upstream/octopus"
+
+##################
+
+####################
+#### Output helpers
+### One line per step, a short success line, and a fix hint on failure.
+
+step() { printf '› %s\n' "$*"; }
+ok() { printf '✓ %s\n' "$*"; }
+fail() {
+    printf '✗ %s\n' "$1" >&2
+    [[ $# -gt 1 ]] && printf '  fix: %s\n' "$2" >&2
+    exit 1
+}
+confirm() {
+    local answer
+    read -r -p "$1 [y/N] " answer
+    [[ "$answer" == "y" || "$answer" == "Y" ]]
+}
+# Prints a script's header comment (everything after the shebang up to the first code line).
+print_usage() {
+    awk 'NR > 1 && /^#/ { sub(/^#+ ?/, ""); print; next } NR > 1 { exit }' "$1"
+}
+
+#### Scripts that delete, reset or publish must call confirm first.
+##################

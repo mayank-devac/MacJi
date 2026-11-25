@@ -1,0 +1,55 @@
+//
+//  Base.xcconfig
+//  MacJi
+//
+//  Created: 2026-11-26
+//  The single source for MacJi's version, build number, bundle ID and compiler settings.
+//  Applied to the whole project; targets override only what they must.
+//
+
+////////////////////
+//// Identity and version
+/// `scripts/bump-version.sh` edits the two version lines; `scripts/release.py` reads them.
+/// The bundle ID is permanent after the first release: preferences, the login item and the
+/// Accessibility grant are all keyed to it. Debug builds add `.debug` so they never share a
+/// grant or preferences with an installed release.
+
+MACJI_BUNDLE_ID = io.github.mayank-devac.macji
+MARKETING_VERSION = 0.1.0
+CURRENT_PROJECT_VERSION = 1
+MACJI_BUNDLE_SUFFIX[config=Debug] = .debug
+PRODUCT_BUNDLE_IDENTIFIER = $(MACJI_BUNDLE_ID)$(MACJI_BUNDLE_SUFFIX)
+
+//// Never change MACJI_BUNDLE_ID once a release has shipped.
+//////////////////
+
+////////////////////
+//// Language and warnings
+/// Swift 6 language mode with complete concurrency checking; warnings fail Release builds.
+
+MACOSX_DEPLOYMENT_TARGET = 14.6
+SWIFT_VERSION = 6.0
+SWIFT_STRICT_CONCURRENCY = complete
+SWIFT_TREAT_WARNINGS_AS_ERRORS[config=Release] = YES
+GCC_TREAT_WARNINGS_AS_ERRORS[config=Release] = YES
+SWIFT_EMIT_LOC_STRINGS = YES
+
+//////////////////
+
+////////////////////
+//// Signing
+/// A fresh clone signs ad-hoc ("Sign to Run Locally") so it always builds without a certificate.
+/// Ad-hoc identity changes every build, so macOS forgets the Accessibility grant after each
+/// rebuild. For a stable local grant, set CODE_SIGN_IDENTITY in Config/LocalSigning.xcconfig.
+// Releases are re-signed by scripts/release.py with the "MacJi Release" certificate.
+// The hardened runtime is on for Release; Debug leaves it off so the test bundle can load.
+
+CODE_SIGN_STYLE = Manual
+CODE_SIGN_IDENTITY = -
+DEVELOPMENT_TEAM =
+ENABLE_HARDENED_RUNTIME[config=Release] = YES
+
+#include? "LocalSigning.xcconfig"
+
+//// LocalSigning.xcconfig is git-ignored; copy LocalSigning.example.xcconfig.
+//////////////////

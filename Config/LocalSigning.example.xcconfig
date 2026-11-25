@@ -1,0 +1,20 @@
+//
+//  LocalSigning.example.xcconfig
+//  MacJi
+//
+//  Created: 2026-11-26
+//  Copy to Config/LocalSigning.xcconfig (git-ignored) to sign local builds with a stable
+//  identity, so macOS keeps MacJi's Accessibility grant across rebuilds.
+//
+
+////////////////////
+//// Pick one identity
+/// The self-signed "MacJi Release" certificate (see docs/RELEASING.md) needs no Apple account.
+// An Apple Development certificate from a free personal team works too: set DEVELOPMENT_TEAM.
+
+CODE_SIGN_IDENTITY = MacJi Release
+// CODE_SIGN_IDENTITY = Apple Development
+// DEVELOPMENT_TEAM = ABCDE12345
+
+//// Never commit the real LocalSigning.xcconfig.
+//////////////////
