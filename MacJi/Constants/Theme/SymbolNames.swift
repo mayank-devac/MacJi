@@ -1,12 +1,12 @@
 //
-//  Symbols.swift
+//  SymbolNames.swift
 //  MacJi
 //
 //  Created: 2026-11-26
 //  SF Symbol names used across the app, including the template menu-bar icon.
 //
 
-enum Symbols {
+enum SymbolNames {
     /// Template (monochrome) symbol, so the menu-bar icon follows the menu bar's appearance.
     static let menuBar = "face.smiling"
     static let search = "magnifyingglass"

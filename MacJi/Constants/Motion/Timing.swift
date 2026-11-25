@@ -25,6 +25,10 @@ enum Timing {
     /// macOS updates `AXIsProcessTrusted()` a moment after it posts the change notification.
     static let permissionRecheckDelay: TimeInterval = 0.5
 
+    /// A click on the menu-bar icon closes the transient popover on mouse-down; a toggle arriving
+    /// this soon after is that same click and must not reopen it.
+    static let popoverReopenGuard: TimeInterval = 0.3
+
     /// AX messaging timeout for caret lookups; unresponsive apps must not stall typing.
     static let axMessagingTimeout: Float = 0.1
 }

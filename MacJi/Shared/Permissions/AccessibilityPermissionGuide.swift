@@ -1,0 +1,124 @@
+//
+//  AccessibilityPermissionGuide.swift
+//  MacJi
+//
+//  Created: 2026-11-26
+//  Opens System Settings → Accessibility and docks a small panel next to its window with a
+//  draggable MacJi icon, so the user can drop the app into the list.
+//  Ported from Octopus: octopus/UI/Permissions/AccessibilityPermissionGuide.swift
+//
+
+import AppKit
+import ApplicationServices
+import SwiftUI
+
+@MainActor
+final class AccessibilityPermissionGuide {
+    static let shared = AccessibilityPermissionGuide()
+
+    private var panel: NSPanel?
+    private var timer: Timer?
+    private var openedAt = Date.distantPast
+
+    private init() {}
+
+    ////////////////////
+    //// Open the guide
+    /// Opens the Accessibility pane and runs the drag panel until access is granted.
+    // Already trusted: just open the pane so the user can still review it.
+    // Safe to call repeatedly: a second call only reopens the pane and restarts the launch grace.
+
+    func open() {
+        NSWorkspace.shared.open(AppLinks.accessibilitySettings)
+        guard !AXIsProcessTrusted() else { return }
+
+        openedAt = Date()
+        if panel == nil { panel = makePanel() }
+        if timer == nil {
+            timer = Timer.scheduledTimer(withTimeInterval: Timing.guidePollInterval, repeats: true) { [weak self] _ in
+                MainActor.assumeIsolated { self?.tick() }
+            }
+        }
+        tick()
+    }
+
+    func close() {
+        timer?.invalidate()
+        timer = nil
+        panel?.orderOut(nil)
+        panel = nil
+    }
+
+    //// The guide lives only while System Settings is running and access is missing.
+    //////////////////
+
+    private func makePanel() -> NSPanel {
+        let hosting = NSHostingView(rootView: AccessibilityPermissionGuideView(onClose: { [weak self] in self?.close() }))
+        let panel = NSPanel(contentRect: CGRect(origin: .zero, size: hosting.fittingSize),
+                            styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        panel.level = .floating
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.hasShadow = true
+        panel.hidesOnDeactivate = false
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        panel.contentView = hosting
+        return panel
+    }
+
+    ////////////////////
+    //// Poll state
+    /// Ends on grant or when System Settings is gone; otherwise shows the panel only while
+    /// Settings is the frontmost app with a window on screen, and follows that window.
+    // The launch grace covers the moment between asking Settings to open and it actually running.
+    // Which pane is showing cannot be detected: window titles need Screen Recording permission.
+
+    private func tick() {
+        if AXIsProcessTrusted() { close(); return }
+
+        let settingsApps = NSRunningApplication.runningApplications(withBundleIdentifier: AppLinks.systemSettingsBundleID)
+        if settingsApps.isEmpty {
+            if Date().timeIntervalSince(openedAt) > Timing.guideLaunchGrace { close() } else { panel?.orderOut(nil) }
+            return
+        }
+
+        guard let panel else { return }
+        guard NSWorkspace.shared.frontmostApplication?.bundleIdentifier == AppLinks.systemSettingsBundleID,
+              let window = settingsWindowFrame(pids: Set(settingsApps.map(\.processIdentifier))),
+              let screen = Self.screen(containingMostOf: window) else {
+            panel.orderOut(nil)
+            return
+        }
+
+        let origin = AccessibilityGuidePlacement.origin(panelSize: panel.frame.size, settingsWindow: window,
+                                                        visibleFrame: screen.visibleFrame)
+        if panel.frame.origin != origin { panel.setFrameOrigin(origin) }
+        if !panel.isVisible { panel.orderFrontRegardless() }
+    }
+
+    //// Polling avoids AX observers, which need the very permission being requested.
+    //////////////////
+
+    private static func screen(containingMostOf window: CGRect) -> NSScreen? {
+        let screens = NSScreen.screens
+        return AccessibilityGuidePlacement.screenIndex(containingMostOf: window, screenFrames: screens.map(\.frame))
+            .map { screens[$0] }
+    }
+
+    /// Largest normal-layer System Settings window, in AppKit (bottom-left) coordinates.
+    /// Window bounds and owner PID are readable without Screen Recording permission.
+    // CG window bounds are top-left based on the primary display, hence the flip.
+    private func settingsWindowFrame(pids: Set<pid_t>) -> CGRect? {
+        guard let info = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]],
+              let primaryHeight = NSScreen.screens.first?.frame.height else { return nil }
+
+        let frames = info.compactMap { entry -> CGRect? in
+            guard let pid = entry[kCGWindowOwnerPID as String] as? pid_t, pids.contains(pid),
+                  (entry[kCGWindowLayer as String] as? Int) == 0,
+                  let boundsDict = entry[kCGWindowBounds as String] as? NSDictionary,
+                  let bounds = CGRect(dictionaryRepresentation: boundsDict) else { return nil }
+            return CGRect(x: bounds.minX, y: primaryHeight - bounds.maxY, width: bounds.width, height: bounds.height)
+        }
+        return frames.max { $0.width * $0.height < $1.width * $1.height }
+    }
+}
