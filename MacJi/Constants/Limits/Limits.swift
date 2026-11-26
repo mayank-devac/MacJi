@@ -33,6 +33,8 @@ enum Limits {
     static let aliasMaxSpellings = 8
     static let aliasMaxOutputs = 8
     static let customAliasesMax = 200
+    /// Your alias outputs listed first in a panel or the picker's search.
+    static let aliasResults = 8
     /// UTF-16 units one synthetic key event can carry; CGEvent drops anything longer.
     static let syntheticKeyUTF16Units = 20
     /// Tallest AX rect still treated as one line of text; taller means a field or paragraph.

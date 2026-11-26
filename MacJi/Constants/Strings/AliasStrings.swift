@@ -71,6 +71,10 @@ enum AliasStrings {
     static let save = String(localized: "Save")
     static let cancel = String(localized: "Cancel")
 
+    static func typeHint(_ spelling: String) -> String {
+        String(localized: "Type \(spelling)")
+    }
+
     static func searchHint(_ examples: String) -> String {
         String(localized: "Find it by name in any panel: \(examples)")
     }

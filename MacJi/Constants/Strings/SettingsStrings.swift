@@ -99,6 +99,8 @@ enum SettingsStrings {
     static let aliasesToggle = String(localized: "Convert aliases while typing")
     static let aliasesExample = String(localized: "-> becomes →, (c) becomes ©, :) becomes 🙂")
     static let customizeAliases = String(localized: "Customize…")
+    static let aliasesInSearch = String(localized: "Show your aliases in search")
+    static let aliasesInSearchExample = String(localized: "Find their outputs by name in every panel and the picker: ::check gives ✓ ✔ ☑.")
 
     //////////////////
 

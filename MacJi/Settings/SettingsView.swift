@@ -60,6 +60,7 @@ struct SettingsView: View {
                              trigger: settings.trigger(for: .emoticons),
                              setTrigger: { settings.setTrigger($0, for: .emoticons) })
             AliasesSection(convertsTextAliases: $settings.convertTextAliases,
+                           showsInSearch: $settings.showAliasesInSearch,
                            customCount: settings.customTextAliases.count,
                            everythingTypedIsOff: settings.watchesNoTyping,
                            onCustomize: { showsAliases = true })

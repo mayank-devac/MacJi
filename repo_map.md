@@ -141,7 +141,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       TextAliasesPage.swift — Aliases page: filter, groups with yours first, group switches, + to add, Turn All On
     Sections/ — one view per Settings section
       AboutSection.swift — version, links, Built on Octopus
-      AliasesSection.swift — Aliases switch, Customize…, and a note when nothing watches the keyboard
+      AliasesSection.swift — Aliases switch, Customize…, show-in-search switch, and a note when nothing watches the keyboard
       EmojiPickerSection.swift — picker shortcut recorder and reset, Symbols and Emoticons tab switches
       EmoticonsSection.swift — Emoticons switch, autocomplete − N + stepper (with Off), optional trigger
       GeneralSection.swift — open at login, automatic updates, Check Now
@@ -200,6 +200,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       SecureInput.swift — who holds Secure Event Input and how to release it
     TextAliases/ — text aliases shared by the panel (conversion) and the picker (search)
       ActiveTextAliases.swift — the aliases that convert: built-in + yours − turned off; yours win a spelling
+      AliasGlyphs.swift — your aliases as a searchable catalog, merged first into panel and picker results
       CustomTextAliasCodec.swift — your aliases to and from the stored plist array, keeping unreadable entries
       CustomTextAliasValidator.swift — rules for your aliases (name, spellings, outputs) and the editor draft
       TextAlias.swift — one text alias: spellings, outputs, group, word-start rule, your name for it

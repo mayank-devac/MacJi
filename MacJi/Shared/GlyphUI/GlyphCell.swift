@@ -32,6 +32,8 @@ struct GlyphCell: View {
         Button(action: onPick) {
             Text(glyph.text)
                 .font(.system(size: EmojiUIMetrics.cellEmojiSize))
+                .lineLimit(1)
+                .minimumScaleFactor(EmojiUIMetrics.cellMinimumTextScale)
                 .frame(width: EmojiUIMetrics.cellSize, height: EmojiUIMetrics.cellSize)
                 .background(RoundedRectangle(cornerRadius: EmojiUIMetrics.cellCornerRadius, style: .continuous).fill(highlight))
                 .scaleEffect(isHovered ? EmojiUIMetrics.cellHoverScale : 1)

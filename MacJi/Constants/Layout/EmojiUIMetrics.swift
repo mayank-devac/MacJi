@@ -15,6 +15,8 @@ enum EmojiUIMetrics {
     static let cellSize: CGFloat = 34
     static let cellCornerRadius: CGFloat = 6
     static let cellHoverScale: CGFloat = 1.15
+    /// A longer alias output ("→ done") shrinks to fit the cell instead of being cut off.
+    static let cellMinimumTextScale: CGFloat = 0.3
 
     // Glyph row (emoticons): one wide glyph per row
     static let rowHeight: CGFloat = 26

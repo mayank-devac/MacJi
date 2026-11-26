@@ -112,6 +112,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.inlinePanel.setTextAliases(on ? active : [])
             }
             .store(in: &subscriptions)
+        settings.$showAliasesInSearch.combineLatest(settings.$customTextAliases, settings.$disabledTextAliases)
+            .sink { [weak self] shown, custom, disabled in
+                let catalog = shown ? AliasGlyphs.catalog(from: custom.filter { !disabled.contains($0.id) }) : .empty
+                self?.inlinePanel.setAliasCatalog(catalog)
+                self?.picker.setAliasCatalog(catalog)
+            }
+            .store(in: &subscriptions)
         settings.$pickerShowsSymbols.combineLatest(settings.$pickerShowsEmoticons)
             .sink { [weak self] symbols, emoticons in
                 guard let self else { return }

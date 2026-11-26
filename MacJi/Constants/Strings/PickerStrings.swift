@@ -16,6 +16,7 @@ enum PickerStrings {
     static let clearSearch = String(localized: "Clear search")
     static let recentlyUsed = String(localized: "Recently Used")
     static let searchResults = String(localized: "Best Matches")
+    static let yourAliases = String(localized: "Your Aliases")
     static let noResults = String(localized: "Nothing found")
     static let noResultsHint = String(localized: "Try another word, or press esc to clear")
     static let copy = String(localized: "Copy")

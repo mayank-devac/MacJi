@@ -69,5 +69,10 @@ struct EmojiPickerTests {
         #expect(model.groups.map(\.title) == [PickerStrings.searchResults])
         #expect(model.groups.first?.glyphs.map(\.text) == ["❤️", "😍"])
         #expect(model.selectedGlyph?.text == "❤️")
+        model.aliases = AliasGlyphs.catalog(from: [
+            TextAlias(id: "custom-1", texts: ["<3<3"], replacements: ["💕", "❤️"], group: .emoji, boundary: .afterSpace, name: "Heart pair"),
+        ])
+        #expect(model.groups.map(\.title) == [PickerStrings.yourAliases, PickerStrings.searchResults])
+        #expect(model.groups.map { $0.glyphs.map(\.text) } == [["💕", "❤️"], ["😍"]])
     }
 }

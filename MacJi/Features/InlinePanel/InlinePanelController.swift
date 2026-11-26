@@ -56,6 +56,11 @@ final class InlinePanelController {
         stopListening()
     }
 
+    /// Your aliases to list first in every panel; empty turns that off.
+    func setAliasCatalog(_ catalog: AliasCatalog) {
+        model.aliases = catalog
+    }
+
     func setLibrary(_ library: GlyphLibrary) {
         model.library = library
         rebuildAutocomplete()

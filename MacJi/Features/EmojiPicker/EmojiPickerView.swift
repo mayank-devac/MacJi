@@ -229,7 +229,8 @@ struct EmojiPickerView: View {
     }
 
     private func footerDetail(for glyph: Glyph) -> String? {
-        switch model.tab {
+        if let spelling = model.focusedSpelling { return AliasStrings.typeHint(spelling) }
+        return switch model.tab {
         case .emoji: glyph.aliases.first.map(PickerStrings.alias)
         case .symbols: PanelStrings.codePoints(of: glyph.text)
         case .emoticons: glyph.text

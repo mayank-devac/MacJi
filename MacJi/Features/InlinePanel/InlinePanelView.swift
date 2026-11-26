@@ -155,7 +155,8 @@ struct InlinePanelView: View {
 
     ////////////////////
     //// Footer
-    /// The focused glyph and its name; a symbol also shows its code point.
+    /// The focused glyph and its name; one of your alias outputs shows its spelling, a symbol
+    /// its code point.
 
     private var footer: some View {
         HStack(spacing: PanelMetrics.footerSpacing) {
@@ -168,7 +169,11 @@ struct InlinePanelView: View {
                         .font(.callout)
                         .lineLimit(1)
                         .truncationMode(.tail)
-                    if model.kind == .symbols {
+                    if let spelling = model.focusedSpelling {
+                        Text(AliasStrings.typeHint(spelling))
+                            .font(.caption2.monospaced())
+                            .foregroundStyle(.secondary)
+                    } else if model.kind == .symbols {
                         Text(PanelStrings.codePoints(of: glyph.text))
                             .font(.caption2.monospaced())
                             .foregroundStyle(.secondary)

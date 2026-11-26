@@ -51,6 +51,9 @@ final class AppSettings: ObservableObject {
                          forKey: PreferenceKeys.customTextAliases)
         }
     }
+    @Published var showAliasesInSearch: Bool {
+        didSet { store(showAliasesInSearch, oldValue, PreferenceKeys.showAliasesInSearch) }
+    }
     @Published var pickerShowsSymbols: Bool {
         didSet { store(pickerShowsSymbols, oldValue, PreferenceKeys.pickerShowsSymbols) }
     }
@@ -92,6 +95,7 @@ final class AppSettings: ObservableObject {
         convertTextAliases = Self.bool(defaults, PreferenceKeys.convertTextAliases, PreferenceDefaults.convertTextAliases)
         disabledTextAliases = Set(defaults.stringArray(forKey: PreferenceKeys.disabledTextAliases) ?? [])
         (customTextAliases, unreadableCustomAliases) = CustomTextAliasCodec.decode(defaults.object(forKey: PreferenceKeys.customTextAliases))
+        showAliasesInSearch = Self.bool(defaults, PreferenceKeys.showAliasesInSearch, PreferenceDefaults.showAliasesInSearch)
         pickerShowsSymbols = Self.bool(defaults, PreferenceKeys.pickerShowsSymbols, PreferenceDefaults.pickerShowsSymbols)
         pickerShowsEmoticons = Self.bool(defaults, PreferenceKeys.pickerShowsEmoticons, PreferenceDefaults.pickerShowsEmoticons)
         showMenuBarIcon = Self.bool(defaults, PreferenceKeys.showMenuBarIcon, PreferenceDefaults.showMenuBarIcon)

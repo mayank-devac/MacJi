@@ -63,4 +63,17 @@ struct CustomTextAliasTests {
         #expect(TextAliasConverter(aliases: withMineOff).conversion(typing: .text(">"), after: "a -")?.replacement == "→")
         #expect(ActiveTextAliases.builtIn(using: "->")?.id == "rightArrow")
     }
+
+    @Test func searchFindsEveryOutputByNameOrSpellingOnceAndFirst() {
+        let catalog = AliasGlyphs.catalog(from: [mine(["[x]"], ["✓", "✔"]), mine(["(v)"], ["✓"], name: "Tick", id: "custom-2")])
+        #expect(GlyphSearch.ranked("check", in: catalog, limit: 8).map(\.text) == ["✓", "✔"])
+        #expect(GlyphSearch.ranked("tick", in: catalog, limit: 8).isEmpty)
+        #expect(GlyphSearch.ranked("[x]", in: catalog, limit: 8).map(\.text) == ["✓", "✔"])
+        let found = GlyphSearch.ranked("check", in: catalog, limit: 8)
+        let emoji = Glyph(text: "✔", description: "check mark", category: "Symbols", aliases: [], tags: [])
+        let rocket = Glyph(text: "🚀", description: "rocket", category: "Travel & Places", aliases: [], tags: [])
+        #expect(AliasGlyphs.merge(found, before: [emoji, rocket]).map(\.text) == ["✓", "✔", "🚀"])
+        #expect(AliasGlyphs.spelling(of: emoji, in: catalog) == "[x]")
+        #expect(AliasGlyphs.spelling(of: rocket, in: catalog) == nil)
+    }
 }

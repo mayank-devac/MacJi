@@ -38,6 +38,8 @@ enum PreferenceKeys {
     static let disabledTextAliases = "disabledTextAliases"
     /// [[String: Any]]: the user's own aliases (fields in `CustomAliasKeys`), in Settings order.
     static let customTextAliases = "customTextAliases"
+    /// Bool: your alias outputs appear first in panel and picker search, found by name or spelling.
+    static let showAliasesInSearch = "showAliasesInSearch"
     /// Bool: the picker shows a Symbols tab.
     static let pickerShowsSymbols = "pickerShowsSymbols"
     /// Bool: the picker shows an Emoticons tab.
@@ -90,6 +92,7 @@ enum PreferenceDefaults {
     static let emoticonsEnabled = true
     static let emoticonAutocompleteLength = 2
     static let pickerShowsSymbols = true
+    static let showAliasesInSearch = true
     static let pickerShowsEmoticons = true
 
     static var registered: [String: Any] {
@@ -102,6 +105,7 @@ enum PreferenceDefaults {
             PreferenceKeys.emoticonAutocompleteLength: emoticonAutocompleteLength,
             PreferenceKeys.emoticonPanelTrigger: emoticonTrigger,
             PreferenceKeys.pickerShowsSymbols: pickerShowsSymbols,
+            PreferenceKeys.showAliasesInSearch: showAliasesInSearch,
             PreferenceKeys.pickerShowsEmoticons: pickerShowsEmoticons,
             PreferenceKeys.rankFrequentlyUsedEmoji: rankFrequentlyUsedEmoji,
             PreferenceKeys.convertTextAliases: convertTextAliases,

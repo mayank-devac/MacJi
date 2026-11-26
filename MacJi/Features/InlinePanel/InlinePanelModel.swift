@@ -37,6 +37,8 @@ final class InlinePanelModel: ObservableObject {
     @Published private(set) var growsFrom = UnitPoint.topLeading
 
     var library = GlyphLibrary.empty
+    /// Your aliases' outputs, listed first when they match the term; empty while that is off.
+    var aliases = AliasCatalog.empty
     /// Set on each open; empty while frequency ranking is off.
     private var useCounts: [String: Int] = [:]
 
@@ -52,6 +54,11 @@ final class InlinePanelModel: ObservableObject {
     /// The pointer wins over the keyboard so the shown name matches what is under it.
     var focusedGlyph: Glyph? {
         hovered ?? selectedGlyph
+    }
+
+    /// "Type [x]" when the focused glyph is one of your alias outputs.
+    var focusedSpelling: String? {
+        focusedGlyph.flatMap { AliasGlyphs.spelling(of: $0, in: aliases) }
     }
 
     /// What Return and Shift-Return act on: the selection, else the first result.
@@ -119,28 +126,36 @@ final class InlinePanelModel: ObservableObject {
     //// Results
     /// Each panel searches its own catalog; the symbol and emoticon panels honour their filter.
     /// Autocomplete lists the emoticons that start with what was typed, used ones first.
+    // Your alias outputs that match the term come first, unless a filter or autocomplete is on.
 
     private func refreshResults() {
         guard let search else {
             results = []
             return
         }
+        let found = panelResults(for: search)
+        let showsAliases = !search.isAutocomplete && symbolCategory == nil && emoticonCategory == nil
+        let mine = showsAliases ? GlyphSearch.ranked(search.term, in: aliases, useCounts: useCounts, limit: Limits.aliasResults) : []
+        results = Array(AliasGlyphs.merge(mine, before: found).prefix(Limits.inlineResults))
+        selection = results.first?.text
+        hovered = nil
+    }
+
+    private func panelResults(for search: Search) -> [Glyph] {
         let limit = Limits.inlineResults
         switch search.kind {
         case .emoji:
-            results = GlyphSearch.ranked(search.term, in: library.emoji, useCounts: useCounts, limit: limit)
+            return GlyphSearch.ranked(search.term, in: library.emoji, useCounts: useCounts, limit: limit)
         case .symbols:
-            results = GlyphSearch.ranked(search.term, in: library.symbols, category: symbolCategory,
-                                         useCounts: useCounts, limit: limit)
+            return GlyphSearch.ranked(search.term, in: library.symbols, category: symbolCategory,
+                                      useCounts: useCounts, limit: limit)
         case .emoticons where search.isAutocomplete:
-            results = GlyphSearch.starting(with: search.term, in: library.emoticons, category: emoticonCategory,
-                                           useCounts: useCounts, limit: limit)
+            return GlyphSearch.starting(with: search.term, in: library.emoticons, category: emoticonCategory,
+                                        useCounts: useCounts, limit: limit)
         case .emoticons:
-            results = GlyphSearch.ranked(search.term, in: library.emoticons, category: emoticonCategory,
-                                         useCounts: useCounts, limit: limit)
+            return GlyphSearch.ranked(search.term, in: library.emoticons, category: emoticonCategory,
+                                      useCounts: useCounts, limit: limit)
         }
-        selection = results.first?.text
-        hovered = nil
     }
 
     //////////////////

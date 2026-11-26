@@ -46,6 +46,8 @@ final class EmojiPickerModel: ObservableObject {
     var onTabChanged: (PickerTab) -> Void = { _ in }
     private let recents: GlyphRecents
     var library = GlyphLibrary.empty { didSet { refreshGroups(selectFirst: false) } }
+    /// Your aliases' outputs, listed first in search results; empty while that is off.
+    var aliases = AliasCatalog.empty { didSet { refreshGroups(selectFirst: false) } }
 
     init(recents: GlyphRecents) {
         self.recents = recents
@@ -60,6 +62,11 @@ final class EmojiPickerModel: ObservableObject {
 
     /// The pointer wins over the keyboard so the footer names what is under it.
     var focusedGlyph: Glyph? { hovered ?? selectedGlyph }
+
+    /// "Type [x]" when the focused glyph is one of your alias outputs.
+    var focusedSpelling: String? {
+        focusedGlyph.flatMap { AliasGlyphs.spelling(of: $0, in: aliases) }
+    }
 
     /// A hidden tab falls back to Emoji.
     func setVisibleTabs(_ tabs: [PickerTab]) {
@@ -133,8 +140,8 @@ final class EmojiPickerModel: ObservableObject {
     //// Groups
     /// Browsing shows "Recently Used" (all categories only, like the system picker) and then the
     /// tab's categories. Searching shows one ranked "Best Matches" group, shared with the inline
-    // panel's ranking, so the likeliest glyph is always first and selected. Recents are shared
-    // across tabs; each tab shows only its own.
+    // panel's ranking, so the likeliest glyph is always first and selected; your matching alias
+    // outputs come before it in every tab. Recents are shared across tabs; each tab shows its own.
 
     private func refreshGroups(selectFirst: Bool) {
         switch tab {
@@ -152,8 +159,12 @@ final class EmojiPickerModel: ObservableObject {
 
     private func groups<Category>(in catalog: GlyphCatalog<Category>, category: Category?) -> [GlyphSection] {
         if isSearching {
+            let mine = category == nil ? GlyphSearch.ranked(query, in: aliases, limit: Limits.aliasResults) : []
+            let listed = Set(mine.map(\.text))
             let matches = GlyphSearch.ranked(query, in: catalog, category: category, limit: Limits.pickerResults)
-            return matches.isEmpty ? [] : [GlyphSection(title: PickerStrings.searchResults, glyphs: matches)]
+                .filter { !listed.contains($0.text) }
+            return [GlyphSection(title: PickerStrings.yourAliases, glyphs: mine),
+                    GlyphSection(title: PickerStrings.searchResults, glyphs: matches)].filter { !$0.glyphs.isEmpty }
         }
         let recentGlyphs = category == nil ? Array(catalog.glyphs(for: recents.characters).prefix(Limits.recentsShown)) : []
         let recentGroup = recentGlyphs.isEmpty ? [] : [GlyphSection(title: PickerStrings.recentlyUsed, glyphs: recentGlyphs)]

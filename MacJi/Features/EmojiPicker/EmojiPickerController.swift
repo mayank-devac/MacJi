@@ -50,6 +50,11 @@ final class EmojiPickerController: NSObject, NSPopoverDelegate {
         popover.performClose(nil)
     }
 
+    /// Your aliases to list first in search; empty turns that off.
+    func setAliasCatalog(_ catalog: AliasCatalog) {
+        model.aliases = catalog
+    }
+
     func setLibrary(_ library: GlyphLibrary) {
         model.library = library
     }
