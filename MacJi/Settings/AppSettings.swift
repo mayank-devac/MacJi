@@ -17,6 +17,19 @@ final class AppSettings: ObservableObject {
     }
     /// Always valid: change it through `setTrigger(_:)`.
     @Published private(set) var trigger: String
+    @Published var rankFrequentlyUsedEmoji: Bool {
+        didSet { store(rankFrequentlyUsedEmoji, oldValue, PreferenceKeys.rankFrequentlyUsedEmoji) }
+    }
+    @Published var convertTextAliases: Bool {
+        didSet { store(convertTextAliases, oldValue, PreferenceKeys.convertTextAliases) }
+    }
+    /// IDs from `TextAliasCatalog`; unknown IDs (from a newer MacJi) are kept.
+    @Published var disabledTextAliases: Set<String> {
+        didSet {
+            guard disabledTextAliases != oldValue else { return }
+            defaults.set(disabledTextAliases.sorted(), forKey: PreferenceKeys.disabledTextAliases)
+        }
+    }
     @Published var showMenuBarIcon: Bool {
         didSet { store(showMenuBarIcon, oldValue, PreferenceKeys.showMenuBarIcon) }
     }
@@ -33,6 +46,9 @@ final class AppSettings: ObservableObject {
         self.defaults = defaults
         inlinePanelEnabled = defaults.object(forKey: PreferenceKeys.inlinePanelEnabled) as? Bool ?? PreferenceDefaults.inlinePanelEnabled
         trigger = InlineTrigger.valid(defaults.object(forKey: PreferenceKeys.inlinePanelTrigger) as? String)
+        rankFrequentlyUsedEmoji = defaults.object(forKey: PreferenceKeys.rankFrequentlyUsedEmoji) as? Bool ?? PreferenceDefaults.rankFrequentlyUsedEmoji
+        convertTextAliases = defaults.object(forKey: PreferenceKeys.convertTextAliases) as? Bool ?? PreferenceDefaults.convertTextAliases
+        disabledTextAliases = Set(defaults.stringArray(forKey: PreferenceKeys.disabledTextAliases) ?? [])
         showMenuBarIcon = defaults.object(forKey: PreferenceKeys.showMenuBarIcon) as? Bool ?? PreferenceDefaults.showMenuBarIcon
     }
 

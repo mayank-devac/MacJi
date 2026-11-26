@@ -27,6 +27,8 @@ final class InlinePanelModel: ObservableObject {
     @Published private(set) var growsFrom = UnitPoint.topLeading
 
     var catalog = EmojiCatalog.empty
+    /// Set on each open; empty while frequency ranking is off.
+    private var useCounts: [String: Int] = [:]
 
     var selectedEmoji: Emoji? {
         results.first { $0.emoji == selection }
@@ -46,9 +48,10 @@ final class InlinePanelModel: ObservableObject {
     //// Session lifecycle
     /// A presentation starts empty; `update` fills it. `reset` runs once the panel has faded out.
 
-    func beginPresentation(growsFrom anchor: UnitPoint) {
+    func beginPresentation(growsFrom anchor: UnitPoint, useCounts: [String: Int]) {
         reset()
         growsFrom = anchor
+        self.useCounts = useCounts
         presentationID += 1
     }
 
@@ -56,7 +59,7 @@ final class InlinePanelModel: ObservableObject {
         self.trigger = trigger
         guard query != self.query else { return }
         self.query = query
-        results = EmojiSearch.ranked(query, in: catalog, limit: Limits.inlineResults)
+        results = EmojiSearch.ranked(query, in: catalog, useCounts: useCounts, limit: Limits.inlineResults)
         selection = results.first?.emoji
         hovered = nil
     }

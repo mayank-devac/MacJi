@@ -5,13 +5,22 @@ Guidance for Claude Code (and any developer) working in this repository.
 
 ## Project
 
-MacJi is an open-source macOS menu-bar app for emoji. It has two features:
+MacJi is an open-source macOS menu-bar app for emoji. Its features:
 
 1. **Inline panel** – type the trigger (default `::`) plus a term in any app (`::roc`) and an emoji
    panel opens under the caret. Return replaces `::roc` with the emoji, Shift-Return copies it,
    Esc closes, Space or punctuation closes it as you keep typing.
 2. **Emoji picker** – a menu-bar popover (also opened by a global shortcut) with search,
    categories, recents and keyboard navigation. Return copies, Option-Return copies and stays open.
+3. **Frequent-emoji ranking** – the inline panel lists used emoji first, most used first, when they
+   match by prefix (`EmojiSearch.ranked(useCounts:)`, counts in `EmojiRecents`). Setting
+   `rankFrequentlyUsedEmoji`, default on. The picker keeps the plain ranking.
+4. **Text aliases** – while the inline panel is on, `->` becomes →, `(c)` ©, `:)` 🙂 as the last
+   character is typed (`TextAliasCatalog` → `TextAliasConverter`, run from the event tap's key
+   path). Settings › Inline Panel › Aliases + Customize… (`convertTextAliases`,
+   `disabledTextAliases`). Emoticon spellings come from wooorm/emoticon (MIT,
+   `LICENSES/emoticon-MIT.txt`), filtered as `docs/convert-symbols.md` explains. Alias IDs are
+   stored, so they are permanent; keep `docs/convert-symbols.md` in step with the catalog.
 
 - macOS **14.6+** for the app, **15+** for the test target. Swift 6 language mode with complete
   strict concurrency. SwiftUI + AppKit. Accessory app (`LSUIElement`), no Dock icon.
@@ -35,6 +44,9 @@ Act like a senior developer who owns this repo for years.
 - **Safe by default.** Handle failure paths explicitly (AX calls fail often), no force-unwraps,
   keep UI and AX on the main actor, never weaken permission or signing handling.
 - **Test what you change** (see Testing rule).
+- **A new feature updates the docs in the same change:** the feature list under Project and any
+  rule it adds in this file, the README (Features, Usage, Settings, and Privacy if it stores
+  something), `PRIVACY.md` when it stores data, and `repo_map.md`.
 - **Be honest and concise.** Report exactly what was and was not verified.
 - **Ask before risky actions:** deleting files, rewriting history, pushing, creating GitHub repos or
   releases, generating signing keys, touching the Keychain, changing signing, entitlements, the
@@ -97,7 +109,7 @@ Features never import or reference each other.
 | Folder | What belongs there |
 |---|---|
 | `MacJi/App/` | App entry, composition root, launch/reopen policy, the menu-bar status item |
-| `MacJi/Features/InlinePanel/` | The `::term` panel: event tap, trigger tracking, keys, model, window, placement, view, text insertion, Secure Input |
+| `MacJi/Features/InlinePanel/` | The `::term` panel: event tap, trigger tracking, keys, model, window, placement, view, text insertion, Secure Input, text aliases |
 | `MacJi/Features/EmojiPicker/` | The picker popover: controller, model, view, keys, anchor for the hidden-icon case |
 | `MacJi/Shared/EmojiData/` | Emoji model, catalog, ranked search, recents store, clipboard, grid rows, `emoji.json` — used by both features |
 | `MacJi/Shared/EmojiUI/` | Emoji cell, key hints, "Copied" badge — reusable emoji views |
@@ -112,7 +124,7 @@ Features never import or reference each other.
 | `MacJiTests/` | Swift Testing suites, mirroring the source folders |
 | `Config/` | `Base.xcconfig` (version, build, bundle ID), signing example |
 | `scripts/` | Automation (see Scripts) |
-| `docs/` | `ARCHITECTURE.md`, `RELEASING.md`, `icon-prompt.md` |
+| `docs/` | `ARCHITECTURE.md`, `RELEASING.md`, `icon-prompt.md`, `convert-symbols.md` |
 | `dist/` | Sparkle feed `appcast.xml` (served from `main`) and the last release's signing identity |
 | `Upstream/octopus/` | Octopus submodule, reference only |
 

@@ -20,10 +20,18 @@ enum PreferenceKeys {
     static let inlinePanelEnabled = "inlinePanelEnabled"
     /// String: the characters that open the inline panel, validated by `InlineTrigger`.
     static let inlinePanelTrigger = "inlinePanelTrigger"
+    /// Bool: the inline panel lists the user's most-used matching emoji first.
+    static let rankFrequentlyUsedEmoji = "rankFrequentlyUsedEmoji"
+    /// Bool: typed text aliases ("->", ":)") are replaced with their symbol or emoji.
+    static let convertTextAliases = "convertTextAliases"
+    /// [String]: IDs of the text aliases the user turned off; aliases added later start on.
+    static let disabledTextAliases = "disabledTextAliases"
     /// Bool: the emoji icon is shown in the menu bar.
     static let showMenuBarIcon = "showMenuBarIcon"
     /// [String]: recently used emoji characters, newest first.
     static let emojiRecents = "emojiRecents"
+    /// [String: Int]: how often each emoji character was inserted or copied.
+    static let emojiUseCounts = "emojiUseCounts"
     /// Int: how many `SettingsMigrator` migrations have run.
     static let settingsSchemaVersion = "settingsSchemaVersion"
     /// Bool: set after the first launch has shown Settings once.
@@ -45,15 +53,19 @@ enum PreferenceDefaults {
     static let inlinePanelEnabled = true
     static let trigger = "::"
     static let showMenuBarIcon = true
+    static let rankFrequentlyUsedEmoji = true
+    static let convertTextAliases = true
 
     static var registered: [String: Any] {
         [
             PreferenceKeys.inlinePanelEnabled: inlinePanelEnabled,
             PreferenceKeys.inlinePanelTrigger: trigger,
+            PreferenceKeys.rankFrequentlyUsedEmoji: rankFrequentlyUsedEmoji,
+            PreferenceKeys.convertTextAliases: convertTextAliases,
             PreferenceKeys.showMenuBarIcon: showMenuBarIcon,
         ]
     }
 }
 
-//// Recents default to empty and need no registration.
+//// Recents, use counts and disabled aliases default to empty and need no registration.
 //////////////////

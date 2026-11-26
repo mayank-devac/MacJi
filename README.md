@@ -46,6 +46,10 @@ account and no analytics.
 - **Inline panel.** Type the trigger (`::` by default) and a word in any app. A panel of matching
   emoji opens under the caret. Return replaces `::roc` with the emoji, Shift-Return copies it, Esc
   closes the panel. Keep typing a space or punctuation and it gets out of your way.
+- **Learns your favourites.** The inline panel puts the emoji you use most at the top of its
+  matches, so `::h` offers your usual ❤️ before 🏠.
+- **Aliases.** Type `->` and get →, `!=` gives ≠, `(c)` gives ©, `:)` gives 🙂, in any app, as you
+  type. 15 symbols and 28 emoticons in close to 90 spellings, each of which you can turn off.
 - **Emoji picker.** Click the menu-bar icon or press **⌃⌥⌘Space** from any app. Search, browse by
   category or pick from your recents with the keyboard alone. If the icon is hidden, the picker opens
   at your caret, or at the pointer when the app doesn't report a caret.
@@ -97,7 +101,7 @@ button that opens the right System Settings pane with a short drag-to-allow guid
 | | |
 |---|---|
 | **Why it's needed** | The inline panel has to notice when you type the trigger, find the caret so the panel opens beside it, and type the emoji in place of `::roc`. macOS only allows that with Accessibility access. |
-| **What it reads** | Key presses, only while the inline panel is turned on. They're matched against the trigger in memory, and only the last few characters are kept. |
+| **What it reads** | Key presses, only while the inline panel is turned on. They're matched against the trigger and the aliases in memory, and only the last few characters are kept. |
 | **What it never does** | Store, log or send keystrokes. Read the text of your documents. Run in the background with the inline panel turned off: switching it off removes the keyboard listener completely. |
 | **What works without it** | The emoji picker. Its shortcut and clipboard copy don't need any permission. |
 
@@ -118,6 +122,41 @@ once and restarts, so your keyboard never gets stuck.
 | Space, punctuation | Close the panel and keep typing |
 
 The trigger never fires right after a letter or digit, so code like `std::string` won't open it.
+
+#### Ranking
+
+Matches are ordered by how well they fit what you typed: an exact short name (`::fire` → 🔥)
+first, then short names that start with it, then names and keywords with a word that starts with
+it, then names that only contain it. With several words, every word must match.
+
+With **Rank frequently used emoji higher** on (the default), emoji you have inserted or copied
+before jump ahead of that order, most used first, whenever a short name or a word of their name
+or keywords starts with what you typed. MacJi counts uses on your Mac only. Turn the setting off
+to get the plain order back. The picker keeps the plain order.
+
+### Aliases (symbol conversion)
+
+With **Aliases** on (the default), MacJi converts a short spelling into a symbol or emoji the
+moment you type its last character, in every app where the inline panel works. Delete right
+after a conversion removes the symbol.
+
+| Group | You type | You get |
+|---|---|---|
+| Arrows | `->` `<-` `<->` `=>` `<==` `<=>` | → ← ↔ ⇒ ⇐ ⇔ |
+| Math | `!=` `<=` `>=` `+-` `~=` | ≠ ≤ ≥ ± ≈ |
+| Symbols | `...` `(c)` `(r)` `(tm)` | … © ® ™ |
+| Emoticons | `:)` `:D` `;)` `:P` `:(` `:'(` `>:(` `<3` … | 🙂 😃 😉 😛 🙁 😢 😠 ❤️ … |
+
+- Bracket symbols and emoticons convert only at the start of a word, so `note:)`, `f(c)` and
+  the `::` trigger stay as typed.
+- Longer spellings build on shorter ones: `<->` becomes ↔ even though `<-` converts first.
+- Settings › Inline Panel › **Customize…** has a switch for every alias. Turn off the ones you
+  type in code, such as `->` or `!=`. Aliases added in a later version start on.
+- The emoticon spellings come from [wooorm/emoticon](https://github.com/wooorm/emoticon),
+  minus the ones that would fire inside words, lists, URLs or code.
+
+[docs/convert-symbols.md](docs/convert-symbols.md) lists every alias, the common conversions
+left out and why, and how to type each symbol on a Mac without MacJi.
 
 ### Emoji picker
 
@@ -159,7 +198,8 @@ or open MacJi again from Applications or Spotlight, which also works when the ic
 - **Accessibility:** status, Grant Access, and a warning while Secure Input is on.
 - **Emoji Picker:** record a different shortcut, or reset it to ⌃⌥⌘Space.
 - **Inline Panel:** turn it on or off, and change the trigger (up to four characters, with a symbol
-  such as `:` or `;` so it never fires inside ordinary words).
+  such as `:` or `;` so it never fires inside ordinary words). Turn frequent-emoji ranking on or
+  off, turn Aliases on or off, and pick single aliases under **Customize…**.
 - **Menu Bar:** show or hide the icon.
 - **General:** open at login, automatic update checks, Check Now.
 
@@ -200,8 +240,8 @@ security problem, follow [SECURITY.md](SECURITY.md) instead of opening a public 
 
 ## Privacy
 
-MacJi has no analytics, no crash reporting and no account. It stores your settings and recent emoji
-on your Mac and nothing else. The details are in [PRIVACY.md](PRIVACY.md).
+MacJi has no analytics, no crash reporting and no account. It stores your settings, your recent
+emoji and how often you used each one on your Mac, and nothing else. The details are in [PRIVACY.md](PRIVACY.md).
 
 ## Built on Octopus
 
@@ -213,5 +253,6 @@ copies of that code, so a change in Octopus can never break the MacJi build.
 ## Licence
 
 MacJi is released under the [MIT Licence](LICENSE). Emoji data comes from
-[gemoji](https://github.com/github/gemoji) (MIT). Notices for included code and data are in
+[gemoji](https://github.com/github/gemoji) (MIT) and emoticon spellings from
+[emoticon](https://github.com/wooorm/emoticon) (MIT). Notices for included code and data are in
 [LICENSES](LICENSES).

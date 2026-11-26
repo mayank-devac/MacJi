@@ -94,8 +94,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func wireSettings() {
-        settings.$inlinePanelEnabled.combineLatest(settings.$trigger)
-            .sink { [weak self] enabled, trigger in self?.inlinePanel.configure(enabled: enabled, trigger: trigger) }
+        settings.$inlinePanelEnabled.combineLatest(settings.$trigger, settings.$rankFrequentlyUsedEmoji)
+            .sink { [weak self] enabled, trigger, ranks in
+                self?.inlinePanel.configure(enabled: enabled, trigger: trigger, ranksFrequentlyUsed: ranks)
+            }
+            .store(in: &subscriptions)
+        settings.$convertTextAliases.combineLatest(settings.$disabledTextAliases)
+            .sink { [weak self] on, disabled in
+                self?.inlinePanel.setTextAliases(on ? TextAliasCatalog.all.filter { !disabled.contains($0.id) } : [])
+            }
             .store(in: &subscriptions)
         settings.$showMenuBarIcon.removeDuplicates()
             .sink { [weak self] shown in self?.statusItem.setVisible(shown) }

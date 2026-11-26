@@ -112,7 +112,7 @@ struct ReadmeScreenshots {
         }
 
         editor.typed = "::r"
-        panel.beginPresentation(growsFrom: .topLeading)
+        panel.beginPresentation(growsFrom: .topLeading, useCounts: [:])
         panel.update(query: "r", trigger: "::")
         editor.panelShown = true
         for _ in 0..<6 { _ = try await shot(.milliseconds(40), after: .milliseconds(35)) }

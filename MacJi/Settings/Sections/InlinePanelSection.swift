@@ -3,7 +3,8 @@
 //  MacJi
 //
 //  Created: 2026-11-26
-//  The inline panel's on/off toggle and the trigger field with live validation.
+//  The inline panel's on/off toggle, the trigger field with live validation, and the
+//  frequency-ranking and Aliases toggles that work only while the panel is on.
 //
 
 import SwiftUI
@@ -13,6 +14,9 @@ struct InlinePanelSection: View {
     let trigger: String
     /// Stores a valid trigger and returns nil, or returns why it was rejected.
     let setTrigger: (String) -> InlineTrigger.Problem?
+    @Binding var ranksFrequentlyUsed: Bool
+    @Binding var convertsTextAliases: Bool
+    let onCustomizeAliases: () -> Void
 
     @State private var draft = ""
     @State private var problem: InlineTrigger.Problem?
@@ -29,6 +33,11 @@ struct InlinePanelSection: View {
                 SettingsHint(text: "\(message(for: problem)) \(SettingsStrings.triggerKeptHint(trigger))",
                              symbol: SymbolNames.error, tint: Palette.error)
             }
+            Group {
+                Toggle(SettingsStrings.rankFrequentlyUsed, isOn: $ranksFrequentlyUsed)
+                aliasesRow
+            }
+            .disabled(!isEnabled)
         } header: {
             Text(SettingsStrings.inlineHeader)
         } footer: {
@@ -61,6 +70,21 @@ struct InlinePanelSection: View {
 
     //// The stored trigger only ever holds a valid value.
     //////////////////
+
+    /// One switch turns every alias on or off; Customize… picks them one by one.
+    private var aliasesRow: some View {
+        LabeledContent {
+            HStack {
+                Button(SettingsStrings.customizeAliases, action: onCustomizeAliases)
+                Toggle(SettingsStrings.aliasesToggle, isOn: $convertsTextAliases)
+                    .toggleStyle(.switch)
+                    .labelsHidden()
+            }
+        } label: {
+            Text(SettingsStrings.aliasesToggle)
+            Text(SettingsStrings.aliasesExample)
+        }
+    }
 
     private func message(for problem: InlineTrigger.Problem) -> String {
         switch problem {

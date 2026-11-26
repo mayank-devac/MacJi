@@ -22,4 +22,9 @@ enum SettingsMetrics {
     static let aboutIconSize: CGFloat = 56
     static let aboutSpacing: CGFloat = 12
     static let linkSpacing: CGFloat = 16
+
+    // Aliases page
+    static let aliasSpacing: CGFloat = 8
+    static let aliasTextWidth: CGFloat = 96
+    static let pageHeaderPadding: CGFloat = 12
 }

@@ -3,7 +3,7 @@
 //  MacJiTests
 //
 //  Created: 2026-11-26
-//  Trigger tracking, key mapping, trigger validation and panel placement.
+//  Trigger tracking, key mapping, text aliases, trigger validation and panel placement.
 //  Ported from Octopus: octopusTests/MacJiTests.swift
 //
 
@@ -47,6 +47,45 @@ struct InlinePanelTests {
         #expect(TypedKey(keyCode: 0, modifiers: .command, characters: "a") == .reset)
         #expect(TypedKey(keyCode: 51, modifiers: [], characters: "\u{8}") == .deleteBackward)
         #expect(TypedKey(keyCode: 41, modifiers: .shift, characters: ":") == .text(":"))
+    }
+
+    @Test func typedAliasBecomesItsReplacement() {
+        let all = TextAliasConverter(aliases: TextAliasCatalog.all)
+        #expect(all.conversion(typing: .text(">"), after: "a -") == .init(replacement: "→", deleteCount: 1))
+        #expect(all.conversion(typing: .text("m"), after: "(t") == nil)
+        #expect(all.conversion(typing: .text(")"), after: "(tm") == .init(replacement: "™", deleteCount: 3))
+        #expect(all.conversion(typing: .text(">"), after: "a ") == nil)
+        #expect(all.conversion(typing: .deleteBackward, after: "-") == nil)
+        #expect(TextAliasConverter(aliases: []).conversion(typing: .text(">"), after: "-") == nil)
+    }
+
+    @Test func longerAliasMatchesAfterShorterOneConverted() {
+        let all = TextAliasConverter(aliases: TextAliasCatalog.all)
+        #expect(all.conversion(typing: .text(">"), after: "a ←") == .init(replacement: "↔", deleteCount: 1))
+        #expect(all.conversion(typing: .text(">"), after: "≤") == .init(replacement: "⇔", deleteCount: 1))
+        let withoutLeftArrow = TextAliasConverter(aliases: TextAliasCatalog.all.filter { $0.id != "leftArrow" })
+        #expect(withoutLeftArrow.conversion(typing: .text(">"), after: "<-") == .init(replacement: "↔", deleteCount: 2))
+    }
+
+    @Test func emoticonsConvertOnlyAtWordStart() {
+        let all = TextAliasConverter(aliases: TextAliasCatalog.all)
+        #expect(all.conversion(typing: .text(")"), after: "hi :") == .init(replacement: "🙂", deleteCount: 1))
+        #expect(all.conversion(typing: .text(")"), after: ":") == .init(replacement: "🙂", deleteCount: 1))
+        #expect(all.conversion(typing: .text(")"), after: "note:") == nil)
+        #expect(all.conversion(typing: .text("D"), after: "::") == nil)
+    }
+
+    @Test func emoticonWithAPrefixBeatsTheShorterOneInside() {
+        let all = TextAliasConverter(aliases: TextAliasCatalog.all)
+        #expect(all.conversion(typing: .text("("), after: "so >:") == .init(replacement: "😠", deleteCount: 2))
+        #expect(all.conversion(typing: .text(")"), after: "O:-") == .init(replacement: "😇", deleteCount: 3))
+        #expect(all.conversion(typing: .text("="), after: "≤") == .init(replacement: "⇐", deleteCount: 1))
+    }
+
+    @Test func aliasIDsAndSpellingsAreUnique() {
+        let spellings = TextAliasCatalog.all.flatMap(\.texts)
+        #expect(Set(TextAliasCatalog.all.map(\.id)).count == TextAliasCatalog.all.count)
+        #expect(Set(spellings).count == spellings.count)
     }
 
     @Test func invalidTriggersAreRejectedWithAReasonAndFallBack() {

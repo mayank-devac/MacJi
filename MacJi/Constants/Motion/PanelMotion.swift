@@ -39,6 +39,8 @@ enum PanelMotion {
     static let badgeOut = Animation.easeIn(duration: 0.2)
     static let badgeVisible = Duration.milliseconds(1200)
     static let settingsReveal = Animation.easeOut(duration: 0.18)
+    /// Settings sliding to a sub-page (Aliases) and back.
+    static let settingsSlide = Animation.spring(response: 0.32, dampingFraction: 0.9)
 }
 
 //// Badge visibility outlasts the copy-close delay, so the badge is still showing as the panel fades.

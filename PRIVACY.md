@@ -24,8 +24,9 @@ network requests other than checking for updates.
 All of it stays on your Mac, in MacJi's preferences
 (`~/Library/Preferences/io.github.mayank-devac.macji.plist`):
 
-- your settings (trigger, shortcut, menu-bar icon, open at login, update checks)
-- up to 24 recently used emoji
+- your settings (trigger, shortcut, ranking, aliases you turned off, menu-bar icon, open at login,
+  update checks)
+- up to 24 recently used emoji, and how many times you inserted or copied each emoji
 - the Settings window position and Sparkle's last update-check date
 
 ## What MacJi sends

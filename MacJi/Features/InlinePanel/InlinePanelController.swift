@@ -21,6 +21,8 @@ final class InlinePanelController {
     private lazy var panel = InlinePanelWindow(rootView: InlinePanelView(model: model) { [weak self] in self?.insert($0) })
     private var tracker = TriggerTracker(trigger: PreferenceDefaults.trigger)
     private var isEnabled = false
+    private var ranksFrequentlyUsed = PreferenceDefaults.rankFrequentlyUsedEmoji
+    private var aliases = TextAliasConverter(aliases: [])
     private var isPresented = false
     private var workspaceObserver: NSObjectProtocol?
     private var pointerMonitor: Any?
@@ -56,16 +58,23 @@ final class InlinePanelController {
 
     ////////////////////
     //// Settings and permission
-    /// The composition root forwards the enable toggle and trigger from AppSettings, and calls
+    /// The composition root forwards the panel settings from AppSettings, and calls
     /// `retryListening` when Accessibility changes. The tap exists only while both allow it.
+    // Frequency ranking applies from the next open; text aliases ride on the same tap.
 
-    func configure(enabled: Bool, trigger: String) {
+    func configure(enabled: Bool, trigger: String, ranksFrequentlyUsed: Bool) {
         if tracker.trigger != trigger {
             tracker.trigger = trigger
             endSession()
         }
         isEnabled = enabled
+        self.ranksFrequentlyUsed = ranksFrequentlyUsed
         retryListening()
+    }
+
+    /// The aliases to convert while typing; empty turns conversion off.
+    func setTextAliases(_ enabled: [TextAlias]) {
+        aliases = TextAliasConverter(aliases: enabled)
     }
 
     func retryListening() {
@@ -99,8 +108,9 @@ final class InlinePanelController {
 
     ////////////////////
     //// Key handling (runs inside the event tap)
-    /// While a term is open, panel keys are consumed and handled on the next main-queue turn;
-    /// every other key passes through and updates the buffer.
+    /// While a term is open, panel keys are consumed and handled on the next main-queue turn.
+    /// A key that completes a text alias is consumed and its replacement typed instead; every
+    /// other key passes through and updates the buffer.
     // The buffer is updated synchronously so fast typing never races the panel. Nothing is
     // queued while no trigger is being typed and no panel is showing. Typing in MacJi's own
     // windows (the trigger field, the picker search) never opens the panel; the panel itself is
@@ -122,11 +132,22 @@ final class InlinePanelController {
             }
             return true
         }
-        tracker.apply(TypedKey(keyCode: keyCode, modifiers: modifiers, characters: characters))
+        let key = TypedKey(keyCode: keyCode, modifiers: modifiers, characters: characters)
+        let conversion = aliases.conversion(typing: key, after: tracker.buffer)
+        if let conversion {
+            for _ in 0..<conversion.deleteCount { tracker.apply(.deleteBackward) }
+            tracker.apply(.text(conversion.replacement))
+            DispatchQueue.main.async {
+                TextInserter.replace(characterCount: conversion.deleteCount, with: conversion.replacement)
+            }
+        } else {
+            tracker.apply(key)
+        }
         let query = tracker.query
-        guard query != nil || isPresented else { return false }
-        DispatchQueue.main.async { [weak self] in self?.refresh(query) }
-        return false
+        if query != nil || isPresented {
+            DispatchQueue.main.async { [weak self] in self?.refresh(query) }
+        }
+        return conversion != nil
     }
 
     //// Return with no results passes through, so MacJi never swallows a line break for nothing.
@@ -192,7 +213,8 @@ final class InlinePanelController {
         let placement = InlinePanelPlacement.place(card: PanelMetrics.cardSize, caret: CaretLocator.caretRect(),
                                                    pointer: NSEvent.mouseLocation,
                                                    visibleFrames: NSScreen.screens.map(\.visibleFrame))
-        model.beginPresentation(growsFrom: placement.opensAbove ? .bottomLeading : .topLeading)
+        model.beginPresentation(growsFrom: placement.opensAbove ? .bottomLeading : .topLeading,
+                                useCounts: ranksFrequentlyUsed ? recents.useCounts : [:])
         panel.setFrame(placement.frame, display: false)
         panel.orderFrontRegardless()
         isPresented = true

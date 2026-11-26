@@ -39,6 +39,10 @@ enum SettingsStrings {
     static let inlineHeader = String(localized: "Inline Panel")
     static let inlineToggle = String(localized: "Open emoji panel while typing")
     static let triggerLabel = String(localized: "Trigger")
+    static let rankFrequentlyUsed = String(localized: "Rank frequently used emoji higher")
+    static let aliasesToggle = String(localized: "Aliases")
+    static let aliasesExample = String(localized: "-> becomes →, (c) becomes ©, :) becomes 🙂")
+    static let customizeAliases = String(localized: "Customize…")
     static let triggerErrorEmpty = String(localized: "Type at least one character.")
     static let triggerErrorWhitespace = String(localized: "Spaces aren't allowed.")
     static let triggerErrorOnlyLetters = String(localized: "Include a symbol such as : or ; so the trigger never fires inside words.")
@@ -55,6 +59,21 @@ enum SettingsStrings {
     static func inlineExample(trigger: String) -> String {
         String(localized: "Type \(trigger)rocket in any app, then Return inserts 🚀. Shift-Return copies, esc closes.")
     }
+
+    //////////////////
+
+    ////////////////////
+    //// Aliases page
+
+    static let aliasesBack = String(localized: "Inline Panel")
+    static let aliasesTitle = String(localized: "Aliases")
+    static let aliasesArrows = String(localized: "Arrows")
+    static let aliasesMath = String(localized: "Math")
+    static let aliasesSymbols = String(localized: "Symbols")
+    static let aliasesEmoticons = String(localized: "Emoticons")
+    static let aliasesEmoticonsFooter = String(localized: "Symbols in brackets and emoticons convert only at the start of a word, so \"note:)\" and the trigger stay as typed.")
+    static let aliasesFooter = String(localized: "An alias converts as you type its last character, in every app. Turn off any you type in code, such as -> or !=.")
+    static let turnAllOn = String(localized: "Turn All On")
 
     //////////////////
 

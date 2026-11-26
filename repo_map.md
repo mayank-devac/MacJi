@@ -26,6 +26,7 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 | GitHub / Octopus / licence links | `MacJi/Constants/Links/AppLinks.swift` |
 | App icon | `scripts/make-icon.sh <1024.png>` → `MacJi/Resources/Assets.xcassets/AppIcon.appiconset` |
 | Menu-bar icon | `MacJi/Constants/Theme/SymbolNames.swift` (`menuBar`) |
+| Text aliases (`->` → `→`, `:)` → 🙂) | `MacJi/Features/InlinePanel/TextAliasCatalog.swift`, documented in `docs/convert-symbols.md` |
 | Emoji data | `scripts/update-emoji-data.py` → `MacJi/Shared/EmojiData/Resources/emoji.json` |
 | Release steps | `docs/RELEASING.md`, `scripts/release.py` |
 | README screenshots and GIFs | `scripts/make-screenshots.sh` → `assets/screenshots/` (scenes in `MacJiTests/Screenshots/`) |
@@ -54,6 +55,7 @@ Config/ — build settings
 LICENSE — MIT licence for MacJi
 LICENSES/ — notices for code and data MacJi includes
   Octopus-MIT.txt — original Octopus MIT notice (required)
+  emoticon-MIT.txt — wooorm/emoticon licence (source of the emoticon aliases)
   gemoji-MIT.txt — gemoji emoji data licence
 MacJi/ — the app target (synchronised folder: new files are picked up automatically)
   App/ — entry point and composition root
@@ -106,6 +108,9 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       InlinePanelWindow.swift — non-activating floating panel that never takes focus
       InlineTrigger.swift — trigger validation and its error messages
       SecureInputNotifier.swift — notification when a background app blocks MacJi
+      TextAlias.swift — one text alias: spellings, replacement, group, word-start rule
+      TextAliasCatalog.swift — the built-in aliases (arrows, math, symbols, emoticons); IDs are stored
+      TextAliasConverter.swift — the key just typed → what to delete and insert, chained aliases included
       TextInserter.swift — replaces the typed `::term` with the emoji via synthetic keys
       TriggerTracker.swift — typed-text buffer and the term after the trigger
   Resources/ — bundle resources
@@ -122,11 +127,13 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       SettingsHint.swift — small explanatory or error line under a control
       SettingsStatusRow.swift — status row with symbol, explanation and optional fix-it button
     LoginItem.swift — SMAppService wrapper with real status and errors
+    Pages/ — Settings pages that slide in over the main Form
+      TextAliasesPage.swift — Aliases page: one switch per alias, Turn All On
     Sections/ — one view per Settings section
       AboutSection.swift — version, links, Built on Octopus
       EmojiPickerSection.swift — picker shortcut recorder and reset
       GeneralSection.swift — open at login, automatic updates, Check Now
-      InlinePanelSection.swift — enable toggle and trigger field with validation
+      InlinePanelSection.swift — enable toggle, trigger field with validation, ranking toggle, Aliases switch + Customize…
       MenuBarSection.swift — show/hide the menu-bar icon
       PermissionSection.swift — Accessibility and Secure Input status rows
       QuitSection.swift — Quit MacJi button at the bottom of Settings
@@ -142,7 +149,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       EmojiCatalog.swift — loads and indexes emoji.json once
       EmojiClipboard.swift — copies an emoji to the pasteboard
       EmojiGrid.swift — splits items into fixed-column rows for drawing and arrow keys
-      EmojiRecents.swift — recently used emoji, persisted and capped
+      EmojiRecents.swift — recently used emoji (persisted, capped) and per-emoji use counts
       EmojiSearch.swift — ranked search used by the panel and the picker
       Resources/ — data files
         emoji.json — gemoji data stripped to the fields MacJi reads
@@ -237,6 +244,7 @@ dist/ — Sparkle update feed, served from main
 docs/ — long-form documentation
   ARCHITECTURE.md — layers, data flow, MacJi file → Octopus file table
   RELEASING.md — one-time certificate/key setup and the release steps
+  convert-symbols.md — every text → symbol conversion: built in, left out and why, macOS ways
   icon-prompt.md — image prompt for the 1024 px app icon
 repo_map.md — this file
 scripts/ — automation (see CLAUDE.md → Scripts)
