@@ -1,9 +1,9 @@
 # MacJi update feed
 
-This repository holds only the Sparkle feed (`appcast.xml`) for
-[MacJi](https://github.com/mayank-devac/MacJi), an open-source emoji app for macOS.
+This folder holds MacJi's Sparkle feed (`appcast.xml`) and the signing identity of the last release
+(`signing-identity.json`).
 
-- The app reads `https://raw.githubusercontent.com/mayank-devac/macji-dist/main/appcast.xml`.
-- Every update archive is attached to a GitHub Release of the source repository and signed with
+- The app reads `https://raw.githubusercontent.com/mayank-devac/MacJi/main/dist/appcast.xml`.
+- Every update archive is attached to a GitHub Release of this repository and signed with
   MacJi's EdDSA key; the app refuses any archive whose signature does not match.
-- `appcast.xml` is written by `scripts/release.py` in the source repository. Don't edit it by hand.
+- `appcast.xml` is written by `scripts/release.py`. Don't edit it by hand.

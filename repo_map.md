@@ -20,7 +20,7 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 | Preference keys and their defaults | `MacJi/Constants/Keys/PreferenceKeys.swift` |
 | Default picker shortcut | `MacJi/Constants/Keys/ShortcutNames.swift` |
 | Renaming or reshaping a stored setting | `MacJi/Settings/SettingsMigrator.swift` (add a migration) |
-| Update feed URL / public EdDSA key | `MacJi/Resources/Info.plist`, mirrored by `DIST_REPO` / `FEED_URL` in `scripts/config.sh` and `scripts/config.py` |
+| Update feed URL / public EdDSA key | `MacJi/Resources/Info.plist`, mirrored by `SOURCE_REPO` in `scripts/config.sh` and `FEED_URL` in `scripts/config.py` |
 | Version and build number | `Config/Base.xcconfig` (via `scripts/bump-version.sh`) |
 | Bundle ID (never after the first release) | `Config/Base.xcconfig` and `scripts/config.sh` |
 | GitHub / Octopus / licence links | `MacJi/Constants/Links/AppLinks.swift` |
@@ -198,8 +198,8 @@ assets/ — images used by the README
   icon/ — app icon PNGs for the README header
   screenshots/ — README images and GIFs, light and dark (written by scripts/make-screenshots.sh)
 build.sh — build, quit the running MacJi, relaunch, print the running path
-dist/ — files for the macji-dist feed repository
-  README.md — README published to macji-dist
+dist/ — Sparkle update feed, served from main
+  README.md — what the feed folder holds
   appcast.xml — template/placeholder Sparkle feed
 docs/ — long-form documentation
   ARCHITECTURE.md — layers, data flow, MacJi file → Octopus file table

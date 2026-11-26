@@ -211,15 +211,15 @@ def sign_update(zip_path):
     return result.stdout.strip()
 
 
-def release_notes(version):
-    match = re.search(rf"^## \[{re.escape(version)}\][^\n]*\n(.*?)(?=^## \[|\Z)", config.CHANGELOG.read_text(), re.S | re.M)
+def release_notes(heading):
+    match = re.search(rf"^## \[{re.escape(heading)}\][^\n]*\n(.*?)(?=^## \[|\Z)", config.CHANGELOG.read_text(), re.S | re.M)
     notes = match.group(1).strip() if match else ""
     if not notes:
-        raise ReleaseError(f"CHANGELOG.md has no notes under [{version}]. Write them, then rerun.")
+        raise ReleaseError(f"CHANGELOG.md has no notes under [{heading}]. Write them, then rerun.")
     return notes
 
 
-def write_appcast(template, destination, version, build, zip_path, signature):
+def write_appcast(template, destination, version, build, zip_path, signature, notes):
     tree = ET.parse(template)
     channel = tree.getroot().find("channel")
     for item in channel.findall("item"):
@@ -231,7 +231,7 @@ def write_appcast(template, destination, version, build, zip_path, signature):
     ET.SubElement(item, f"{{{SPARKLE_NS}}}version").text = build
     ET.SubElement(item, f"{{{SPARKLE_NS}}}shortVersionString").text = version
     ET.SubElement(item, f"{{{SPARKLE_NS}}}minimumSystemVersion").text = config.MINIMUM_SYSTEM
-    ET.SubElement(item, "description", {f"{{{SPARKLE_NS}}}format": "plain-text"}).text = release_notes(version)
+    ET.SubElement(item, "description", {f"{{{SPARKLE_NS}}}format": "plain-text"}).text = notes
     ET.SubElement(item, "enclosure", {
         "url": f"https://github.com/{config.SOURCE_REPO}/releases/download/v{version}/{zip_path.name}",
         "length": str(zip_path.stat().st_size), "type": "application/octet-stream",
@@ -259,6 +259,7 @@ def main():
         raise ReleaseError("Commit or stash your changes first; a release is built from a clean tree.")
 
     version, build = next_version(args.bump, *read_version())
+    notes = release_notes("Unreleased")
     output = config.RELEASE_DIR / version
     if output.exists():
         raise ReleaseError(f"{output} already exists. Remove it (scripts/clean.sh) or choose another version.")
@@ -277,11 +278,11 @@ def main():
     step("Signing the update with EdDSA and writing the appcast")
     signature = sign_update(zip_path)
     appcast = output / "appcast.xml"
-    write_appcast(config.DIST_DIR / "appcast.xml", appcast, version, build, zip_path, signature)
+    write_appcast(config.DIST_DIR / "appcast.xml", appcast, version, build, zip_path, signature, notes)
     run("swift", config.ROOT / "scripts/verify-update.swift", zip_path, appcast, public_key)
     sums = "".join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n" for p in (zip_path, dmg_path))
     (output / "SHA256SUMS.txt").write_text(sums)
-    (output / "notes.md").write_text(release_notes(version) + "\n")
+    (output / "notes.md").write_text(notes + "\n")
     if not args.dry_run:
         shutil.copyfile(appcast, config.DIST_DIR / "appcast.xml")
         IDENTITY_FILE.write_text(json.dumps({"certificate_leaf_sha1": leaf_hash, "ed_public_key": public_key}, indent=2) + "\n")
@@ -291,10 +292,10 @@ def main():
     print("Publish it yourself when you have tested the DMG:")
     if not args.dry_run:
         print(f'  git add Config/Base.xcconfig CHANGELOG.md dist && git commit -m "Release {version}"')
-    print(f"  git tag v{version} && git push origin HEAD v{version}")
+    print(f"  git tag v{version} && git push origin v{version}")
     print(f"  gh release create v{version} {rel}/{zip_path.name} {rel}/{dmg_path.name} {rel}/SHA256SUMS.txt "
           f"--repo {config.SOURCE_REPO} --title \"{config.APP_NAME} {version}\" --notes-file {rel}/notes.md")
-    print(f"  then copy {rel}/appcast.xml to a {config.DIST_REPO} checkout, commit and push it (feed goes live)")
+    print("  git push origin HEAD:main      (publishes dist/appcast.xml; the feed goes live last)")
 
 
 if __name__ == "__main__":

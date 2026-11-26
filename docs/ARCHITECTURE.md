@@ -110,7 +110,7 @@ and `KeyboardShortcuts.Name` strings are permanent.
 ## Updates and releases
 
 `UpdateController` wraps Sparkle's standard updater: Check Now, the automatic-check toggle and the
-last check date. The feed is `appcast.xml` in the `macji-dist` repository; archives are attached to
+last check date. The feed is `dist/appcast.xml` in this repository; archives are attached to
 GitHub Releases of this repository. Releases are signed with the self-signed `MacJi Release`
 certificate and EdDSA-signed for Sparkle. See [RELEASING.md](RELEASING.md).
 

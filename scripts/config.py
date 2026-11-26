@@ -27,8 +27,8 @@ SPARKLE_KEY_ACCOUNT = "macji"
 
 ####################
 #### Paths, repositories and the update feed
-### Release archives are attached to GitHub Releases of the source repository; the appcast lives
-### in the small macji-dist repository so publishing a feed never needs a push to the source repo.
+### Release archives are attached to GitHub Releases of the source repository; the appcast is
+### dist/appcast.xml on its main branch, so pushing the release commit publishes the feed.
 
 DERIVED_DATA = ROOT / ".build/DerivedData"
 RELEASE_DIR = ROOT / ".build/release"
@@ -38,8 +38,7 @@ ENTITLEMENTS = ROOT / "MacJi/Resources/MacJi.entitlements"
 CHANGELOG = ROOT / "CHANGELOG.md"
 DIST_DIR = ROOT / "dist"
 SOURCE_REPO = "mayank-devac/MacJi"
-DIST_REPO = "mayank-devac/macji-dist"
-FEED_URL = f"https://raw.githubusercontent.com/{DIST_REPO}/main/appcast.xml"
+FEED_URL = f"https://raw.githubusercontent.com/{SOURCE_REPO}/main/dist/appcast.xml"
 PLACEHOLDER_PUBLIC_KEY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
 MINIMUM_SYSTEM = "14.6"
 

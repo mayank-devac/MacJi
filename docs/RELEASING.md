@@ -42,12 +42,11 @@ the login item stay valid only while they're the same, and so does the bundle ID
 - Back up the private key: `generate_keys --account macji -x macji-private-key` writes it to a file.
   Keep that file outside the repository and delete the local copy. **Never commit or print it.**
 
-### 3. Create the feed repository
+### 3. The feed
 
-Create the public repository `mayank-devac/macji-dist` with `dist/README.md` and `dist/appcast.xml`
-from this repository. The app's feed URL (`SUFeedURL` in Info.plist) is
-`https://raw.githubusercontent.com/mayank-devac/macji-dist/main/appcast.xml`. Update archives
-themselves go on GitHub Releases of `mayank-devac/MacJi`.
+The feed is `dist/appcast.xml` in this repository. The app's feed URL (`SUFeedURL` in Info.plist)
+is `https://raw.githubusercontent.com/mayank-devac/MacJi/main/dist/appcast.xml`, so the repository
+must be public. Update archives go on GitHub Releases of `mayank-devac/MacJi`.
 
 ## Every release
 
@@ -66,8 +65,8 @@ themselves go on GitHub Releases of `mayank-devac/MacJi`.
    the appcast with the release notes and runs `scripts/verify-update.swift`.
 4. Install the DMG from `.build/release/<version>/` on a Mac (ideally another one): first launch,
    Accessibility, `::` in TextEdit, the picker, Check for Updates.
-5. Run the commands `release.py` printed: commit, tag, push, `gh release create …`, then publish
-   `appcast.xml` to `macji-dist`. The feed goes live with that last push.
+5. Run the commands `release.py` printed: commit, tag and push the tag, `gh release create …`, then
+   push `main`. The feed goes live with that last push, after the archive it points at exists.
 
 ## How updates stay trusted
 

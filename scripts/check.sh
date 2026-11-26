@@ -93,12 +93,12 @@ fi
 
 python_value() { sed -nE "s/^$1 = \"(.*)\"$/\1/p" scripts/config.py; }
 found=""
-for key in BUNDLE_ID SIGNING_IDENTITY SPARKLE_KEY_ACCOUNT SOURCE_REPO DIST_REPO PLACEHOLDER_PUBLIC_KEY; do
+for key in BUNDLE_ID SIGNING_IDENTITY SPARKLE_KEY_ACCOUNT SOURCE_REPO PLACEHOLDER_PUBLIC_KEY; do
     shell_name="MACJI_$key"
     [[ "$(python_value "$key")" == "${!shell_name}" ]] || found+="scripts/config.py: $key differs from config.sh"$'\n'
 done
 grep -qE "^MACJI_BUNDLE_ID = $MACJI_BUNDLE_ID\$" "$MACJI_XCCONFIG" || found+="Config/Base.xcconfig: MACJI_BUNDLE_ID differs from config.sh"$'\n'
-grep -qF "/$MACJI_DIST_REPO/main/appcast.xml" "$MACJI_INFO_PLIST" || found+="MacJi/Resources/Info.plist: SUFeedURL doesn't point at $MACJI_DIST_REPO"$'\n'
+grep -qF "/$MACJI_SOURCE_REPO/main/dist/appcast.xml" "$MACJI_INFO_PLIST" || found+="MacJi/Resources/Info.plist: SUFeedURL doesn't point at $MACJI_SOURCE_REPO's dist/appcast.xml"$'\n'
 report "Shared values agree (config.sh, config.py, Base.xcconfig, Info.plist)" "${found%$'\n'}"
 
 #### 6. Signing material

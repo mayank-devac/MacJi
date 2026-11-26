@@ -112,7 +112,7 @@ Features never import or reference each other.
 | `Config/` | `Base.xcconfig` (version, build, bundle ID), signing example |
 | `scripts/` | Automation (see Scripts) |
 | `docs/` | `ARCHITECTURE.md`, `RELEASING.md`, `icon-prompt.md` |
-| `dist/` | Template appcast + README for the `macji-dist` feed repository |
+| `dist/` | Sparkle feed `appcast.xml` (served from `main`) and the last release's signing identity |
 | `Upstream/octopus/` | Octopus submodule, reference only |
 
 ## Comment style — the "Mayank `////` style"

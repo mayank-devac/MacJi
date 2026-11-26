@@ -36,7 +36,6 @@ MACJI_XCCONFIG="$MACJI_ROOT/Config/Base.xcconfig"
 MACJI_INFO_PLIST="$MACJI_ROOT/MacJi/Resources/Info.plist"
 MACJI_APPICON_DIR="$MACJI_ROOT/MacJi/Resources/Assets.xcassets/AppIcon.appiconset"
 MACJI_SOURCE_REPO="mayank-devac/MacJi"
-MACJI_DIST_REPO="mayank-devac/macji-dist"
 MACJI_OCTOPUS_PATH="$MACJI_ROOT/Upstream/octopus"
 MACJI_OCTOPUS_REPO="mayank-devac/octopus-mac"
 

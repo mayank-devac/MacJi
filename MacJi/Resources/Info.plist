@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>SUFeedURL</key>
-	<string>https://raw.githubusercontent.com/mayank-devac/macji-dist/main/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/mayank-devac/MacJi/main/dist/appcast.xml</string>
 	<key>SUPublicEDKey</key>
-	<string>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</string>
+	<string>aQa9O7F/xIugGkkf4hN6ckZDe0o+0/l2h+1B73X/JyY=</string>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 </dict>
