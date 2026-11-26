@@ -200,7 +200,8 @@ assets/ — images used by the README
 build.sh — build, quit the running MacJi, relaunch, print the running path
 dist/ — Sparkle update feed, served from main
   README.md — what the feed folder holds
-  appcast.xml — template/placeholder Sparkle feed
+  appcast.xml — Sparkle feed, written by scripts/release.py
+  signing-identity.json — certificate hash and EdDSA key of the last release (release.py checks rotation)
 docs/ — long-form documentation
   ARCHITECTURE.md — layers, data flow, MacJi file → Octopus file table
   RELEASING.md — one-time certificate/key setup and the release steps
