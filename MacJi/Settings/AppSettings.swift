@@ -43,6 +43,14 @@ final class AppSettings: ObservableObject {
             defaults.set(disabledTextAliases.sorted(), forKey: PreferenceKeys.disabledTextAliases)
         }
     }
+    /// Your own aliases, in Settings order. Entries this build can't read are kept on save.
+    @Published var customTextAliases: [TextAlias] {
+        didSet {
+            guard customTextAliases != oldValue else { return }
+            defaults.set(CustomTextAliasCodec.encode(customTextAliases, keeping: unreadableCustomAliases),
+                         forKey: PreferenceKeys.customTextAliases)
+        }
+    }
     @Published var pickerShowsSymbols: Bool {
         didSet { store(pickerShowsSymbols, oldValue, PreferenceKeys.pickerShowsSymbols) }
     }
@@ -59,6 +67,7 @@ final class AppSettings: ObservableObject {
     }
 
     private let defaults: UserDefaults
+    private let unreadableCustomAliases: [Any]
 
     ////////////////////
     //// Reading stored values
@@ -82,6 +91,7 @@ final class AppSettings: ObservableObject {
         rankFrequentlyUsedEmoji = Self.bool(defaults, PreferenceKeys.rankFrequentlyUsedEmoji, PreferenceDefaults.rankFrequentlyUsedEmoji)
         convertTextAliases = Self.bool(defaults, PreferenceKeys.convertTextAliases, PreferenceDefaults.convertTextAliases)
         disabledTextAliases = Set(defaults.stringArray(forKey: PreferenceKeys.disabledTextAliases) ?? [])
+        (customTextAliases, unreadableCustomAliases) = CustomTextAliasCodec.decode(defaults.object(forKey: PreferenceKeys.customTextAliases))
         pickerShowsSymbols = Self.bool(defaults, PreferenceKeys.pickerShowsSymbols, PreferenceDefaults.pickerShowsSymbols)
         pickerShowsEmoticons = Self.bool(defaults, PreferenceKeys.pickerShowsEmoticons, PreferenceDefaults.pickerShowsEmoticons)
         showMenuBarIcon = Self.bool(defaults, PreferenceKeys.showMenuBarIcon, PreferenceDefaults.showMenuBarIcon)

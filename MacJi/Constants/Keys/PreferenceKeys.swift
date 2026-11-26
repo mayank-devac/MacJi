@@ -36,6 +36,8 @@ enum PreferenceKeys {
     static let convertTextAliases = "convertTextAliases"
     /// [String]: IDs of the text aliases the user turned off; aliases added later start on.
     static let disabledTextAliases = "disabledTextAliases"
+    /// [[String: Any]]: the user's own aliases (fields in `CustomAliasKeys`), in Settings order.
+    static let customTextAliases = "customTextAliases"
     /// Bool: the picker shows a Symbols tab.
     static let pickerShowsSymbols = "pickerShowsSymbols"
     /// Bool: the picker shows an Emoticons tab.
@@ -56,6 +58,16 @@ enum PreferenceKeys {
     static let settingsWindowAutosave = "SettingsWindow"
     /// AppKit autosave name for the status item's position.
     static let statusItemAutosave = "MacJiStatusItem"
+}
+
+/// Fields of each dictionary in `customTextAliases`; permanent like the keys above.
+enum CustomAliasKeys {
+    static let id = "id"
+    static let name = "name"
+    static let group = "group"
+    static let texts = "texts"
+    static let replacements = "replacements"
+    static let wordStartOnly = "wordStartOnly"
 }
 
 //// Keys are plain strings on purpose: they are what is written to disk.

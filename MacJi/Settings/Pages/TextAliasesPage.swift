@@ -20,7 +20,7 @@ struct TextAliasesPage: View {
             header
             Divider()
             Form {
-                ForEach(TextAlias.Group.allCases) { group in
+                ForEach(TextAlias.Group.allCases.filter { group in aliases.contains { $0.group == group } }) { group in
                     Section {
                         ForEach(aliases.filter { $0.group == group }) { row(for: $0) }
                     } header: {
@@ -82,6 +82,7 @@ struct TextAliasesPage: View {
         case .math: SettingsStrings.aliasesMath
         case .symbols: SettingsStrings.aliasesSymbols
         case .emoticons: SettingsStrings.aliasesEmoticons
+        case .emoji: SettingsStrings.aliasesEmoji
         }
     }
 }

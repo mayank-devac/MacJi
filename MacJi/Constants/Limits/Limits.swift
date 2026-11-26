@@ -26,6 +26,13 @@ enum Limits {
     static let emoticonRunMaxLength = 16
     /// Lengths the Settings `− +` stepper offers for emoticon autocomplete (below the lowest is Off).
     static let emoticonAutocompleteLengths = 2...6
+    /// Your own aliases: name, spelling and output lengths, and how many of each.
+    static let aliasNameMaxLength = 40
+    static let aliasSpellingLengths = 2...16
+    static let aliasOutputMaxLength = 64
+    static let aliasMaxSpellings = 8
+    static let aliasMaxOutputs = 8
+    static let customAliasesMax = 200
     /// UTF-16 units one synthetic key event can carry; CGEvent drops anything longer.
     static let syntheticKeyUTF16Units = 20
     /// Tallest AX rect still treated as one line of text; taller means a field or paragraph.

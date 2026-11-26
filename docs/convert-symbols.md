@@ -3,7 +3,7 @@
 Every text-to-symbol conversion worth knowing on a Mac: the ones MacJi's **Aliases** convert,
 the ones left out on purpose, and how to type each symbol without MacJi.
 
-The source of truth for the built-in list is `MacJi/Features/InlinePanel/TextAliasCatalog.swift`.
+The source of truth for the built-in list is `MacJi/Shared/TextAliases/TextAliasCatalog.swift`.
 Keep this file in step with it.
 
 ## How MacJi aliases work

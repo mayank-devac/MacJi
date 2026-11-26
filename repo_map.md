@@ -26,7 +26,7 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 | GitHub / Octopus / licence links | `MacJi/Constants/Links/AppLinks.swift` |
 | App icon | `scripts/make-icon.sh <1024.png>` → `MacJi/Resources/Assets.xcassets/AppIcon.appiconset` |
 | Menu-bar icon | `MacJi/Constants/Theme/SymbolNames.swift` (`menuBar`) |
-| Text aliases (`->` → `→`, `:)` → 🙂) | `MacJi/Features/InlinePanel/TextAliasCatalog.swift`, documented in `docs/convert-symbols.md` |
+| Text aliases (`->` → `→`, `:)` → 🙂) | `MacJi/Shared/TextAliases/TextAliasCatalog.swift`, documented in `docs/convert-symbols.md` |
 | Emoji data | `scripts/update-emoji-data.py` → `MacJi/Shared/Glyphs/Resources/emoji.json` |
 | Symbol data (names, keywords like `rarr`) | `scripts/update-symbol-data.py` → `MacJi/Shared/Glyphs/Resources/symbols.json` |
 | Emoticon data (ASCII faces, kaomoji) | `scripts/update-emoticon-data.py <index.js> <kaomoji.json>` → `MacJi/Shared/Glyphs/Resources/emoticons.json` |
@@ -116,8 +116,6 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       InlinePanelWindow.swift — non-activating floating panel that never takes focus
       InlineTrigger.swift — trigger validation (incl. no trigger containing another) and its reasons
       SecureInputNotifier.swift — notification when a background app blocks MacJi
-      TextAlias.swift — one text alias: spellings, replacement, group, word-start rule
-      TextAliasCatalog.swift — the built-in aliases (arrows, math, symbols, emoticons); IDs are stored
       TextAliasConverter.swift — the key just typed → what to delete and insert, chained aliases included
       TextInserter.swift — replaces the typed `::term` with the glyph via synthetic keys, chunked for long text
       TriggerTracker.swift — typed-text buffer and the panel + term after the last trigger typed
@@ -197,6 +195,12 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       EventTapTrust.swift — throwaway-tap check of real trust
       PermissionStatus.swift — observable Accessibility and Secure Input state, updated by notifications
       SecureInput.swift — who holds Secure Event Input and how to release it
+    TextAliases/ — text aliases shared by the panel (conversion) and the picker (search)
+      ActiveTextAliases.swift — the aliases that convert: built-in + yours − turned off; yours win a spelling
+      CustomTextAliasCodec.swift — your aliases to and from the stored plist array, keeping unreadable entries
+      CustomTextAliasValidator.swift — rules for your aliases (name, spellings, outputs) and the editor draft
+      TextAlias.swift — one text alias: spellings, outputs, group, word-start rule, your name for it
+      TextAliasCatalog.swift — the built-in aliases (arrows, math, symbols, emoticons); IDs are stored
   Updates/ — software updates
     UpdateController.swift — Sparkle updater: check now, automatic checks, last check
 MacJi.xcodeproj/ — Xcode project (synchronised folders, shared scheme)
@@ -219,6 +223,8 @@ MacJiTests/ — Swift Testing suites, mirroring MacJi/
     Permissions/ — permission tests
       EventTapRevocationDetectorTests.swift — revocation needs consecutive failures
       SecureInputTests.swift — reads the Secure Input holder from the console session only
+    TextAliases/ — custom alias tests
+      CustomTextAliasTests.swift — validation, storage that keeps unreadable entries, overriding a built-in
 PRIVACY.md — what MacJi reads, stores and sends (almost nothing)
 README.md — pitch, install, first launch, permissions, usage, build, Built on Octopus
 SECURITY.md — how to report a vulnerability; signing and update model
