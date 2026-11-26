@@ -8,24 +8,27 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 
 | I want to change… | File |
 |---|---|
-| Trigger default (`::`) or its rules | `MacJi/Constants/Keys/PreferenceKeys.swift` (`Defaults.trigger`), `MacJi/Features/InlinePanel/InlineTrigger.swift` |
+| Trigger default (`::`) or its rules | `MacJi/Constants/Keys/PreferenceKeys.swift` (`PreferenceDefaults.trigger`), `MacJi/Features/InlinePanel/InlineTrigger.swift` |
 | Copy-close delay, fades, springs, name-reveal delay | `MacJi/Constants/Motion/PanelMotion.swift` |
 | Inline panel size, grid columns, caret gap | `MacJi/Constants/Layout/PanelMetrics.swift` |
-| Picker size, columns, recents count | `MacJi/Constants/Layout/PickerMetrics.swift` |
+| Picker size and columns | `MacJi/Constants/Layout/PickerMetrics.swift` |
+| Result caps, recents count, trigger length | `MacJi/Constants/Limits/Limits.swift` |
+| Revocation probe, recovery and AX timeouts | `MacJi/Constants/Motion/Timing.swift` |
 | Settings window width / height limits | `MacJi/Constants/Layout/SettingsMetrics.swift` |
 | Colours | `MacJi/Constants/Theme/Palette.swift` |
 | Any user-visible text | `MacJi/Constants/Strings/*.swift` |
 | Preference keys and their defaults | `MacJi/Constants/Keys/PreferenceKeys.swift` |
 | Default picker shortcut | `MacJi/Constants/Keys/ShortcutNames.swift` |
 | Renaming or reshaping a stored setting | `MacJi/Settings/SettingsMigrator.swift` (add a migration) |
-| Update feed URL / public EdDSA key | `MacJi/Resources/Info.plist` and `scripts/config.sh` |
+| Update feed URL / public EdDSA key | `MacJi/Resources/Info.plist`, mirrored by `DIST_REPO` / `FEED_URL` in `scripts/config.sh` and `scripts/config.py` |
 | Version and build number | `Config/Base.xcconfig` (via `scripts/bump-version.sh`) |
 | Bundle ID (never after the first release) | `Config/Base.xcconfig` and `scripts/config.sh` |
 | GitHub / Octopus / licence links | `MacJi/Constants/Links/AppLinks.swift` |
 | App icon | `scripts/make-icon.sh <1024.png>` → `MacJi/Resources/Assets.xcassets/AppIcon.appiconset` |
-| Menu-bar icon | `MacJi/Constants/Theme/Palette.swift` (`menuBarSymbol`) |
+| Menu-bar icon | `MacJi/Constants/Theme/SymbolNames.swift` (`menuBar`) |
 | Emoji data | `scripts/update-emoji-data.py` → `MacJi/Shared/EmojiData/Resources/emoji.json` |
 | Release steps | `docs/RELEASING.md`, `scripts/release.py` |
+| README screenshots and GIFs | `scripts/make-screenshots.sh` → `assets/screenshots/` (scenes in `MacJiTests/Screenshots/`) |
 | Shared script values (bundle ID, cert name, repos) | `scripts/config.sh`, `scripts/config.py` |
 
 ## Tree
@@ -61,13 +64,18 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       PreferenceKeys.swift — UserDefaults keys and their registered defaults (keys are permanent)
       ShortcutNames.swift — KeyboardShortcuts names and the default picker shortcut
     Layout/ — sizes and spacing
+      EmojiUIMetrics.swift — shared emoji views: grid cell, footer keycaps, Copied badge
+      GuideMetrics.swift — drag-to-allow Accessibility guide beside System Settings
       PanelMetrics.swift — inline panel card, grid, caret gap, shadow margin
       PickerMetrics.swift — picker popover size, grid, recents limit
       SettingsMetrics.swift — Settings window size and row spacing
+    Limits/ — caps
+      Limits.swift — trigger and query length, result counts, recents count, caret height
     Links/ — URLs
       AppLinks.swift — GitHub, Octopus, licence, releases and System Settings URLs
     Motion/ — timing
       PanelMotion.swift — springs, fades, copy-close and name-reveal delays
+      Timing.swift — non-animation intervals: revocation probe, guide polling, recovery, AX timeout
     Strings/ — user-visible text
       MenuBarStrings.swift — status item and its menu
       PanelStrings.swift — inline panel
@@ -76,6 +84,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       SettingsStrings.swift — Settings window
     Theme/ — colours and symbols
       Palette.swift — colours and SF Symbol names
+      SymbolNames.swift — SF Symbol names, including the menu-bar icon
   Features/ — the two user features; they never import each other
     EmojiPicker/ — menu-bar picker popover
       EmojiPickerCategoryBar.swift — category filter buttons
@@ -93,7 +102,6 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       InlinePanelView.swift — header, grid and footer of the panel
       InlinePanelWindow.swift — non-activating floating panel that never takes focus
       InlineTrigger.swift — trigger validation and its error messages
-      SecureInput.swift — who holds Secure Event Input and how to release it
       SecureInputNotifier.swift — notification when a background app blocks MacJi
       TextInserter.swift — replaces the typed `::term` with the emoji via synthetic keys
       TriggerTracker.swift — typed-text buffer and the term after the trigger
@@ -102,12 +110,14 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       AccentColor.colorset/ — accent colour
         Contents.json — accent colour definition
       AppIcon.appiconset/ — app icon (written by scripts/make-icon.sh)
-        Contents.json — icon size list
       Contents.json — asset catalog metadata
     Info.plist — Sparkle feed URL and public EdDSA key (merged with generated keys)
     MacJi.entitlements — hardened-runtime entitlements (none; no sandbox)
   Settings/ — Settings window and stored settings
     AppSettings.swift — typed accessors, registered defaults, change publishers
+    Components/ — reusable Settings rows
+      SettingsHint.swift — small explanatory or error line under a control
+      SettingsStatusRow.swift — status row with symbol, explanation and optional fix-it button
     LoginItem.swift — SMAppService wrapper with real status and errors
     Sections/ — one view per Settings section
       AboutSection.swift — version, links, Built on Octopus
@@ -152,10 +162,11 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       AccessibilityPermissionGuide.swift — open System Settings and show the drag guide
       AccessibilityPermissionGuideView.swift — the drag-to-allow guide panel
       AccessibilityRevocationRecovery.swift — relaunch after revocation to free input
-      AccessibilityStatus.swift — observable trust state, updated by system notifications
       EventTapPermissionWatch.swift — remove every tap when Accessibility is revoked
       EventTapRevocationProbe.swift — background probe and its failure detector
       EventTapTrust.swift — throwaway-tap check of real trust
+      PermissionStatus.swift — observable Accessibility and Secure Input state, updated by notifications
+      SecureInput.swift — who holds Secure Event Input and how to release it
   Updates/ — software updates
     UpdateController.swift — Sparkle updater: check now, automatic checks, last check
 MacJi.xcodeproj/ — Xcode project (synchronised folders, shared scheme)
@@ -165,18 +176,27 @@ MacJiTests/ — Swift Testing suites, mirroring MacJi/
       EmojiPickerTests.swift — key mapping, grid rows, recents grouping
     InlinePanel/ — inline panel tests
       InlinePanelTests.swift — trigger tracking, keys, validation, placement, caret, Secure Input
+  Screenshots/ — opt-in README image generator (skipped in normal test runs)
+    ReadmeScreenshots.swift — renders picker, search, Settings and the inline-panel GIF frames, light and dark
+    ScreenshotStage.swift — themes, backdrop, mock window chrome and the offscreen 2x renderer
   Settings/ — settings tests
     SettingsTests.swift — migrations, idempotence, per-key fallback
   Shared/ — shared code tests
+    AX/ — AX helper tests
+      CaretLocatorTests.swift — rejects field, paragraph and off-screen caret rects
     EmojiData/ — emoji data tests
       EmojiDataTests.swift — catalog search, ranking, recents
     Permissions/ — permission tests
       EventTapRevocationDetectorTests.swift — revocation needs consecutive failures
+      SecureInputTests.swift — reads the Secure Input holder from the console session only
 PRIVACY.md — what MacJi reads, stores and sends (almost nothing)
 README.md — pitch, install, first launch, permissions, usage, build, Built on Octopus
 SECURITY.md — how to report a vulnerability; signing and update model
 Upstream/ — reference sources
   octopus/ — Octopus git submodule, reference only, never compiled
+assets/ — images used by the README
+  icon/ — app icon PNGs for the README header
+  screenshots/ — README images and GIFs, light and dark (written by scripts/make-screenshots.sh)
 build.sh — build, quit the running MacJi, relaunch, print the running path
 dist/ — files for the macji-dist feed repository
   README.md — README published to macji-dist
@@ -187,14 +207,15 @@ docs/ — long-form documentation
   icon-prompt.md — image prompt for the 1024 px app icon
 repo_map.md — this file
 scripts/ — automation (see CLAUDE.md → Scripts)
+  bump-version.sh — bump version/build and add a CHANGELOG heading
   check.sh — repo hygiene gate (CI + before every commit)
   clean.sh — remove build output and release artefacts (asks first)
   config.py — shared values for Python scripts (mirrors config.sh)
   config.sh — shared values: bundle ID, scheme, paths, certificate, repos
   make-icon.sh — every AppIcon size and Contents.json from one 1024 px PNG
   make-placeholder-icon.swift — draws the placeholder icon
+  make-screenshots.sh — regenerate README images and GIFs from the real views (needs ffmpeg)
   new-file.sh — new Swift file with the standard header
-  release.entitlements — entitlements used when signing a release
   release.py — full signed release; --dry-run publishes nothing
   repo-map.py — regenerate the tree in repo_map.md
   reset-permissions.sh — dev only: reset the Accessibility grant (asks first)
@@ -202,7 +223,6 @@ scripts/ — automation (see CLAUDE.md → Scripts)
   sync-from-octopus.sh — diff ported files against their Octopus origins
   test.sh — run tests; fails when zero tests ran
   update-emoji-data.py — strip a gemoji emoji.json to MacJi's fields
-  bump-version.sh — bump version/build and add a CHANGELOG heading
   verify-update.swift — check an archive's EdDSA signature, version and appcast entry
 ```
 <!-- repo-map:tree:end -->

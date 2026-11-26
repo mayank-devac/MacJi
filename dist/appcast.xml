@@ -2,7 +2,7 @@
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
   <channel>
     <title>MacJi Updates</title>
-    <link>https://github.com/mayank-devac/macji/releases</link>
+    <link>https://github.com/mayank-devac/MacJi/releases</link>
     <description>Signed MacJi updates.</description>
     <language>en</language>
   </channel>

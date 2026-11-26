@@ -47,7 +47,7 @@ the login item stay valid only while they're the same, and so does the bundle ID
 Create the public repository `mayank-devac/macji-dist` with `dist/README.md` and `dist/appcast.xml`
 from this repository. The app's feed URL (`SUFeedURL` in Info.plist) is
 `https://raw.githubusercontent.com/mayank-devac/macji-dist/main/appcast.xml`. Update archives
-themselves go on GitHub Releases of `mayank-devac/macji`.
+themselves go on GitHub Releases of `mayank-devac/MacJi`.
 
 ## Every release
 

@@ -15,10 +15,10 @@ import Foundation
 // which the first launch of any build exposes immediately.
 
 enum AppLinks {
-    static let repository = URL(string: "https://github.com/mayank-devac/macji")!
-    static let releases = URL(string: "https://github.com/mayank-devac/macji/releases")!
-    static let licence = URL(string: "https://github.com/mayank-devac/macji/blob/main/LICENSE")!
-    static let privacy = URL(string: "https://github.com/mayank-devac/macji/blob/main/PRIVACY.md")!
+    static let repository = URL(string: "https://github.com/mayank-devac/MacJi")!
+    static let releases = URL(string: "https://github.com/mayank-devac/MacJi/releases")!
+    static let licence = URL(string: "https://github.com/mayank-devac/MacJi/blob/main/LICENSE")!
+    static let privacy = URL(string: "https://github.com/mayank-devac/MacJi/blob/main/PRIVACY.md")!
     static let octopus = URL(string: "https://github.com/mayank-devac/octopus-mac")!
     static let accessibilitySettings = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
     static let systemSettingsBundleID = "com.apple.systempreferences"

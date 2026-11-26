@@ -49,13 +49,15 @@ Act like a senior developer who owns this repo for years.
 CONFIGURATION=Release ./build.sh    # same for Release
 scripts/test.sh                     # all tests; fails if zero tests ran
 scripts/test.sh InlinePanelTests    # one suite
-scripts/test.sh InlinePanelTests/triggerInsideWordIsIgnored   # one test
+scripts/test.sh InlinePanelTests/triggerInsideWordIsIgnored   # one test ("()" is added)
+scripts/make-screenshots.sh         # regenerate the README images and GIFs after a visible UI change
 scripts/check.sh                    # repo hygiene (run before every commit; CI runs it)
 ```
 
 - Tests use **Swift Testing** (`#expect`), not XCTest. A filter that matches nothing runs **zero
   tests and still "passes"** in `xcodebuild`. `scripts/test.sh` refuses that; when you call
-  `xcodebuild` yourself, confirm the test names appear in the output.
+  `xcodebuild` yourself, confirm the test names appear in the output. A Swift Testing filter for one
+  test needs the trailing `()`; `test.sh` adds it.
 - `Config/Base.xcconfig` holds the version, build number and bundle ID and optionally includes the
   git-ignored `Config/LocalSigning.xcconfig` (copy `LocalSigning.example.xcconfig`).
 - There is no linter; `scripts/check.sh` is the hygiene gate.
@@ -74,6 +76,7 @@ scripts/check.sh                    # repo hygiene (run before every commit; CI 
 | `scripts/release.py` | Full signed release (see `docs/RELEASING.md`); `--dry-run` publishes nothing |
 | `scripts/verify-update.swift` | Check an archive's EdDSA signature, version and appcast entry |
 | `scripts/make-icon.sh <1024.png>` | Every AppIcon size + `Contents.json` |
+| `scripts/make-screenshots.sh` | README images and GIFs from the real views, light + dark, into `assets/screenshots/` (needs ffmpeg) |
 | `scripts/make-placeholder-icon.swift` | Draw the placeholder 1024 px icon (yellow face on blue tile) |
 | `scripts/update-emoji-data.py <gemoji.json>` | Strip a gemoji `emoji.json` to the fields MacJi reads |
 | `scripts/sync-from-octopus.sh [file]` | Update the Octopus submodule and diff every ported file's origin |
@@ -232,6 +235,8 @@ Pure logic only (trigger tracking, key mapping, search ranking, settings validat
 geometry). No tests for trivial getters, SwiftUI layout or what the compiler guarantees.
 Tests mirror source folders and are named for the behaviour, not the method. Keep state changes
 outside `#expect(...)` (Swift Testing macros capture immutably).
+`MacJiTests/Screenshots/` is the one exception: an opt-in image generator, skipped unless
+`scripts/make-screenshots.sh` runs it (it shows as "1 skipped" in `scripts/test.sh`).
 
 ## Memory rule
 

@@ -1,0 +1,56 @@
+#
+#  ci.yml
+#  MacJi
+#
+#  Created: 2026-11-26
+#  Hygiene check, an unsigned Release build (warnings are errors) and the test suite on every
+#  push and pull request.
+#
+
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+####################
+#### One job, three gates
+### check.sh is fast and runs first; the Release build catches warnings, which fail Release only.
+# Nothing is signed: CODE_SIGNING_ALLOWED=NO, and the Octopus submodule is not fetched (never compiled).
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Repo hygiene
+        run: scripts/check.sh
+
+      - name: Build Release (unsigned)
+        run: |
+          xcodebuild -project MacJi.xcodeproj -scheme MacJi -configuration Release \
+            -destination 'platform=macOS' -derivedDataPath .build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO build > .build-release.log 2>&1 \
+            || { grep -E "error:" .build-release.log | sort -u | head -30; exit 1; }
+
+      - name: Test
+        run: scripts/test.sh --unsigned
+
+#### Swift Testing passes a filter that matches nothing; test.sh fails when zero tests ran.
+##################
