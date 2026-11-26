@@ -5,12 +5,12 @@
 #
 #  Created: 2026-11-26
 #  Regenerates every README image from MacJi's real views: picker, search, Settings and the
-#  inline-panel GIF, each in light and dark, written to assets/screenshots/.
+#  inline-panel GIF, each in light and dark, written to assets/screenshots_by_agent/.
 #
 ####################
 #### Usage
-### scripts/make-screenshots.sh    render, encode the GIFs, replace assets/screenshots/*
-# Example: scripts/make-screenshots.sh && git diff --stat assets/screenshots
+### scripts/make-screenshots.sh    render, encode the GIFs, replace assets/screenshots_by_agent/*
+# Example: scripts/make-screenshots.sh && git diff --stat assets/screenshots_by_agent
 # Needs ffmpeg for the GIFs (brew install ffmpeg). Run it after any visible UI change.
 # A nearly transparent window flashes nothing on screen but needs a logged-in session.
 ##################
@@ -21,7 +21,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/config.sh"
 command -v ffmpeg >/dev/null || fail "ffmpeg is not installed." "Run: brew install ffmpeg"
 
 render="$MACJI_ROOT/.build/screenshots"
-assets="$MACJI_ROOT/assets/screenshots"
+assets="$MACJI_ROOT/assets/screenshots_by_agent"
 gif_width=880
 
 ####################
@@ -57,4 +57,4 @@ cp "$render"/*.png "$render"/*.gif "$assets/"
 for file in "$assets"/*; do
     printf '  %6s  %s\n' "$(du -h "$file" | cut -f1)" "${file#$MACJI_ROOT/}"
 done
-ok "README images written to assets/screenshots/"
+ok "README images written to assets/screenshots_by_agent/"

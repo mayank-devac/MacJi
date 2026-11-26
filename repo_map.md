@@ -35,7 +35,7 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 | Symbol data (names, keywords like `rarr`) | `scripts/update-symbol-data.py` → `MacJi/Shared/Glyphs/Resources/symbols.json` |
 | Emoticon data (ASCII faces, kaomoji) | `scripts/update-emoticon-data.py <index.js> <kaomoji.json>` → `MacJi/Shared/Glyphs/Resources/emoticons.json` |
 | Release steps | `docs/RELEASING.md`, `scripts/release.py` |
-| README screenshots and GIFs | `scripts/make-screenshots.sh` → `assets/screenshots/` (scenes in `MacJiTests/Screenshots/`) |
+| README screenshots and GIFs | `scripts/make-screenshots.sh` → `assets/screenshots_by_agent/` (scenes in `MacJiTests/Screenshots/`) |
 | Website (GitHub Pages) | `WEB/` (deployed by `.github/workflows/pages.yml`; images via `scripts/make-web-assets.sh`) |
 | Shared script values (bundle ID, cert name, repos) | `scripts/config.sh`, `scripts/config.py` |
 
@@ -265,6 +265,17 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
   thank-you.html — after Download: starts the .dmg, confetti, first-launch steps
 assets/ — app images
   icon/ — app icon PNGs for the README header
+  new_screenshots/ — TODO: describe
+    editor-dark.png — TODO: describe
+    editor-light.png — TODO: describe
+    panel-emoticons-dark.png — TODO: describe
+    panel-emoticons-light.png — TODO: describe
+    panel-symbols-dark.png — TODO: describe
+    panel-symbols-light.png — TODO: describe
+    picker-emoticons-dark.png — TODO: describe
+    picker-emoticons-light.png — TODO: describe
+    picker-symbols-dark.png — TODO: describe
+    picker-symbols-light.png — TODO: describe
   picker-buttons/ — picker images with the Settings button; not used by the README or website
     picker-dark.png — picker, dark
     picker-light.png — picker, light
@@ -281,6 +292,7 @@ docs/ — long-form documentation
   RELEASING.md — one-time certificate/key setup and the release steps
   convert-symbols.md — every text → symbol conversion: built in, left out and why, macOS ways
   icon-prompt.md — image prompt for the 1024 px app icon
+  zany-sprouting-origami-of.md — TODO: describe
 repo_map.md — this file
 scripts/ — automation (see CLAUDE.md → Scripts)
   bump-version.sh — bump version/build and add a CHANGELOG heading

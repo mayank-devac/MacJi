@@ -20,7 +20,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/config.sh"
 command -v cwebp >/dev/null || fail "cwebp is not installed." "Run: brew install webp"
 
 web="$MACJI_ROOT/WEB/assets"
-shots="$MACJI_ROOT/assets/screenshots"
+shots="$MACJI_ROOT/assets/screenshots_by_agent"
 icons="$MACJI_ROOT/assets/icon"
 
 ####################

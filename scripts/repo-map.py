@@ -41,6 +41,7 @@ COLLAPSED = {
     "MacJi/Resources/Assets.xcassets/AppIcon.appiconset",
     "assets/icon",
     "assets/screenshots",
+    "assets/screenshots_by_agent",
     "WEB/assets/icon",
     "WEB/assets/screenshots",
 }
