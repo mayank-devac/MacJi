@@ -10,12 +10,12 @@
 import SwiftUI
 
 struct CopiedBadge: View {
-    let emoji: Emoji?
+    let glyph: Glyph?
 
     var body: some View {
         HStack(spacing: EmojiUIMetrics.badgeSpacing) {
             Image(systemName: SymbolNames.copied).foregroundStyle(Palette.copiedCheck)
-            Text(EmojiStrings.copied(emoji?.emoji ?? ""))
+            Text(EmojiStrings.copied(glyph?.text ?? ""))
         }
         .font(.system(size: EmojiUIMetrics.badgeFontSize, weight: .medium))
         .padding(.horizontal, EmojiUIMetrics.badgeHorizontalPadding)
@@ -36,14 +36,14 @@ struct CopiedBadge: View {
 
 private struct CopiedBadgeModifier: ViewModifier {
     let copyCount: Int
-    let emoji: Emoji?
+    let glyph: Glyph?
     let presentationID: Int
     @State private var isShown = false
 
     func body(content: Content) -> some View {
         content
             .overlay(alignment: .bottom) {
-                if isShown { CopiedBadge(emoji: emoji) }
+                if isShown { CopiedBadge(glyph: glyph) }
             }
             .task(id: copyCount) { await flash() }
             .onChange(of: presentationID) { isShown = false }
@@ -58,8 +58,8 @@ private struct CopiedBadgeModifier: ViewModifier {
 }
 
 extension View {
-    func copiedBadge(copyCount: Int, emoji: Emoji?, presentationID: Int) -> some View {
-        modifier(CopiedBadgeModifier(copyCount: copyCount, emoji: emoji, presentationID: presentationID))
+    func copiedBadge(copyCount: Int, glyph: Glyph?, presentationID: Int) -> some View {
+        modifier(CopiedBadgeModifier(copyCount: copyCount, glyph: glyph, presentationID: presentationID))
     }
 }
 

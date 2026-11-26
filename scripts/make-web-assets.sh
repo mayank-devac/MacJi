@@ -50,7 +50,7 @@ to_webp "$icons/icon_128x128@2x.png" "$web/icon/icon-256.webp"
 cp "$shots/inline-panel-light.png" "$web/screenshots/inline-panel-light.png"
 cp "$icons/icon_32x32@2x.png" "$web/icon/favicon-64.png"
 cp "$icons/icon_128x128@2x.png" "$web/icon/icon-256.png"
-cp "$MACJI_ROOT/MacJi/Shared/EmojiData/Resources/emoji.json" "$web/data/emoji.json"
+cp "$MACJI_ROOT/MacJi/Shared/Glyphs/Resources/emoji.json" "$web/data/emoji.json"
 
 ##################
 

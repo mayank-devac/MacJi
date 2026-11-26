@@ -14,11 +14,11 @@ import SwiftUI
 final class InlinePanelModel: ObservableObject {
     @Published private(set) var trigger = PreferenceDefaults.trigger
     @Published private(set) var query = ""
-    @Published private(set) var results: [Emoji] = []
+    @Published private(set) var results: [Glyph] = []
     /// The selected emoji character; the first result after each new term.
     @Published var selection: String?
-    @Published var hovered: Emoji?
-    @Published private(set) var lastCopied: Emoji?
+    @Published var hovered: Glyph?
+    @Published private(set) var lastCopied: Glyph?
     /// Bumped on every copy so copying the same emoji twice re-shows the badge.
     @Published private(set) var copyCount = 0
     /// Bumped on each open so the view replays its appear animation and drops stale feedback.
@@ -30,18 +30,18 @@ final class InlinePanelModel: ObservableObject {
     /// Set on each open; empty while frequency ranking is off.
     private var useCounts: [String: Int] = [:]
 
-    var selectedEmoji: Emoji? {
-        results.first { $0.emoji == selection }
+    var selectedGlyph: Glyph? {
+        results.first { $0.text == selection }
     }
 
     /// The pointer wins over the keyboard so the shown name matches what is under it.
-    var focusedEmoji: Emoji? {
-        hovered ?? selectedEmoji
+    var focusedGlyph: Glyph? {
+        hovered ?? selectedGlyph
     }
 
     /// What Return and Shift-Return act on: the selection, else the first result.
-    var chosenEmoji: Emoji? {
-        selectedEmoji ?? results.first
+    var chosenGlyph: Glyph? {
+        selectedGlyph ?? results.first
     }
 
     ////////////////////
@@ -59,8 +59,8 @@ final class InlinePanelModel: ObservableObject {
         self.trigger = trigger
         guard query != self.query else { return }
         self.query = query
-        results = EmojiSearch.ranked(query, in: catalog, useCounts: useCounts, limit: Limits.inlineResults)
-        selection = results.first?.emoji
+        results = GlyphSearch.ranked(query, in: catalog, useCounts: useCounts, limit: Limits.inlineResults)
+        selection = results.first?.text
         hovered = nil
     }
 
@@ -76,13 +76,13 @@ final class InlinePanelModel: ObservableObject {
     //////////////////
 
     func moveSelection(_ key: MenuKey) {
-        let rows = EmojiGrid.rows(of: results.map(\.emoji), columns: PanelMetrics.columnCount)
+        let rows = GlyphGrid.rows(of: results.map(\.text), columns: PanelMetrics.columnCount)
         selection = MenuGridNavigator.move(selection, key, in: rows)
     }
 
     /// Returns false when the clipboard refused the text.
-    func copy(_ emoji: Emoji) -> Bool {
-        guard EmojiClipboard.copy(emoji) else { return false }
+    func copy(_ emoji: Glyph) -> Bool {
+        guard GlyphClipboard.copy(emoji) else { return false }
         lastCopied = emoji
         copyCount += 1
         return true

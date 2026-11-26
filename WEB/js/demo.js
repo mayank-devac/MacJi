@@ -1,7 +1,7 @@
 /*
   demo.js · MacJi website · Created: 2026-11-26
   A working copy of MacJi's inline panel in the hero: type ::term in the note and pick an emoji.
-  Uses the app's own emoji.json and the same trigger rule and ranking as EmojiSearch.swift.
+  Uses the app's own emoji.json and the same trigger rule and ranking as GlyphSearch.swift.
 */
 
 (function () {
@@ -39,7 +39,7 @@
 
   ////////////////////
   //// Catalog and ranking
-  /// Mirrors EmojiCatalog + EmojiSearch: 0 exact alias · 1 alias prefix · 2 word prefix · 3 anywhere.
+  /// Mirrors GlyphCatalog + GlyphSearch: 0 exact alias · 1 alias prefix · 2 word prefix · 3 anywhere.
   // Buckets keep catalog order inside each rank, exactly like the app, so "roc" shows 🪨 then 🚀.
 
   function load() {

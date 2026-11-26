@@ -1,9 +1,9 @@
 //
-//  EmojiRecents.swift
+//  GlyphRecents.swift
 //  MacJi
 //
 //  Created: 2026-11-26
-//  Recently used emoji, newest first, and how often each was used; shared by the inline panel
+//  Recently used glyphs, newest first, and how often each was used; shared by the inline panel
 //  and the picker.
 //  Ported from Octopus: octopus/UI/EmojiPicker/EmojiPickerSettings.swift, octopus/UI/EmojiPicker/EmojiPickerModel.swift
 //
@@ -11,7 +11,7 @@
 import Foundation
 
 @MainActor
-final class EmojiRecents {
+final class GlyphRecents {
     private let defaults: UserDefaults
     private let limit: Int
 

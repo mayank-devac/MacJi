@@ -23,7 +23,7 @@ final class EmojiPickerController: NSObject, NSPopoverDelegate {
     private var previousApp: NSRunningApplication?
     private var closedAt = Date.distantPast
 
-    init(recents: EmojiRecents) {
+    init(recents: GlyphRecents) {
         model = EmojiPickerModel(recents: recents)
         super.init()
     }

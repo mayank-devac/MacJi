@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "MacJi/Shared/EmojiData/Resources/emoji.json"
+OUTPUT = ROOT / "MacJi/Shared/Glyphs/Resources/emoji.json"
 FIELDS = ("emoji", "description", "category", "aliases", "tags")
 
 

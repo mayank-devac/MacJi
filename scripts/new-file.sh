@@ -11,7 +11,7 @@
 #### Usage
 ### scripts/new-file.sh <MacJi/Folder/Name.swift> "<what this file does>"
 ### scripts/new-file.sh <MacJiTests/Folder/NameTests.swift> "<behaviour it protects>"
-# Example: scripts/new-file.sh MacJi/Shared/EmojiUI/SkinTonePicker.swift "Skin-tone variants for one emoji."
+# Example: scripts/new-file.sh MacJi/Shared/GlyphUI/SkinTonePicker.swift "Skin-tone variants for one emoji."
 # Refuses to overwrite an existing file. Then run scripts/repo-map.py and describe the new entry.
 ##################
 

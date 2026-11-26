@@ -34,9 +34,9 @@ If you also run Octopus, turn its MacJi feature off while you test, or both apps
 ```sh
 ./build.sh                      # build Debug, quit the running build, launch the new one
 scripts/test.sh                 # every test; fails if no tests ran
-scripts/test.sh EmojiDataTests  # one suite
+scripts/test.sh GlyphDataTests  # one suite
 scripts/check.sh                # hygiene gate: run it before every commit (CI runs it too)
-scripts/new-file.sh MacJi/Shared/EmojiUI/Thing.swift "What this file does"
+scripts/new-file.sh MacJi/Shared/GlyphUI/Thing.swift "What this file does"
 ```
 
 Every script supports `--help`. The full list is in [CLAUDE.md](CLAUDE.md#scripts).

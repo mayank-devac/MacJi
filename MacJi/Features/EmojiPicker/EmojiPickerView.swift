@@ -102,16 +102,16 @@ struct EmojiPickerView: View {
         .overlay {
             if model.groups.isEmpty { emptyState }
         }
-        .copiedBadge(copyCount: model.copyCount, emoji: model.lastCopied, presentationID: model.openCount)
+        .copiedBadge(copyCount: model.copyCount, glyph: model.lastCopied, presentationID: model.openCount)
     }
 
     //////////////////
 
-    private func section(_ group: EmojiSection) -> some View {
+    private func section(_ group: GlyphSection) -> some View {
         Section {
-            ForEach(group.emojis) { emoji in
-                let slot = EmojiSlot(group: group.title, emoji: emoji.emoji)
-                EmojiCell(emoji: emoji, isSelected: model.selection == slot, hovered: $model.hovered) {
+            ForEach(group.glyphs) { emoji in
+                let slot = PickerSlot(group: group.title, text: emoji.text)
+                GlyphCell(glyph: emoji, isSelected: model.selection == slot, hovered: $model.hovered) {
                     model.selection = slot
                     model.pick(emoji)
                 }
@@ -146,8 +146,8 @@ struct EmojiPickerView: View {
 
     private var footer: some View {
         HStack(spacing: PickerMetrics.footerSpacing) {
-            if let emoji = model.focusedEmoji {
-                Text(emoji.emoji).font(.system(size: PickerMetrics.footerEmojiSize))
+            if let emoji = model.focusedGlyph {
+                Text(emoji.text).font(.system(size: PickerMetrics.footerEmojiSize))
                 VStack(alignment: .leading, spacing: 1) {
                     Text(emoji.displayName)
                         .lineLimit(1)

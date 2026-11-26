@@ -20,7 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // default registration in applicationWillFinishLaunching.
 
     private lazy var settings = AppSettings(defaults: .standard)
-    private lazy var recents = EmojiRecents(defaults: .standard)
+    private lazy var recents = GlyphRecents(defaults: .standard)
     private lazy var inlinePanel = InlinePanelController(recents: recents)
     private lazy var picker = EmojiPickerController(recents: recents)
     private let permissions = PermissionStatus()
@@ -126,7 +126,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func loadCatalog() {
         Task { [weak self] in
-            let catalog = await EmojiCatalog.loadBundled()
+            let catalog = await EmojiCatalog.loadBundled(GlyphResources.emoji)
             self?.inlinePanel.setCatalog(catalog)
             self?.picker.setCatalog(catalog)
         }

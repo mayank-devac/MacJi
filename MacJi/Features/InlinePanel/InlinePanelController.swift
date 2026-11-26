@@ -15,7 +15,7 @@ import AppKit
 final class InlinePanelController {
     private let monitor = InlineInputMonitor()
     private let model = InlinePanelModel()
-    private let recents: EmojiRecents
+    private let recents: GlyphRecents
     private let secureInputNotifier = SecureInputNotifier()
     private let fader = MenuPanelFader()
     private lazy var panel = InlinePanelWindow(rootView: InlinePanelView(model: model) { [weak self] in self?.insert($0) })
@@ -28,7 +28,7 @@ final class InlinePanelController {
     private var pointerMonitor: Any?
     private var copyClose: Task<Void, Never>?
 
-    init(recents: EmojiRecents) {
+    init(recents: GlyphRecents) {
         self.recents = recents
     }
 
@@ -156,15 +156,15 @@ final class InlinePanelController {
     private func perform(_ action: InlinePanelKeyAction, replacing length: Int) {
         switch action {
         case .insert:
-            guard let emoji = model.chosenEmoji else { hidePanel(); return }
+            guard let emoji = model.chosenGlyph else { hidePanel(); return }
             replace(length, with: emoji)
         case .copy:
-            guard let emoji = model.chosenEmoji, model.copy(emoji) else {
+            guard let emoji = model.chosenGlyph, model.copy(emoji) else {
                 NSSound.beep()
                 hidePanel()
                 return
             }
-            recents.record(emoji.emoji)
+            recents.record(emoji.text)
             copyClose = Task { [weak self] in
                 guard (try? await Task.sleep(for: .seconds(PanelMotion.copyCloseDelay))) != nil else { return }
                 self?.hidePanel()
@@ -175,17 +175,17 @@ final class InlinePanelController {
     }
 
     /// Pointer click on a result.
-    private func insert(_ emoji: Emoji) {
+    private func insert(_ emoji: Glyph) {
         let length = tracker.replacementLength
         guard length > 0 else { hidePanel(); return }
         tracker.reset()
         replace(length, with: emoji)
     }
 
-    private func replace(_ length: Int, with emoji: Emoji) {
+    private func replace(_ length: Int, with emoji: Glyph) {
         hidePanel()
-        recents.record(emoji.emoji)
-        TextInserter.replace(characterCount: length, with: emoji.emoji)
+        recents.record(emoji.text)
+        TextInserter.replace(characterCount: length, with: emoji.text)
     }
 
     private func endSession() {

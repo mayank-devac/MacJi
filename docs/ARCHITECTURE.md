@@ -25,7 +25,7 @@ concurrency. UI and Accessibility code runs on the main actor. Its only dependen
 └────────┬─────────────┘   └─────────┬──────────┘   └─────────────┬──────────┘
          │      never import each other (features know only Shared)│
 ┌────────▼─────────────────────────────────────────────────────────▼──────────┐
-│ Shared/  EmojiData · EmojiUI · MenuKit · Permissions · AX · Logging         │
+│ Shared/  Glyphs · GlyphUI · MenuKit · Permissions · AX · Logging            │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ Constants/  Keys · Strings · Layout · Motion · Theme · Links · Limits       │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -60,7 +60,7 @@ key-down in any app
        TriggerTracker   keeps the last few characters, finds "trigger + term"
        InlinePanelKeys  maps arrows / Return / Shift-Return / Esc while a term is open
   → next main-queue turn
-       InlinePanelModel   EmojiSearch results, selection, copy feedback
+       InlinePanelModel   GlyphSearch results, selection, copy feedback
        CaretLocator       caret rect once per open (falls back to the pointer)
        InlinePanelPlacement + InlinePanelWindow   non-activating panel under the caret
   → Return: TextInserter deletes "::term" and types the emoji with synthetic key events
@@ -117,8 +117,8 @@ certificate and EdDSA-signed for Sparkle. See [RELEASING.md](RELEASING.md).
 ## Emoji data
 
 `scripts/update-emoji-data.py` strips gemoji's `emoji.json` to the fields MacJi reads.
-`EmojiCatalog.loadBundled()` decodes it once, off the main thread, and precomputes lowercase keywords,
-so `EmojiSearch` allocates nothing per keystroke. Results are capped (`Limits`).
+`GlyphCatalog.loadBundled(_:)` decodes it once, off the main thread, and precomputes lowercase keywords,
+so `GlyphSearch` allocates nothing per keystroke. Results are capped (`Limits`).
 
 ## Ported from Octopus
 
@@ -166,15 +166,16 @@ commit; `scripts/sync-from-octopus.sh --table` regenerates the table below.
 | `MacJi/Settings/LoginItem.swift` | [octopus/UI/Preferences/PreferencesGeneralView.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/Preferences/PreferencesGeneralView.swift) |
 | `MacJi/Shared/AX/AXValueReader.swift` | [octopus/UI/MacJi/MacJiCaretLocator.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MacJi/MacJiCaretLocator.swift) |
 | `MacJi/Shared/AX/CaretLocator.swift` | [octopus/UI/MacJi/MacJiCaretLocator.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MacJi/MacJiCaretLocator.swift) |
-| `MacJi/Shared/EmojiData/Emoji.swift` | [octopus/UI/EmojiPicker/EmojiCatalog.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiCatalog.swift) |
-| `MacJi/Shared/EmojiData/EmojiCatalog.swift` | [octopus/UI/EmojiPicker/EmojiCatalog.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiCatalog.swift) |
-| `MacJi/Shared/EmojiData/EmojiClipboard.swift` | [octopus/UI/MacJi/MacJiModel.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MacJi/MacJiModel.swift)<br>[octopus/UI/EmojiPicker/EmojiPickerModel.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerModel.swift) |
-| `MacJi/Shared/EmojiData/EmojiGrid.swift` | [octopus/UI/MacJi/MacJiModel.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MacJi/MacJiModel.swift)<br>[octopus/UI/EmojiPicker/EmojiPickerModel.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerModel.swift) |
-| `MacJi/Shared/EmojiData/EmojiRecents.swift` | [octopus/UI/EmojiPicker/EmojiPickerSettings.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerSettings.swift)<br>[octopus/UI/EmojiPicker/EmojiPickerModel.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerModel.swift) |
-| `MacJi/Shared/EmojiData/EmojiSearch.swift` | [octopus/UI/MacJi/MacJiSearch.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MacJi/MacJiSearch.swift)<br>[octopus/UI/EmojiPicker/EmojiCatalog.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiCatalog.swift) |
-| `MacJi/Shared/EmojiUI/CopiedBadge.swift` | [octopus/UI/EmojiPicker/EmojiPickerComponents.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerComponents.swift)<br>[octopus/UI/EmojiPicker/EmojiPickerView.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerView.swift)<br>[octopus/UI/MacJi/MacJiView.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MacJi/MacJiView.swift) |
-| `MacJi/Shared/EmojiUI/EmojiCell.swift` | [octopus/UI/EmojiPicker/EmojiPickerComponents.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerComponents.swift) |
-| `MacJi/Shared/EmojiUI/KeyHint.swift` | [octopus/UI/EmojiPicker/EmojiPickerComponents.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerComponents.swift) |
+| `MacJi/Shared/GlyphUI/CopiedBadge.swift` | [octopus/UI/EmojiPicker/EmojiPickerComponents.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerComponents.swift)<br>[octopus/UI/EmojiPicker/EmojiPickerView.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerView.swift)<br>[octopus/UI/MacJi/MacJiView.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MacJi/MacJiView.swift) |
+| `MacJi/Shared/GlyphUI/GlyphCell.swift` | [octopus/UI/EmojiPicker/EmojiPickerComponents.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerComponents.swift) |
+| `MacJi/Shared/GlyphUI/KeyHint.swift` | [octopus/UI/EmojiPicker/EmojiPickerComponents.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerComponents.swift) |
+| `MacJi/Shared/Glyphs/Glyph.swift` | [octopus/UI/EmojiPicker/EmojiCatalog.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiCatalog.swift) |
+| `MacJi/Shared/Glyphs/GlyphCatalog.swift` | [octopus/UI/EmojiPicker/EmojiCatalog.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiCatalog.swift) |
+| `MacJi/Shared/Glyphs/GlyphCategory.swift` | [octopus/UI/EmojiPicker/EmojiCatalog.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiCatalog.swift) |
+| `MacJi/Shared/Glyphs/GlyphClipboard.swift` | [octopus/UI/MacJi/MacJiModel.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MacJi/MacJiModel.swift)<br>[octopus/UI/EmojiPicker/EmojiPickerModel.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerModel.swift) |
+| `MacJi/Shared/Glyphs/GlyphGrid.swift` | [octopus/UI/MacJi/MacJiModel.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MacJi/MacJiModel.swift)<br>[octopus/UI/EmojiPicker/EmojiPickerModel.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerModel.swift) |
+| `MacJi/Shared/Glyphs/GlyphRecents.swift` | [octopus/UI/EmojiPicker/EmojiPickerSettings.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerSettings.swift)<br>[octopus/UI/EmojiPicker/EmojiPickerModel.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiPickerModel.swift) |
+| `MacJi/Shared/Glyphs/GlyphSearch.swift` | [octopus/UI/MacJi/MacJiSearch.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MacJi/MacJiSearch.swift)<br>[octopus/UI/EmojiPicker/EmojiCatalog.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/EmojiPicker/EmojiCatalog.swift) |
 | `MacJi/Shared/MenuKit/MenuAppearModifier.swift` | [octopus/UI/MenuKit/MenuAppearModifier.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MenuKit/MenuAppearModifier.swift) |
 | `MacJi/Shared/MenuKit/MenuCardBackground.swift` | [octopus/UI/MenuKit/MenuCardBackground.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MenuKit/MenuCardBackground.swift) |
 | `MacJi/Shared/MenuKit/MenuGridNavigator.swift` | [octopus/UI/MenuKit/MenuGridNavigator.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopus/UI/MenuKit/MenuGridNavigator.swift) |
@@ -195,7 +196,7 @@ commit; `scripts/sync-from-octopus.sh --table` regenerates the table below.
 | `MacJiTests/Features/EmojiPicker/EmojiPickerTests.swift` | [octopusTests/EmojiPickerTests.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopusTests/EmojiPickerTests.swift) |
 | `MacJiTests/Features/InlinePanel/InlinePanelTests.swift` | [octopusTests/MacJiTests.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopusTests/MacJiTests.swift) |
 | `MacJiTests/Shared/AX/CaretLocatorTests.swift` | [octopusTests/MacJiTests.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopusTests/MacJiTests.swift) |
-| `MacJiTests/Shared/EmojiData/EmojiDataTests.swift` | [octopusTests/EmojiPickerTests.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopusTests/EmojiPickerTests.swift)<br>[octopusTests/MacJiTests.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopusTests/MacJiTests.swift) |
+| `MacJiTests/Shared/Glyphs/GlyphDataTests.swift` | [octopusTests/EmojiPickerTests.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopusTests/EmojiPickerTests.swift)<br>[octopusTests/MacJiTests.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopusTests/MacJiTests.swift) |
 | `MacJiTests/Shared/Permissions/EventTapRevocationDetectorTests.swift` | [octopusTests/EventTapRevocationDetectorTests.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopusTests/EventTapRevocationDetectorTests.swift) |
 | `MacJiTests/Shared/Permissions/SecureInputTests.swift` | [octopusTests/MacJiTests.swift](https://github.com/mayank-devac/octopus-mac/blob/e0d657082288ff25c63494401f3597fbe35aeb5e/octopusTests/MacJiTests.swift) |
 <!-- octopus-table:end -->

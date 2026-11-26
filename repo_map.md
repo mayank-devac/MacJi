@@ -27,7 +27,7 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 | App icon | `scripts/make-icon.sh <1024.png>` → `MacJi/Resources/Assets.xcassets/AppIcon.appiconset` |
 | Menu-bar icon | `MacJi/Constants/Theme/SymbolNames.swift` (`menuBar`) |
 | Text aliases (`->` → `→`, `:)` → 🙂) | `MacJi/Features/InlinePanel/TextAliasCatalog.swift`, documented in `docs/convert-symbols.md` |
-| Emoji data | `scripts/update-emoji-data.py` → `MacJi/Shared/EmojiData/Resources/emoji.json` |
+| Emoji data | `scripts/update-emoji-data.py` → `MacJi/Shared/Glyphs/Resources/emoji.json` |
 | Release steps | `docs/RELEASING.md`, `scripts/release.py` |
 | README screenshots and GIFs | `scripts/make-screenshots.sh` → `assets/screenshots/` (scenes in `MacJiTests/Screenshots/`) |
 | Website (GitHub Pages) | `WEB/` (deployed by `.github/workflows/pages.yml`; images via `scripts/make-web-assets.sh`) |
@@ -65,6 +65,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
     StatusItemController.swift — menu-bar icon: click opens the picker, right-click menu
   Constants/ — every literal lives here
     Keys/ — stored names
+      GlyphResources.swift — bundled glyph data file names (emoji, symbols, emoticons)
       PreferenceKeys.swift — UserDefaults keys and their registered defaults (keys are permanent)
       ShortcutNames.swift — KeyboardShortcuts names and the default picker shortcut
     Layout/ — sizes and spacing
@@ -144,19 +145,20 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
     AX/ — Accessibility API helpers
       AXValueReader.swift — checked reads of AX attributes (no force casts)
       CaretLocator.swift — caret rectangle of the focused text field
-    EmojiData/ — emoji data shared by both features
-      Emoji.swift — Emoji, EmojiCategory and EmojiSection value types
-      EmojiCatalog.swift — loads and indexes emoji.json once
-      EmojiClipboard.swift — copies an emoji to the pasteboard
-      EmojiGrid.swift — splits items into fixed-column rows for drawing and arrow keys
-      EmojiRecents.swift — recently used emoji (persisted, capped) and per-emoji use counts
-      EmojiSearch.swift — ranked search used by the panel and the picker
+    GlyphUI/ — reusable glyph views
+      CopiedBadge.swift — "Copied" capsule and its timed modifier
+      GlyphCell.swift — one glyph button with selection, hover and press feedback
+      KeyHint.swift — footer keycap with caption
+    Glyphs/ — glyph data shared by both features: emoji, symbols, emoticons
+      Glyph.swift — Glyph and GlyphSection value types
+      GlyphCatalog.swift — loads and indexes one data file once, generic over its categories
+      GlyphCategory.swift — the GlyphCategory protocol and EmojiCategory
+      GlyphClipboard.swift — copies a glyph to the pasteboard
+      GlyphGrid.swift — splits items into fixed-column rows for drawing and arrow keys
+      GlyphRecents.swift — recently used glyphs (persisted, capped) and per-glyph use counts
+      GlyphSearch.swift — ranked search used by the panel and the picker
       Resources/ — data files
         emoji.json — gemoji data stripped to the fields MacJi reads
-    EmojiUI/ — reusable emoji views
-      CopiedBadge.swift — "Copied" capsule and its timed modifier
-      EmojiCell.swift — one emoji button with selection, hover and press feedback
-      KeyHint.swift — footer keycap with caption
     Logging/ — diagnostics
       Log.swift — os.Logger categories (never print)
     MenuKit/ — panel chrome and keyboard helpers
@@ -195,8 +197,8 @@ MacJiTests/ — Swift Testing suites, mirroring MacJi/
   Shared/ — shared code tests
     AX/ — AX helper tests
       CaretLocatorTests.swift — rejects field, paragraph and off-screen caret rects
-    EmojiData/ — emoji data tests
-      EmojiDataTests.swift — catalog search, ranking, recents
+    Glyphs/ — glyph data tests
+      GlyphDataTests.swift — catalog search, ranking, recents
     Permissions/ — permission tests
       EventTapRevocationDetectorTests.swift — revocation needs consecutive failures
       SecureInputTests.swift — reads the Secure Input holder from the console session only
@@ -209,7 +211,7 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
   404.html — Pages not-found page (absolute /MacJi/ paths)
   assets/ — site-only copies of images and data
     data/ — data the live demo reads
-      emoji.json — copy of MacJi/Shared/EmojiData/Resources/emoji.json; refresh it when that changes
+      emoji.json — copy of MacJi/Shared/Glyphs/Resources/emoji.json; refresh it when that changes
     icon/ — favicon and app icon from assets/icon (written by scripts/make-web-assets.sh)
     screenshots/ — WebP screenshots plus the link-preview PNG (written by scripts/make-web-assets.sh)
   css/ — stylesheets
@@ -222,7 +224,7 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
   js/ — scripts, no dependencies
     confetti-sprites.js — confetti shapes with their glow, painted once and cached
     confetti.js — click-anywhere confetti on every page, side poppers, the 🎉 party shower and pointer collisions
-    demo.js — working copy of the inline panel (trigger rule + EmojiSearch ranking)
+    demo.js — working copy of the inline panel (trigger rule + GlyphSearch ranking)
     pointer.js — iPadOS-style pointer and button parallax, ported from the Octopus site
     release.js — latest release's .dmg from the GitHub API, Releases-page fallback
     thank-you.js — starts the download, fires the confetti

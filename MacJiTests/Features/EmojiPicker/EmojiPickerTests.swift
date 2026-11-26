@@ -12,16 +12,16 @@ import Testing
 @testable import MacJi
 
 struct EmojiPickerTests {
-    private let catalog = EmojiCatalog(emojis: [
-        Emoji(emoji: "😍", description: "smiling face with heart-eyes", category: "Smileys & Emotion",
+    private let catalog = EmojiCatalog(glyphs: [
+        Glyph(text: "😍", description: "smiling face with heart-eyes", category: "Smileys & Emotion",
               aliases: ["heart_eyes"], tags: ["love"]),
-        Emoji(emoji: "❤️", description: "red heart", category: "Smileys & Emotion", aliases: ["heart"], tags: ["love"]),
-        Emoji(emoji: "🐶", description: "dog face", category: "Animals & Nature", aliases: ["dog"], tags: ["pet"]),
+        Glyph(text: "❤️", description: "red heart", category: "Smileys & Emotion", aliases: ["heart"], tags: ["love"]),
+        Glyph(text: "🐶", description: "dog face", category: "Animals & Nature", aliases: ["dog"], tags: ["pet"]),
     ])
 
     @Test func gridRowsMatchColumnsAndNeverMixGroups() {
         let groups = catalog.sections()
-        #expect(EmojiPickerModel.grid(for: groups, columns: 1).map { $0.map(\.emoji) } == [["😍"], ["❤️"], ["🐶"]])
+        #expect(EmojiPickerModel.grid(for: groups, columns: 1).map { $0.map(\.text) } == [["😍"], ["❤️"], ["🐶"]])
         #expect(EmojiPickerModel.grid(for: groups, columns: 9).map(\.count) == [2, 1])
     }
 
@@ -38,11 +38,11 @@ struct EmojiPickerTests {
     @MainActor
     @Test func searchShowsOneRankedGroupWithTheBestMatchSelected() throws {
         let defaults = try #require(UserDefaults(suiteName: "macji.tests.picker.\(UUID().uuidString)"))
-        let model = EmojiPickerModel(recents: EmojiRecents(defaults: defaults))
+        let model = EmojiPickerModel(recents: GlyphRecents(defaults: defaults))
         model.catalog = catalog
         model.query = "heart"
         #expect(model.groups.map(\.title) == [PickerStrings.searchResults])
-        #expect(model.groups.first?.emojis.map(\.emoji) == ["❤️", "😍"])
-        #expect(model.selectedEmoji?.emoji == "❤️")
+        #expect(model.groups.first?.glyphs.map(\.text) == ["❤️", "😍"])
+        #expect(model.selectedGlyph?.text == "❤️")
     }
 }

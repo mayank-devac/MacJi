@@ -13,7 +13,7 @@ import SwiftUI
 
 struct InlinePanelView: View {
     @ObservedObject var model: InlinePanelModel
-    let onPick: (Emoji) -> Void
+    let onPick: (Glyph) -> Void
     @State private var showsName = false
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: PanelMetrics.gridSpacing),
@@ -31,7 +31,7 @@ struct InlinePanelView: View {
         .menuCard(cornerRadius: PanelMetrics.cornerRadius)
         .menuAppear(presentationID: model.presentationID, anchor: model.growsFrom)
         .padding(MenuShadowMargin.size)
-        .task(id: model.focusedEmoji?.emoji) { await revealName() }
+        .task(id: model.focusedGlyph?.text) { await revealName() }
     }
 
     ////////////////////
@@ -41,7 +41,7 @@ struct InlinePanelView: View {
 
     private func revealName() async {
         showsName = false
-        guard model.focusedEmoji != nil, (try? await Task.sleep(for: PanelMotion.nameRevealDelay)) != nil else { return }
+        guard model.focusedGlyph != nil, (try? await Task.sleep(for: PanelMotion.nameRevealDelay)) != nil else { return }
         withAnimation(PanelMotion.nameReveal) { showsName = true }
     }
 
@@ -77,10 +77,10 @@ struct InlinePanelView: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: PanelMetrics.gridSpacing) {
                     ForEach(model.results) { emoji in
-                        EmojiCell(emoji: emoji, isSelected: model.selection == emoji.emoji, hovered: $model.hovered) {
+                        GlyphCell(glyph: emoji, isSelected: model.selection == emoji.text, hovered: $model.hovered) {
                             onPick(emoji)
                         }
-                        .id(emoji.emoji)
+                        .id(emoji.text)
                     }
                 }
                 .padding(PanelMetrics.gridPadding)
@@ -94,7 +94,7 @@ struct InlinePanelView: View {
         .overlay {
             if model.results.isEmpty && !model.query.isEmpty { emptyState }
         }
-        .copiedBadge(copyCount: model.copyCount, emoji: model.lastCopied, presentationID: model.presentationID)
+        .copiedBadge(copyCount: model.copyCount, glyph: model.lastCopied, presentationID: model.presentationID)
     }
 
     //////////////////
@@ -114,8 +114,8 @@ struct InlinePanelView: View {
 
     private var footer: some View {
         HStack(spacing: PanelMetrics.footerSpacing) {
-            if showsName, let emoji = model.focusedEmoji {
-                Text(emoji.emoji).font(.system(size: PanelMetrics.footerEmojiSize))
+            if showsName, let emoji = model.focusedGlyph {
+                Text(emoji.text).font(.system(size: PanelMetrics.footerEmojiSize))
                 Text(emoji.displayName)
                     .font(.callout)
                     .lineLimit(1)

@@ -13,7 +13,7 @@ MacJi is an open-source macOS menu-bar app for emoji. Its features:
 2. **Emoji picker** – a menu-bar popover (also opened by a global shortcut) with search,
    categories, recents and keyboard navigation. Return copies, Option-Return copies and stays open.
 3. **Frequent-emoji ranking** – the inline panel lists used emoji first, most used first, when they
-   match by prefix (`EmojiSearch.ranked(useCounts:)`, counts in `EmojiRecents`). Setting
+   match by prefix (`GlyphSearch.ranked(useCounts:)`, counts in `GlyphRecents`). Setting
    `rankFrequentlyUsedEmoji`, default on. The picker keeps the plain ranking.
 4. **Text aliases** – while the inline panel is on, `->` becomes →, `(c)` ©, `:)` 🙂 as the last
    character is typed (`TextAliasCatalog` → `TextAliasConverter`, run from the event tap's key
@@ -111,8 +111,8 @@ Features never import or reference each other.
 | `MacJi/App/` | App entry, composition root, launch/reopen policy, the menu-bar status item |
 | `MacJi/Features/InlinePanel/` | The `::term` panel: event tap, trigger tracking, keys, model, window, placement, view, text insertion, Secure Input, text aliases |
 | `MacJi/Features/EmojiPicker/` | The picker popover: controller, model, view, keys, anchor for the hidden-icon case |
-| `MacJi/Shared/EmojiData/` | Emoji model, catalog, ranked search, recents store, clipboard, grid rows, `emoji.json` — used by both features |
-| `MacJi/Shared/EmojiUI/` | Emoji cell, key hints, "Copied" badge — reusable emoji views |
+| `MacJi/Shared/Glyphs/` | Glyph model, generic catalog, ranked search, recents store, clipboard, grid rows, the bundled data files — used by both features |
+| `MacJi/Shared/GlyphUI/` | Glyph cell, key hints, "Copied" badge — reusable glyph views |
 | `MacJi/Shared/MenuKit/` | Panel chrome and keyboard helpers: card background, shadow margin, appear/fade, grid navigation |
 | `MacJi/Shared/Permissions/` | Accessibility status, permission guide, event-tap trust and revocation recovery |
 | `MacJi/Shared/AX/` | Checked AX value reads and the caret locator |

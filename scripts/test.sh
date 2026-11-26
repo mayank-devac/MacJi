@@ -13,7 +13,7 @@
 ### scripts/test.sh InlinePanelTests                  one suite
 ### scripts/test.sh InlinePanelTests/triggerInsideWordIsIgnored   one test ("()" is added)
 ### scripts/test.sh --unsigned [filter]               build without code signing (CI)
-# Example: scripts/test.sh EmojiDataTests
+# Example: scripts/test.sh GlyphDataTests
 # Full log: .build/test.log. Tests need macOS 15 or later.
 ##################
 

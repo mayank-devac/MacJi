@@ -29,9 +29,9 @@ struct ReadmeScreenshots {
         defaults.removePersistentDomain(forName: Self.defaultsSuite)
         defer { defaults.removePersistentDomain(forName: Self.defaultsSuite) }
         AppSettings.registerDefaults(in: defaults)
-        let recents = EmojiRecents(defaults: defaults)
+        let recents = GlyphRecents(defaults: defaults)
         for emoji in Self.recentEmoji.reversed() { recents.record(emoji) }
-        let catalog = await EmojiCatalog.loadBundled()
+        let catalog = await EmojiCatalog.loadBundled(GlyphResources.emoji)
 
         for theme in ScreenshotTheme.allCases {
             let name = theme.rawValue
@@ -45,7 +45,7 @@ struct ReadmeScreenshots {
 
     //////////////////
 
-    private func renderPicker(_ theme: ScreenshotTheme, catalog: EmojiCatalog, recents: EmojiRecents, query: String,
+    private func renderPicker(_ theme: ScreenshotTheme, catalog: EmojiCatalog, recents: GlyphRecents, query: String,
                               to url: URL) async throws {
         let model = EmojiPickerModel(recents: recents)
         model.catalog = catalog
@@ -127,8 +127,8 @@ struct ReadmeScreenshots {
         let named = try await shot(.milliseconds(1600), after: PanelMotion.nameRevealDelay + .milliseconds(250))
         try named.writePNG(to: output.appending(path: "inline-panel-\(theme.rawValue).png"))
 
-        let chosen = try #require(panel.chosenEmoji)
-        editor.typed = chosen.emoji
+        let chosen = try #require(panel.chosenGlyph)
+        editor.typed = chosen.text
         editor.panelOpacity = 0.35
         _ = try await shot(.milliseconds(50), after: .milliseconds(20))
         editor.panelShown = false

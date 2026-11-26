@@ -1,22 +1,22 @@
 //
-//  EmojiCell.swift
+//  GlyphCell.swift
 //  MacJi
 //
 //  Created: 2026-11-26
-//  One emoji button, shared by the panel and the picker: keyboard selection highlight,
-//  a slight grow on hover, a press shrink, and a tooltip naming the emoji.
+//  One glyph button, shared by the panel and the picker: keyboard selection highlight,
+//  a slight grow on hover, a press shrink, and a tooltip naming the glyph.
 //  Ported from Octopus: octopus/UI/EmojiPicker/EmojiPickerComponents.swift
 //
 
 import SwiftUI
 
-struct EmojiCell: View {
-    let emoji: Emoji
+struct GlyphCell: View {
+    let glyph: Glyph
     let isSelected: Bool
-    @Binding var hovered: Emoji?
+    @Binding var hovered: Glyph?
     let onPick: () -> Void
 
-    private var isHovered: Bool { hovered == emoji }
+    private var isHovered: Bool { hovered == glyph }
 
     private var highlight: Color {
         if isSelected { return Palette.selectionFill }
@@ -26,11 +26,11 @@ struct EmojiCell: View {
     ////////////////////
     //// Cell
     /// The highlight follows the keyboard instantly (like a native menu); only the hover grow animates.
-    // The native tooltip appears once the pointer rests; VoiceOver reads the emoji's name.
+    // The native tooltip appears once the pointer rests; VoiceOver reads the glyph's name.
 
     var body: some View {
         Button(action: onPick) {
-            Text(emoji.emoji)
+            Text(glyph.text)
                 .font(.system(size: EmojiUIMetrics.cellEmojiSize))
                 .frame(width: EmojiUIMetrics.cellSize, height: EmojiUIMetrics.cellSize)
                 .background(RoundedRectangle(cornerRadius: EmojiUIMetrics.cellCornerRadius, style: .continuous).fill(highlight))
@@ -39,12 +39,12 @@ struct EmojiCell: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(MenuPressButtonStyle())
-        .help(emoji.displayName)
-        .accessibilityLabel(emoji.displayName)
+        .help(glyph.displayName)
+        .accessibilityLabel(glyph.displayName)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .onHover { inside in
             if inside {
-                hovered = emoji
+                hovered = glyph
             } else if isHovered {
                 hovered = nil
             }

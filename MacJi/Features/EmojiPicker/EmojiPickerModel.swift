@@ -10,11 +10,11 @@
 
 import AppKit
 
-/// One grid cell. The group is part of the identity because a recent emoji also appears in
+/// One grid cell. The group is part of the identity because a recent glyph also appears in
 /// its own category.
-struct EmojiSlot: Hashable {
+struct PickerSlot: Hashable {
     let group: String
-    let emoji: String
+    let text: String
 }
 
 @MainActor
@@ -22,31 +22,31 @@ final class EmojiPickerModel: ObservableObject {
     @Published var query = "" { didSet { refreshGroups(selectFirst: true) } }
     /// `nil` shows all categories.
     @Published var category: EmojiCategory? { didSet { refreshGroups(selectFirst: true) } }
-    @Published var hovered: Emoji?
-    @Published var selection: EmojiSlot?
-    @Published private(set) var groups: [EmojiSection] = []
-    @Published private(set) var lastCopied: Emoji?
+    @Published var hovered: Glyph?
+    @Published var selection: PickerSlot?
+    @Published private(set) var groups: [GlyphSection] = []
+    @Published private(set) var lastCopied: Glyph?
     /// Bumped on every copy so copying the same emoji twice still re-shows the "Copied" badge.
     @Published private(set) var copyCount = 0
     /// Bumped on each open so the view refocuses the search field and drops stale feedback.
     @Published private(set) var openCount = 0
 
-    private let recents: EmojiRecents
+    private let recents: GlyphRecents
     var catalog = EmojiCatalog.empty { didSet { refreshGroups(selectFirst: false) } }
 
-    init(recents: EmojiRecents) {
+    init(recents: GlyphRecents) {
         self.recents = recents
     }
 
     var isSearching: Bool { !query.allSatisfy(\.isWhitespace) }
 
-    var selectedEmoji: Emoji? {
+    var selectedGlyph: Glyph? {
         guard let selection else { return nil }
-        return groups.first { $0.title == selection.group }?.emojis.first { $0.emoji == selection.emoji }
+        return groups.first { $0.title == selection.group }?.glyphs.first { $0.text == selection.text }
     }
 
     /// The pointer wins over the keyboard so the footer names what is under it.
-    var focusedEmoji: Emoji? { hovered ?? selectedEmoji }
+    var focusedGlyph: Glyph? { hovered ?? selectedGlyph }
 
     /// Starts each open fresh: empty search, all categories, nothing selected, recents re-read.
     func prepareForOpen() {
@@ -75,7 +75,7 @@ final class EmojiPickerModel: ObservableObject {
 
     /// Returns false when there is nothing to copy or the clipboard refused it.
     func copySelection() -> Bool {
-        guard let emoji = selectedEmoji ?? groups.first?.emojis.first else { return false }
+        guard let emoji = selectedGlyph ?? groups.first?.glyphs.first else { return false }
         return pick(emoji)
     }
 
@@ -84,19 +84,19 @@ final class EmojiPickerModel: ObservableObject {
 
     /// Copies the emoji to the clipboard and records it as recently used.
     @discardableResult
-    func pick(_ emoji: Emoji) -> Bool {
-        guard EmojiClipboard.copy(emoji) else { return false }
+    func pick(_ emoji: Glyph) -> Bool {
+        guard GlyphClipboard.copy(emoji) else { return false }
         lastCopied = emoji
         copyCount += 1
-        recents.record(emoji.emoji)
+        recents.record(emoji.text)
         refreshGroups(selectFirst: false)
         return true
     }
 
     /// Splits each group into rows of `columns`; groups never share a row.
-    nonisolated static func grid(for groups: [EmojiSection], columns: Int = PickerMetrics.columnCount) -> [[EmojiSlot]] {
+    nonisolated static func grid(for groups: [GlyphSection], columns: Int = PickerMetrics.columnCount) -> [[PickerSlot]] {
         groups.flatMap { group in
-            EmojiGrid.rows(of: group.emojis.map { EmojiSlot(group: group.title, emoji: $0.emoji) }, columns: columns)
+            GlyphGrid.rows(of: group.glyphs.map { PickerSlot(group: group.title, text: $0.text) }, columns: columns)
         }
     }
 
@@ -108,11 +108,11 @@ final class EmojiPickerModel: ObservableObject {
 
     private func refreshGroups(selectFirst: Bool) {
         if isSearching {
-            let matches = EmojiSearch.ranked(query, in: catalog, category: category, limit: Limits.pickerResults)
-            groups = matches.isEmpty ? [] : [EmojiSection(title: PickerStrings.searchResults, emojis: matches)]
+            let matches = GlyphSearch.ranked(query, in: catalog, category: category, limit: Limits.pickerResults)
+            groups = matches.isEmpty ? [] : [GlyphSection(title: PickerStrings.searchResults, glyphs: matches)]
         } else {
-            let recentEmojis = category == nil ? catalog.emojis(for: recents.characters) : []
-            let recentGroup = recentEmojis.isEmpty ? [] : [EmojiSection(title: PickerStrings.recentlyUsed, emojis: recentEmojis)]
+            let recentEmojis = category == nil ? catalog.glyphs(for: recents.characters) : []
+            let recentGroup = recentEmojis.isEmpty ? [] : [GlyphSection(title: PickerStrings.recentlyUsed, glyphs: recentEmojis)]
             groups = recentGroup + catalog.sections(in: category)
         }
         let slots = Self.grid(for: groups).joined()
