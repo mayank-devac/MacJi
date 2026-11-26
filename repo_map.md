@@ -29,6 +29,7 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 | Emoji data | `scripts/update-emoji-data.py` → `MacJi/Shared/EmojiData/Resources/emoji.json` |
 | Release steps | `docs/RELEASING.md`, `scripts/release.py` |
 | README screenshots and GIFs | `scripts/make-screenshots.sh` → `assets/screenshots/` (scenes in `MacJiTests/Screenshots/`) |
+| Website (GitHub Pages) | `WEB/` (deployed by `.github/workflows/pages.yml`) |
 | Shared script values (bundle ID, cert name, repos) | `scripts/config.sh`, `scripts/config.py` |
 
 ## Tree
@@ -41,6 +42,7 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
     feature_request.md — feature request template
   workflows/ — CI
     ci.yml — build, check.sh and test.sh on macos-latest, unsigned
+    pages.yml — deploy WEB/ to GitHub Pages on pushes to main that touch it
 .gitignore — build output, local signing, secrets, the one-shot prompt
 .gitmodules — the Upstream/octopus submodule
 CHANGELOG.md — dated release notes; fed into the appcast
@@ -194,6 +196,25 @@ README.md — pitch, install, first launch, permissions, usage, build, Built on 
 SECURITY.md — how to report a vulnerability; signing and update model
 Upstream/ — reference sources
   octopus/ — Octopus git submodule, reference only, never compiled
+WEB/ — product website, served by GitHub Pages (static, no build step)
+  404.html — Pages not-found page (absolute /MacJi/ paths)
+  assets/ — site-only copies of images and data
+    data/ — data the live demo reads
+      emoji.json — copy of MacJi/Shared/EmojiData/Resources/emoji.json; refresh it when that changes
+    icon/ — favicon and app icon copied from assets/icon
+    screenshots/ — picker, search, settings and panel shots copied from assets/screenshots
+  css/ — stylesheets
+    base.css — design tokens (light + dark), nav, buttons, keycaps, footer
+    home.css — landing page layout and the inline-panel demo window
+    thank-you.css — thank-you and 404 layout, confetti canvas
+  index.html — landing page with the live ::term demo
+  js/ — scripts, no dependencies
+    confetti.js — party-popper confetti and glitter shower canvas
+    demo.js — working copy of the inline panel (trigger rule + EmojiSearch ranking)
+    release.js — latest release's .dmg from the GitHub API, Releases-page fallback
+    thank-you.js — starts the download, fires the confetti
+    theme.js — light/dark theme, scrolled nav, pointer parallax
+  thank-you.html — after Download: starts the .dmg, confetti, first-launch steps
 assets/ — images used by the README
   icon/ — app icon PNGs for the README header
   screenshots/ — README images and GIFs, light and dark (written by scripts/make-screenshots.sh)

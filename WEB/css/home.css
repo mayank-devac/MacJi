@@ -1,0 +1,789 @@
+/*
+  home.css · MacJi website · Created: 2026-11-26
+  Landing page layout: hero, the inline-panel demo window, bento cards, tiles, shortcuts,
+  privacy, install steps and the closing call to action.
+*/
+
+.d0 { --i: 0; }
+.d1 { --i: 1; }
+.d2 { --i: 2; }
+.d3 { --i: 3; }
+.d4 { --i: 4; }
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent-text);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.note {
+  margin: 0;
+  color: var(--text3);
+  font-size: 13px;
+}
+
+/* //// Screenshots come in pairs; the pair member that matches the theme is shown. */
+.shot-dark {
+  display: none;
+}
+[data-theme="dark"] .shot-light {
+  display: none;
+}
+[data-theme="dark"] .shot-dark {
+  display: block;
+}
+
+/* ////////////////////
+   //// Hero
+   /// Pitch left, live demo right, on a soft blue-and-sunshine glow taken from the app icon. */
+
+.hero {
+  position: relative;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 72px) var(--gutter) 48px;
+  display: grid;
+  grid-template-columns: minmax(300px, 440px) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -80px -10% -40px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(36% 46% at 72% 42%, var(--glow), transparent 70%),
+    radial-gradient(26% 34% at 88% 78%, rgba(255, 201, 60, 0.16), transparent 70%),
+    radial-gradient(30% 40% at 10% 10%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 70%);
+}
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+.app-icon {
+  width: 112px;
+  height: 112px;
+  margin: -12px 0 -4px -10px;
+  filter: drop-shadow(0 12px 24px rgba(0, 60, 160, 0.22));
+}
+h1 {
+  margin: 0;
+  font:
+    700 clamp(44px, 6vw, 72px)/1.03 -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "Helvetica Neue",
+    sans-serif;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.lede {
+  margin: 0;
+  color: var(--text2);
+  font-size: 19px;
+  line-height: 1.5;
+  max-width: 38ch;
+  text-wrap: pretty;
+}
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* ////////////////// */
+
+/* ////////////////////
+   //// Demo window
+   /// A macOS document window. The input's font must match .mirror exactly: the mirror measures
+   /// the text before "::" so the panel lands under the trigger, like the real caret placement. */
+
+.demo {
+  min-width: 0;
+}
+.window {
+  position: relative;
+  background: var(--window);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  transition:
+    box-shadow 0.3s var(--ease),
+    background-color 0.4s var(--ease);
+}
+.window:focus-within {
+  box-shadow: var(--shadow), 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.titlebar {
+  position: relative;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--window-bar);
+  border-bottom: 1px solid var(--line2);
+  border-radius: 14px 14px 0 0;
+}
+.lights {
+  position: absolute;
+  left: 14px;
+  display: flex;
+  gap: 8px;
+}
+.lights i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+}
+.lights i:nth-child(2) {
+  background: #febc2e;
+}
+.lights i:nth-child(3) {
+  background: #28c840;
+}
+.title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+}
+.doc {
+  position: relative;
+  min-height: 400px;
+  padding: 26px clamp(18px, 3vw, 34px) 32px;
+  font-size: 18px;
+}
+.doc-title {
+  margin: 0 0 12px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.doc p {
+  margin: 0 0 8px;
+}
+.line {
+  position: relative;
+}
+.line input,
+.mirror {
+  font: 400 18px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  letter-spacing: -0.022em;
+}
+.line input {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  caret-color: var(--accent);
+  outline: none;
+}
+.line input:focus-visible {
+  box-shadow: none;
+}
+.line input::placeholder {
+  color: var(--text3);
+}
+.mirror {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  white-space: pre;
+  pointer-events: none;
+}
+.demo.playing .line input {
+  caret-color: transparent;
+}
+
+/* //// The panel itself: card, header, eight-column grid, footer with key hints. */
+
+.panel {
+  position: absolute;
+  z-index: 3;
+  width: min(320px, calc(100% - 24px));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--line);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 12px 28px rgba(0, 0, 0, 0.16),
+    0 24px 60px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  transform: translateY(-4px) scale(0.97);
+  transform-origin: 20px 0;
+  transition:
+    opacity 0.16s var(--ease),
+    transform 0.28s var(--spring);
+  overflow: hidden;
+}
+.panel.shown {
+  opacity: 1;
+  transform: none;
+}
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 14px 9px;
+  border-bottom: 1px solid var(--line2);
+  font-size: 13px;
+}
+.panel-app {
+  font-weight: 600;
+  color: var(--text2);
+}
+.panel-term {
+  font: 600 14px/1 ui-monospace, "SF Mono", Menlo, monospace;
+  letter-spacing: 0;
+}
+.panel-count {
+  margin-left: auto;
+  color: var(--text3);
+  font-variant-numeric: tabular-nums;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+  padding: 8px;
+  height: 128px;
+  overflow-y: auto;
+  align-content: start;
+  scrollbar-width: thin;
+}
+.cell {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  font-size: 24px;
+  line-height: 1;
+  cursor: default;
+  transition: background-color 0.12s var(--ease);
+}
+.cell:hover {
+  background: var(--chip-h);
+}
+.cell.on {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.panel-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 10px 6px;
+  color: var(--text2);
+  font-size: 13px;
+}
+.panel-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border-top: 1px solid var(--line2);
+}
+.pick-emoji {
+  font-size: 22px;
+  line-height: 1;
+}
+.pick-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+}
+.hints {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text2);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.hints kbd {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  font-size: 11px;
+  border-bottom-width: 1px;
+}
+.hints kbd + kbd,
+.hints kbd:not(:first-child) {
+  margin-left: 4px;
+}
+.copied {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.9);
+  transition:
+    opacity 0.18s var(--ease),
+    transform 0.3s var(--spring);
+  pointer-events: none;
+}
+.copied.shown {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+@keyframes float-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-46px) scale(1.7);
+  }
+}
+.float {
+  position: absolute;
+  z-index: 4;
+  font-size: 22px;
+  line-height: 1.6;
+  pointer-events: none;
+  animation: float-up 1s var(--ease) forwards;
+}
+.demo-hint {
+  margin: 16px 0 0;
+  text-align: center;
+  color: var(--text2);
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.5s var(--ease),
+    transform 0.5s var(--ease);
+}
+.demo-hint.shown {
+  opacity: 1;
+  transform: none;
+}
+.window noscript img {
+  border-radius: 0 0 14px 14px;
+}
+
+/* ////////////////// */
+
+/* //// Trust strip */
+
+.strip {
+  list-style: none;
+  max-width: var(--max);
+  margin: 8px auto 0;
+  padding: 0 var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.strip li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--text2);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ////////////////////
+   //// Sections */
+
+.section {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: clamp(72px, 10vw, 120px) var(--gutter) 0;
+}
+.section-head {
+  max-width: 720px;
+  margin: 0 auto 44px;
+  text-align: center;
+}
+.section h2,
+.final h2 {
+  margin: 8px 0 0;
+  font:
+    700 clamp(32px, 4.4vw, 52px)/1.08 -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    sans-serif;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.section-lede {
+  margin: 16px auto 0;
+  max-width: 56ch;
+  color: var(--text2);
+  font-size: 19px;
+  text-wrap: pretty;
+}
+.section h3 {
+  margin: 0 0 6px;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* //// Bento cards with screenshots */
+
+.bento {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: var(--r-xl);
+  padding: clamp(24px, 3vw, 36px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  transition: background-color 0.4s var(--ease);
+}
+.card p {
+  margin: 0;
+  color: var(--text2);
+  font-size: 16px;
+  max-width: 46ch;
+}
+.card kbd {
+  margin-right: 2px;
+}
+.shot {
+  margin: auto auto 0;
+  max-width: 300px;
+}
+.shot img {
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+.card-wide {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding-bottom: 0;
+}
+.shot-settings {
+  max-width: 400px;
+  max-height: 360px;
+  margin: 0 auto;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent);
+  mask-image: linear-gradient(to bottom, #000 72%, transparent);
+}
+.shot-settings img {
+  border-radius: 18px 18px 0 0;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+.tile {
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: var(--r-lg);
+  padding: 26px;
+  transition: background-color 0.4s var(--ease);
+}
+.tile-icon {
+  display: block;
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.tile h3 {
+  font-size: 18px;
+}
+.tile p {
+  margin: 0;
+  color: var(--text2);
+  font-size: 15px;
+}
+
+/* ////////////////// */
+
+/* //// Shortcuts */
+
+.keys {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.keys-card {
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: var(--r-xl);
+  padding: clamp(22px, 3vw, 32px);
+}
+.keys-card dl {
+  margin: 12px 0 0;
+}
+.keys-card dl div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line2);
+}
+.keys-card dt {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  font-size: 15px;
+  color: var(--text2);
+}
+.keys-card dd {
+  margin: 0;
+  font-size: 15px;
+  text-align: right;
+}
+
+/* //// Privacy */
+
+.privacy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: clamp(32px, 6vw, 80px);
+  align-items: center;
+}
+.privacy-intro .section-lede {
+  margin-left: 0;
+}
+.privacy-intro a {
+  display: inline-block;
+  margin-top: 18px;
+  font-size: 16px;
+}
+.privacy-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.privacy-list li {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: var(--r-lg);
+}
+.privacy-list li > span {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--chip);
+  font-size: 24px;
+}
+.privacy-list h3 {
+  font-size: 17px;
+  margin-bottom: 2px;
+}
+.privacy-list p {
+  margin: 0;
+  color: var(--text2);
+  font-size: 15px;
+}
+
+/* //// Install */
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.steps li {
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: var(--r-lg);
+  padding: 28px;
+}
+.step-num {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+}
+.steps h3 {
+  font-size: 19px;
+}
+.steps p {
+  margin: 0;
+  color: var(--text2);
+  font-size: 15px;
+}
+.steps b {
+  color: var(--text);
+  font-weight: 600;
+}
+.details {
+  max-width: 760px;
+  margin: 28px auto 0;
+  color: var(--text2);
+  font-size: 15px;
+}
+.details summary {
+  cursor: pointer;
+  color: var(--accent-text);
+  text-align: center;
+  font-size: 16px;
+}
+.details pre {
+  margin: 10px 0 16px;
+  padding: 14px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.details pre code {
+  background: none;
+  padding: 0;
+  color: var(--text);
+}
+
+/* //// Closing call to action */
+
+.final {
+  position: relative;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: clamp(96px, 12vw, 150px) var(--gutter) 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.final::before {
+  content: "";
+  position: absolute;
+  inset: 20% 10% -10%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 50% at 50% 45%, var(--glow), transparent 70%),
+    radial-gradient(22% 30% at 62% 60%, rgba(255, 201, 60, 0.14), transparent 70%);
+}
+.final img {
+  width: 96px;
+  height: 96px;
+  filter: drop-shadow(0 12px 24px rgba(0, 60, 160, 0.22));
+}
+.final > p {
+  margin: 0 0 10px;
+  color: var(--text2);
+  font-size: 19px;
+}
+.final .note {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text3);
+}
+.footer-credits {
+  max-width: var(--max);
+  margin: 14px auto 0;
+}
+
+/* ////////////////////
+   //// Narrow screens
+   /// One column below 960 px; the demo moves under the pitch and keeps its full width. */
+
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero-copy {
+    align-items: center;
+    text-align: center;
+  }
+  .app-icon {
+    margin: 0;
+  }
+  .cta {
+    justify-content: center;
+  }
+  .bento,
+  .keys,
+  .privacy,
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .card-wide {
+    grid-column: auto;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .privacy-intro {
+    text-align: center;
+  }
+  .privacy-intro .section-lede {
+    margin-left: auto;
+  }
+}
+@media (max-width: 520px) {
+  .cta {
+    flex-direction: column;
+    align-self: stretch;
+  }
+  .cta .btn {
+    width: 100%;
+  }
+  .hints {
+    display: none;
+  }
+  .keys-card dl div {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .keys-card dd {
+    text-align: left;
+  }
+}
+
+/* ////////////////// */

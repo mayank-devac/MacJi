@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<!--
+  index.html · MacJi website · Created: 2026-11-26
+  Landing page: hero with the live inline-panel demo, picker, features, shortcuts, privacy, install.
+-->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>MacJi · Emoji anywhere you type</title>
+  <meta name="description" content="MacJi is a free, open-source menu-bar app for macOS. Type ::rocket in any app, press Return, and it becomes 🚀.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#fbfbfd">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MacJi · Emoji anywhere you type">
+  <meta property="og:description" content="Type ::rocket in any Mac app, press Return, and it becomes 🚀. Free and open source.">
+  <meta property="og:image" content="https://mayank-devac.github.io/MacJi/assets/screenshots/inline-panel-light.png">
+  <meta property="og:url" content="https://mayank-devac.github.io/MacJi/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="assets/icon/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/icon/icon-256.png">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/home.css">
+  <script src="js/theme.js"></script>
+  <script src="js/release.js" defer></script>
+  <script src="js/demo.js" defer></script>
+</head>
+
+<body>
+  <a class="sr-only" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="brand" href="./" aria-label="MacJi home">
+      <img src="assets/icon/icon-256.png" alt="" width="28" height="28">MacJi
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#features">Features</a>
+      <a href="#shortcuts">Shortcuts</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#install">Install</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn small" href="thank-you.html" data-fx="3">Download</a>
+      <a class="theme" href="https://github.com/mayank-devac/MacJi" aria-label="MacJi on GitHub" data-fx="4">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+        </svg>
+      </a>
+      <button class="theme" id="theme" type="button" aria-label="Switch theme" data-fx="4">
+        <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+        </svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2" fill="currentColor" />
+          <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- //// Hero: pitch on the left, the working panel on the right -->
+    <section class="hero">
+      <div class="hero-copy">
+        <img class="app-icon rise d0" src="assets/icon/icon-512.png" alt="MacJi app icon" width="112" height="112">
+        <p class="eyebrow rise d1">Free · Open source · macOS 14.6 or later</p>
+        <h1 class="rise d1">Emoji anywhere you&nbsp;type.</h1>
+        <p class="lede rise d2">Type <code>::rocket</code> in any Mac app, press Return, and it becomes 🚀. MacJi lives in your menu bar, with no Dock icon, no account and no analytics.</p>
+        <div class="cta rise d3">
+          <a class="btn" href="thank-you.html" data-fx="6">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 4v11M7 10.5l5 5 5-5M5 20h14" />
+            </svg>
+            Download for Mac
+          </a>
+          <a class="btn ghost" href="https://github.com/mayank-devac/MacJi" data-fx="4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8.5 7 3.5 12l5 5M15.5 7l5 5-5 5" />
+            </svg>
+            View source
+          </a>
+        </div>
+        <p class="note rise d4">
+          <span hidden data-release="version-line">Version <span data-release="version"></span> · <span data-release="size"></span> · </span>Universal app for Apple silicon and Intel
+        </p>
+      </div>
+
+      <div class="demo rise d3" id="demo">
+        <div class="window">
+          <div class="titlebar">
+            <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="title">Launch notes</span>
+          </div>
+          <div class="doc" id="demo-doc">
+            <h2 class="doc-title">Launch checklist</h2>
+            <p>✅ Tests pass on CI</p>
+            <p>✅ Release notes written</p>
+            <div class="line">
+              <label class="sr-only" for="demo-input">Try MacJi: type two colons and a word, such as ::heart</label>
+              <input id="demo-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+                placeholder="Type ::heart, then press Return" role="combobox" aria-autocomplete="list"
+                aria-expanded="false" aria-controls="demo-grid">
+              <span class="mirror" id="demo-mirror" aria-hidden="true"></span>
+            </div>
+
+            <div class="panel" id="demo-panel" hidden>
+              <div class="panel-head">
+                <span class="panel-app">MacJi</span>
+                <span class="panel-term" id="demo-term">::</span>
+                <span class="panel-count" id="demo-count"></span>
+              </div>
+              <div class="grid" id="demo-grid" role="listbox" aria-label="Matching emoji"></div>
+              <div class="panel-foot">
+                <span class="pick-emoji" id="demo-pick-emoji" aria-hidden="true"></span>
+                <span class="pick-name" id="demo-pick-name"></span>
+                <span class="hints" aria-hidden="true"><kbd>↩</kbd> Insert <kbd>⇧↩</kbd> Copy <kbd>esc</kbd></span>
+              </div>
+              <div class="copied" id="demo-copied" role="status"></div>
+            </div>
+          </div>
+          <noscript>
+            <img class="shot-light" src="assets/screenshots/inline-panel-light.png" alt="Typing ::roc opens the MacJi panel with the rocket selected" width="1576" height="1116">
+          </noscript>
+        </div>
+        <p class="demo-hint" id="demo-hint">Your turn. Click the note and try <code>::heart</code>, <code>::party</code> or <code>::cat</code>.</p>
+        <p class="sr-only" id="demo-live" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- //// Trust strip -->
+    <ul class="strip" aria-label="At a glance">
+      <li><span aria-hidden="true">🆓</span> Free forever</li>
+      <li><span aria-hidden="true">🔓</span> MIT licensed</li>
+      <li><span aria-hidden="true">🙈</span> No analytics</li>
+      <li><span aria-hidden="true">👤</span> No account</li>
+      <li><span aria-hidden="true">🪶</span> Menu bar only</li>
+    </ul>
+
+    <!-- //// Bento: the picker and friends -->
+    <section class="section" id="features">
+      <header class="section-head">
+        <p class="eyebrow">Two ways in</p>
+        <h2>Type it inline, or pick it from the menu&nbsp;bar.</h2>
+        <p class="section-lede">The inline panel keeps your hands on the keys. The picker is there when you'd rather browse.</p>
+      </header>
+
+      <div class="bento">
+        <article class="card card-tall">
+          <div class="card-text">
+            <h3>Emoji picker</h3>
+            <p>Click the menu-bar icon or press <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>Space</kbd> from any app. Browse by category, pick from your recents, or search, all from the keyboard.</p>
+          </div>
+          <figure class="shot">
+            <img class="shot-light" src="assets/screenshots/picker-light.png" alt="The MacJi picker under its menu-bar icon, showing recently used emoji and the Smileys category" width="832" height="1048" loading="lazy">
+            <img class="shot-dark" src="assets/screenshots/picker-dark.png" alt="The MacJi picker in dark mode, showing recently used emoji and the Smileys category" width="832" height="1048" loading="lazy">
+          </figure>
+        </article>
+
+        <article class="card card-tall">
+          <div class="card-text">
+            <h3>Search that guesses right</h3>
+            <p>Ranked like you think: exact names first, then names that start with what you typed, then everything else. <code>heart</code> finds ❤️ before 💔.</p>
+          </div>
+          <figure class="shot">
+            <img class="shot-light" src="assets/screenshots/picker-search-light.png" alt="The picker searching for heart, with Red Heart as the best match" width="832" height="1048" loading="lazy">
+            <img class="shot-dark" src="assets/screenshots/picker-search-dark.png" alt="The picker searching for heart in dark mode, with Red Heart as the best match" width="832" height="1048" loading="lazy">
+          </figure>
+        </article>
+
+        <article class="card card-wide">
+          <div class="card-text">
+            <h3>Settings that fit on one screen</h3>
+            <p>Change the trigger, the picker shortcut and launch at login. See whether MacJi has Accessibility access and fix it in one click.</p>
+          </div>
+          <figure class="shot shot-settings">
+            <img class="shot-light" src="assets/screenshots/settings-light.png" alt="MacJi Settings with the inline panel, picker shortcut and permission status" width="1136" height="1296" loading="lazy">
+            <img class="shot-dark" src="assets/screenshots/settings-dark.png" alt="MacJi Settings in dark mode" width="1136" height="1296" loading="lazy">
+          </figure>
+        </article>
+      </div>
+
+      <div class="tiles">
+        <article class="tile">
+          <span class="tile-icon" aria-hidden="true">📍</span>
+          <h3>Opens at your caret</h3>
+          <p>The panel appears right under the text you're typing. In apps that don't report a caret, it opens at the pointer.</p>
+        </article>
+        <article class="tile">
+          <span class="tile-icon" aria-hidden="true">🧑‍💻</span>
+          <h3>Stays out of your code</h3>
+          <p>The trigger never fires right after a letter or digit, so <code>std::string</code> stays plain text.</p>
+        </article>
+        <article class="tile">
+          <span class="tile-icon" aria-hidden="true">🕘</span>
+          <h3>One list of recents</h3>
+          <p>Emoji you insert inline and emoji you copy from the picker go into the same Recently Used row.</p>
+        </article>
+        <article class="tile">
+          <span class="tile-icon" aria-hidden="true">🔐</span>
+          <h3>Tells you when it can't work</h3>
+          <p>When a password field turns on Secure Input, macOS hides keystrokes from every app. MacJi tells you which app holds it and how to release it.</p>
+        </article>
+        <article class="tile">
+          <span class="tile-icon" aria-hidden="true">🔄</span>
+          <h3>Updates itself, safely</h3>
+          <p>Sparkle checks every update against MacJi's EdDSA signature before it installs.</p>
+        </article>
+        <article class="tile">
+          <span class="tile-icon" aria-hidden="true">🌗</span>
+          <h3>Feels like macOS</h3>
+          <p>Native SwiftUI and AppKit. Follows Light and Dark mode, your accent colour and Increase Contrast.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- //// Shortcuts -->
+    <section class="section" id="shortcuts">
+      <header class="section-head">
+        <p class="eyebrow">Keyboard first</p>
+        <h2>Every emoji is a few keys&nbsp;away.</h2>
+      </header>
+      <div class="keys">
+        <div class="keys-card">
+          <h3>Inline panel</h3>
+          <dl>
+            <div><dt><kbd>::</kbd> + word</dt><dd>Open the panel with matching emoji</dd></div>
+            <div><dt><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd></dt><dd>Move the selection</dd></div>
+            <div><dt><kbd>↩</kbd></dt><dd>Replace <code>::word</code> with the emoji</dd></div>
+            <div><dt><kbd>⇧</kbd><kbd>↩</kbd></dt><dd>Copy the emoji, leave your text as it is</dd></div>
+            <div><dt><kbd>esc</kbd></dt><dd>Close the panel</dd></div>
+            <div><dt><kbd>Space</kbd></dt><dd>Close the panel and keep typing</dd></div>
+          </dl>
+        </div>
+        <div class="keys-card">
+          <h3>Emoji picker</h3>
+          <dl>
+            <div><dt><kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>Space</kbd></dt><dd>Open the picker from any app</dd></div>
+            <div><dt>Type</dt><dd>Search by name or keyword</dd></div>
+            <div><dt><kbd>↩</kbd></dt><dd>Copy the emoji and close</dd></div>
+            <div><dt><kbd>⌥</kbd><kbd>↩</kbd></dt><dd>Copy the emoji and keep the picker open</dd></div>
+            <div><dt><kbd>⇥</kbd></dt><dd>Filter by category</dd></div>
+            <div><dt><kbd>esc</kbd></dt><dd>Close the picker</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- //// Privacy -->
+    <section class="section" id="privacy">
+      <div class="privacy">
+        <div class="privacy-intro">
+          <p class="eyebrow">Privacy</p>
+          <h2>One permission. Nothing leaves your&nbsp;Mac.</h2>
+          <p class="section-lede">MacJi asks for Accessibility access so the inline panel can see the trigger and type the emoji for you. That's all it's used for.</p>
+          <a href="https://github.com/mayank-devac/MacJi/blob/main/PRIVACY.md">Read the privacy policy</a>
+        </div>
+        <ul class="privacy-list">
+          <li>
+            <span aria-hidden="true">⌨️</span>
+            <div><h3>What it reads</h3><p>Key presses, only while the inline panel is on. Only the last few characters are kept, in memory, to match the trigger.</p></div>
+          </li>
+          <li>
+            <span aria-hidden="true">🚫</span>
+            <div><h3>What it never does</h3><p>Store, log or send keystrokes, or read the text of your documents. Turn the inline panel off and the keyboard listener is removed completely.</p></div>
+          </li>
+          <li>
+            <span aria-hidden="true">🖱️</span>
+            <div><h3>What works without it</h3><p>The emoji picker. Its shortcut and copying need no permission at all.</p></div>
+          </li>
+          <li>
+            <span aria-hidden="true">🛟</span>
+            <div><h3>If you take access away</h3><p>MacJi notices, stops listening at once and restarts, so your keyboard never gets stuck.</p></div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- //// Install -->
+    <section class="section" id="install">
+      <header class="section-head">
+        <p class="eyebrow">Install</p>
+        <h2>Up and running in a&nbsp;minute.</h2>
+      </header>
+      <ol class="steps">
+        <li>
+          <span class="step-num" aria-hidden="true">1</span>
+          <h3>Download</h3>
+          <p>Get the latest <code>MacJi-<span data-release="version">x.y.z</span>.dmg</code> and drag MacJi into Applications.</p>
+        </li>
+        <li>
+          <span class="step-num" aria-hidden="true">2</span>
+          <h3>Open it once</h3>
+          <p>MacJi is signed but not notarized, so macOS asks first. Open <b>System Settings → Privacy &amp; Security</b> and click <b>Open Anyway</b>.</p>
+        </li>
+        <li>
+          <span class="step-num" aria-hidden="true">3</span>
+          <h3>Allow Accessibility</h3>
+          <p>Settings shows a <b>Grant Access…</b> button with a short drag-to-allow guide. Then type <code>::</code> anywhere.</p>
+        </li>
+      </ol>
+      <details class="details">
+        <summary>Prefer to check the download first?</summary>
+        <p>Each release lists SHA-256 sums in <code>SHA256SUMS.txt</code>. Compare them with:</p>
+        <pre><code>shasum -a 256 ~/Downloads/MacJi-*.dmg</code></pre>
+        <p>If the sum matches and you'd rather use Terminal than System Settings, this clears the download flag in one step:</p>
+        <pre><code>xattr -dr com.apple.quarantine /Applications/MacJi.app</code></pre>
+      </details>
+    </section>
+
+    <!-- //// Closing call to action -->
+    <section class="final">
+      <img src="assets/icon/icon-512.png" alt="" width="96" height="96" loading="lazy">
+      <h2>Say it with 🚀, not&nbsp;“rocket”.</h2>
+      <p>Free, open source and ready for your Mac.</p>
+      <a class="btn" href="thank-you.html" data-fx="6">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 4v11M7 10.5l5 5 5-5M5 20h14" />
+        </svg>
+        Download for Mac
+      </a>
+      <p class="note">Requires macOS 14.6 or later</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>© 2026 Mayank Baral. MacJi is released under the <a href="https://github.com/mayank-devac/MacJi/blob/main/LICENSE">MIT licence</a>.</p>
+      <nav aria-label="Project links">
+        <a href="https://github.com/mayank-devac/MacJi">Source code</a>
+        <a href="https://github.com/mayank-devac/MacJi/releases">Releases</a>
+        <a href="https://github.com/mayank-devac/MacJi/blob/main/CHANGELOG.md">Changelog</a>
+        <a href="https://github.com/mayank-devac/MacJi/blob/main/PRIVACY.md">Privacy</a>
+        <a href="https://github.com/mayank-devac/MacJi/issues">Report an issue</a>
+      </nav>
+    </div>
+    <p class="footer-credits">Emoji data from gemoji (MIT). Built on <a href="https://github.com/mayank-devac/octopus-mac">Octopus</a>. Not affiliated with Apple.</p>
+  </footer>
+</body>
+
+</html>

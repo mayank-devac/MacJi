@@ -1,0 +1,171 @@
+/*
+  thank-you.css · MacJi website · Created: 2026-11-26
+  Thank-you page: the popper, download status, first-launch steps and the confetti canvas.
+*/
+
+.d0 { --i: 0; }
+.d1 { --i: 1; }
+.d2 { --i: 2; }
+.d3 { --i: 3; }
+.d4 { --i: 4; }
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* ////////////////////
+   //// Page
+   /// One centred column on a glow that matches the landing page. */
+
+.thanks {
+  position: relative;
+  max-width: 720px;
+  min-height: calc(100dvh - 56px - 120px);
+  margin: 0 auto;
+  padding: clamp(32px, 7vw, 72px) var(--gutter) 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+.thanks::before {
+  content: "";
+  position: absolute;
+  inset: -60px -30% 40%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 50% at 50% 30%, var(--glow), transparent 70%),
+    radial-gradient(24% 30% at 64% 40%, rgba(255, 201, 60, 0.16), transparent 70%);
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.4) rotate(-30deg);
+  }
+  45% {
+    transform: scale(1.18) rotate(8deg);
+  }
+  70% {
+    transform: scale(0.94) rotate(-4deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+.popper {
+  font-size: 88px;
+  line-height: 1;
+  padding: 8px;
+  border-radius: 28px;
+  cursor: pointer;
+  animation:
+    rise 0.9s var(--ease) both,
+    pop 0.9s var(--spring) 0.2s both;
+  transition: transform 0.4s var(--spring);
+}
+@media (hover: hover) and (pointer: fine) {
+  .popper:hover {
+    transform: scale(1.08) rotate(-6deg);
+  }
+}
+.popper:active {
+  transform: scale(0.92);
+}
+.thanks h1 {
+  margin: 0;
+  font:
+    700 clamp(44px, 7vw, 76px)/1.03 -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+.status {
+  margin: 0;
+  min-height: 1.5em;
+  max-width: 44ch;
+  color: var(--text2);
+  font-size: 19px;
+  text-wrap: pretty;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+.note {
+  margin: 0;
+  color: var(--text3);
+  font-size: 13px;
+}
+
+/* ////////////////// */
+
+/* //// First-launch steps */
+
+.steps {
+  list-style: none;
+  width: 100%;
+  margin: 36px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  text-align: left;
+}
+.steps li {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 20px;
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: var(--r-lg);
+  transition: background-color 0.4s var(--ease);
+}
+.step-emoji {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--chip);
+  font-size: 24px;
+}
+.steps h2 {
+  margin: 2px 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.steps p {
+  margin: 0;
+  color: var(--text2);
+  font-size: 15px;
+}
+.steps b {
+  color: var(--text);
+  font-weight: 600;
+}
+.steps kbd {
+  margin-right: 2px;
+}
+.back {
+  margin: 20px 0 0;
+  font-size: 15px;
+}
+@media (max-width: 520px) {
+  .actions {
+    flex-direction: column;
+    align-self: stretch;
+  }
+  .actions .btn {
+    width: 100%;
+  }
+}

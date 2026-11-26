@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!--
+  thank-you.html · MacJi website · Created: 2026-11-26
+  After "Download": starts the .dmg, throws confetti, and walks through the first launch.
+-->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <title>Thank you · MacJi</title>
+  <meta name="description" content="Your MacJi download is starting. Here's how to open it the first time.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#fbfbfd">
+  <link rel="icon" type="image/png" href="assets/icon/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/icon/icon-256.png">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/thank-you.css">
+  <script src="js/theme.js"></script>
+  <script src="js/release.js" defer></script>
+  <script src="js/confetti.js" defer></script>
+  <script src="js/thank-you.js" defer></script>
+</head>
+
+<body>
+  <header class="nav">
+    <a class="brand" href="./" aria-label="MacJi home">
+      <img src="assets/icon/icon-256.png" alt="" width="28" height="28">MacJi
+    </a>
+    <div class="nav-actions">
+      <a class="theme" href="https://github.com/mayank-devac/MacJi" aria-label="MacJi on GitHub" data-fx="4">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.540 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.530-.49-2.69-.94-.09-.23-.48-.94-.82-1.130-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+        </svg>
+      </a>
+      <button class="theme" id="theme" type="button" aria-label="Switch theme" data-fx="4">
+        <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+        </svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2" fill="currentColor" />
+          <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="thanks">
+    <button class="popper rise d0" id="pop-again" type="button" aria-label="Pop the confetti again">🎉</button>
+    <h1 class="rise d1">Thank you!</h1>
+    <p class="status rise d2" id="download-status" role="status">Finding the latest version…</p>
+
+    <div class="actions rise d3">
+      <a class="btn" id="download-again" href="https://github.com/mayank-devac/MacJi/releases/latest" data-fx="6">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 4v11M7 10.5l5 5 5-5M5 20h14" />
+        </svg>
+        Download again
+      </a>
+      <a class="btn ghost" href="https://github.com/mayank-devac/MacJi" data-fx="4">Star on GitHub</a>
+    </div>
+    <p class="note rise d3">Requires macOS 14.6 or later · <a href="https://github.com/mayank-devac/MacJi/releases/latest" data-release="page">Release notes</a></p>
+
+    <ol class="steps rise d4">
+      <li>
+        <span class="step-emoji" aria-hidden="true">📦</span>
+        <div>
+          <h2>Open the download</h2>
+          <p>Open <code data-release="file">MacJi.dmg</code> from Downloads and drag <b>MacJi</b> into <b>Applications</b>.</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-emoji" aria-hidden="true">🛡️</span>
+        <div>
+          <h2>Allow it once</h2>
+          <p>MacJi isn't notarized, so macOS asks first. Open it, choose <b>Done</b>, then go to <b>System Settings → Privacy &amp; Security</b> and click <b>Open Anyway</b>.</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-emoji" aria-hidden="true">♿️</span>
+        <div>
+          <h2>Grant Accessibility</h2>
+          <p>In MacJi's Settings, click <b>Grant Access…</b> and drag MacJi into the list. The picker works even without it.</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-emoji" aria-hidden="true">🚀</span>
+        <div>
+          <h2>Type <code>::</code> anywhere</h2>
+          <p>Try <code>::rocket</code> in Notes, or press <kbd>⌃</kbd><kbd>⌥</kbd><kbd>⌘</kbd><kbd>Space</kbd> for the picker.</p>
+        </div>
+      </li>
+    </ol>
+
+    <p class="back"><a href="./">← Back to MacJi</a></p>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>© 2026 Mayank Baral. MacJi is released under the <a href="https://github.com/mayank-devac/MacJi/blob/main/LICENSE">MIT licence</a>.</p>
+      <nav aria-label="Project links">
+        <a href="https://github.com/mayank-devac/MacJi">Source code</a>
+        <a href="https://github.com/mayank-devac/MacJi/releases">Releases</a>
+        <a href="https://github.com/mayank-devac/MacJi/blob/main/PRIVACY.md">Privacy</a>
+        <a href="https://github.com/mayank-devac/MacJi/issues">Report an issue</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+
+</html>
