@@ -5,11 +5,11 @@
 #
 #  Created: 2026-11-26
 #  Refreshes the website's copies in WEB/assets: screenshots and icon as WebP, the PNGs that
-#  browsers and link previews need, and the emoji data the live demo reads.
+#  browsers and link previews need, and the emoji and symbol data the live demo reads.
 #
 ####################
 #### Usage
-### scripts/make-web-assets.sh    rewrite WEB/assets from assets/ and the app's emoji.json
+### scripts/make-web-assets.sh    rewrite WEB/assets from assets/ and the app's emoji and symbol data
 # Example: scripts/make-screenshots.sh && scripts/make-web-assets.sh && git diff --stat WEB
 # Needs cwebp (brew install webp).
 ##################
@@ -33,7 +33,7 @@ to_webp() {
 }
 
 mkdir -p "$web/screenshots" "$web/icon" "$web/data"
-for name in picker picker-search settings; do
+for name in picker picker-search settings symbol-panel emoticon-panel aliases-page; do
     for theme in light dark; do
         to_webp "$shots/$name-$theme.png" "$web/screenshots/$name-$theme.webp"
     done
@@ -51,6 +51,7 @@ cp "$shots/inline-panel-light.png" "$web/screenshots/inline-panel-light.png"
 cp "$icons/icon_32x32@2x.png" "$web/icon/favicon-64.png"
 cp "$icons/icon_128x128@2x.png" "$web/icon/icon-256.png"
 cp "$MACJI_ROOT/MacJi/Shared/Glyphs/Resources/emoji.json" "$web/data/emoji.json"
+cp "$MACJI_ROOT/MacJi/Shared/Glyphs/Resources/symbols.json" "$web/data/symbols.json"
 
 ##################
 

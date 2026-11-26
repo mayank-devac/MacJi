@@ -1,20 +1,30 @@
 /*
   demo.js · MacJi website · Created: 2026-11-26
-  A working copy of MacJi's inline panel in the hero: type ::term in the note and pick an emoji.
-  Uses the app's own emoji.json and the same trigger rule and ranking as GlyphSearch.swift.
+  A working copy of MacJi's inline panels in the hero: type ::term for emoji or ##term for symbols
+  in the note and pick one. Uses the app's own emoji.json and symbols.json and the same trigger
+  rule and ranking as GlyphSearch.swift.
 */
 
 (function () {
   "use strict";
 
-  var DATA_URL = "assets/data/emoji.json";
+  /// One entry per panel: its data file, what an empty term shows, and the word for its glyphs.
+  var PANELS = {
+    "::": {
+      url: "assets/data/emoji.json", noun: "emoji",
+      favourites: ["🚀", "🎉", "❤️", "👍", "😂", "✨", "🔥", "✅", "👀", "🙏", "🥳", "💯", "👋", "🤔", "😎", "🫶"],
+    },
+    "##": {
+      url: "assets/data/symbols.json", noun: "symbols",
+      favourites: ["→", "←", "↔", "⇒", "≠", "≈", "±", "×", "÷", "°", "€", "£", "©", "™", "⌘", "⌥"],
+    },
+  };
   var COLUMNS = 8;
   var RESULT_LIMIT = 64;
   var QUERY_MAX = 32;
   var SCRIPT = "Tell the team we ship today ::roc";
   var TARGET = "🚀";
-  var FAVOURITES = ["🚀", "🎉", "❤️", "👍", "😂", "✨", "🔥", "✅", "👀", "🙏", "🥳", "💯", "👋", "🤔", "😎", "🫶"];
-  var TRIGGER = new RegExp("(^|[^A-Za-z0-9:])::([A-Za-z0-9_+\\-]{0," + QUERY_MAX + "})$");
+  var TRIGGER = new RegExp("(^|[^A-Za-z0-9:#])(::|##)([A-Za-z0-9_+\\-]{0," + QUERY_MAX + "})$");
 
   var demo = document.getElementById("demo");
   if (!demo) return;
@@ -32,24 +42,25 @@
   var doc = document.getElementById("demo-doc");
   var reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  var catalog = [];
-  var byEmoji = {};
-  var state = { open: false, start: -1, results: [], selected: 0, dismissedAt: -1 };
+  var state = { open: false, panel: null, start: -1, results: [], selected: 0, dismissedAt: -1 };
   var autoplay = { running: false, timers: [] };
 
   ////////////////////
   //// Catalog and ranking
   /// Mirrors GlyphCatalog + GlyphSearch: 0 exact alias · 1 alias prefix · 2 word prefix · 3 anywhere.
+  /// Each panel's data loads once, the symbols only when "##" is first typed.
   // Buckets keep catalog order inside each rank, exactly like the app, so "roc" shows 🪨 then 🚀.
 
-  function load() {
-    return fetch(DATA_URL)
+  function load(panel) {
+    if (panel.loading) return panel.loading;
+    panel.loading = fetch(panel.url)
       .then(function (response) {
-        if (!response.ok) throw new Error("emoji.json " + response.status);
+        if (!response.ok) throw new Error(panel.url + " " + response.status);
         return response.json();
       })
       .then(function (items) {
-        catalog = items.map(function (item) {
+        panel.byGlyph = {};
+        panel.catalog = items.map(function (item) {
           var words = [item.description].concat(item.tags).join(" ").toLowerCase();
           var entry = {
             emoji: item.emoji,
@@ -58,10 +69,11 @@
             keywords: [item.description].concat(item.aliases, item.tags).join(" ").toLowerCase(),
             words: words.split(/[^a-z0-9]+/).filter(Boolean),
           };
-          byEmoji[item.emoji] = entry;
+          panel.byGlyph[item.emoji] = entry;
           return entry;
         });
       });
+    return panel.loading;
   }
 
   function rank(entry, term) {
@@ -71,13 +83,13 @@
     return 3;
   }
 
-  function search(query) {
+  function search(panel, query) {
     var term = query.toLowerCase();
     if (!term) {
-      return FAVOURITES.map(function (emoji) { return byEmoji[emoji]; }).filter(Boolean);
+      return panel.favourites.map(function (glyph) { return panel.byGlyph[glyph]; }).filter(Boolean);
     }
     var buckets = [[], [], [], []];
-    catalog.forEach(function (entry) {
+    panel.catalog.forEach(function (entry) {
       if (entry.keywords.indexOf(term) > -1) buckets[rank(entry, term)].push(entry);
     });
     return buckets[0].concat(buckets[1], buckets[2], buckets[3]).slice(0, RESULT_LIMIT);
@@ -88,15 +100,15 @@
 
   ////////////////////
   //// Trigger tracking
-  /// Same rule as InlineTrigger: "::" not glued to a letter or digit (so std::string stays quiet),
-  /// then letters, digits, _ + or -. A space or punctuation ends the term and closes the panel.
+  /// Same rule as InlineTrigger: "::" or "##" not glued to a letter or digit (so std::string and
+  /// a##b stay quiet), then letters, digits, _ + or -. A space or punctuation ends the term.
 
   function readTrigger() {
     var caret = input.selectionStart;
     if (caret !== input.selectionEnd) return null;
     var match = TRIGGER.exec(input.value.slice(0, caret));
     if (!match) return null;
-    return { start: caret - match[2].length - 2, term: match[2], caret: caret };
+    return { trigger: match[2], start: caret - match[3].length - 2, term: match[3], caret: caret };
   }
 
   function update() {
@@ -106,10 +118,16 @@
       close();
       return;
     }
+    var panelData = PANELS[trigger.trigger];
+    if (!panelData.catalog) {
+      load(panelData).then(update, close);
+      return;
+    }
+    state.panel = panelData;
     state.start = trigger.start;
-    state.results = search(trigger.term);
+    state.results = search(panelData, trigger.term);
     state.selected = 0;
-    termLabel.textContent = "::" + trigger.term;
+    termLabel.textContent = trigger.trigger + trigger.term;
     render();
     open();
     place(trigger.start);
@@ -127,11 +145,11 @@
     if (!state.results.length) {
       var empty = document.createElement("p");
       empty.className = "panel-empty";
-      empty.textContent = "No emoji match. Keep typing or press Esc.";
+      empty.textContent = "No " + state.panel.noun + " match. Keep typing or press Esc.";
       grid.appendChild(empty);
       pickEmoji.textContent = "";
       pickName.textContent = "";
-      announce("No emoji match");
+      announce("No " + state.panel.noun + " match");
       return;
     }
     state.results.forEach(function (entry, index) {
@@ -151,7 +169,7 @@
       grid.appendChild(cell);
     });
     select(0);
-    announce(state.results.length + " emoji. " + state.results[0].name + " selected.");
+    announce(state.results.length + " " + state.panel.noun + ". " + state.results[0].name + " selected.");
   }
 
   function select(index) {
@@ -199,7 +217,7 @@
     input.removeAttribute("aria-activedescendant");
   }
 
-  //// Under the "::" like the real panel under the caret; clamped inside the note.
+  //// Under the trigger like the real panel under the caret; clamped inside the note.
   function place(start) {
     mirror.textContent = input.value.slice(0, start) || "​";
     var lineBox = input.getBoundingClientRect();
@@ -321,8 +339,8 @@
   //// Keeps the sentence already in the note when the new term still fits on its line.
   document.querySelectorAll("[data-try]").forEach(function (chip) {
     chip.addEventListener("click", function () {
-      var term = "::" + chip.dataset.try;
-      var kept = input.value.replace(/::[A-Za-z0-9_+\-]*$/, "").trim();
+      var term = chip.dataset.try;
+      var kept = input.value.replace(/(::|##)[A-Za-z0-9_+\-]*$/, "").trim();
       var line = kept ? kept + " " + term : term;
       mirror.textContent = line;
       writeAtEnd(mirror.offsetWidth < input.clientWidth ? line : term);
@@ -389,7 +407,7 @@
     finish();
   }
 
-  load()
+  load(PANELS["::"])
     .then(function () {
       demo.classList.add("ready");
       if (reduceMotion || !("IntersectionObserver" in window)) {
