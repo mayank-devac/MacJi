@@ -48,5 +48,13 @@ jobs:
       - name: Test
         run: scripts/test.sh --unsigned
 
+      - name: Upload build and test logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: .build/*.log
+          retention-days: 7
+
 #### Swift Testing passes a filter that matches nothing; test.sh fails when zero tests ran.
 ##################
