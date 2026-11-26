@@ -54,6 +54,7 @@ jobs:
         with:
           name: logs
           path: .build/*.log
+          include-hidden-files: true
           retention-days: 7
 
 #### Swift Testing passes a filter that matches nothing; test.sh fails when zero tests ran.
