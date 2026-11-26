@@ -204,14 +204,15 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
     icon/ — favicon and app icon from assets/icon (written by scripts/make-web-assets.sh)
     screenshots/ — WebP screenshots plus the link-preview PNG (written by scripts/make-web-assets.sh)
   css/ — stylesheets
-    base.css — design tokens (light + dark), page glow, nav, buttons, keycaps, footer, motion
+    base.css — design tokens (light + dark), page glow, nav, buttons, keycaps, footer, motion, confetti canvas
     demo.css — the hero's note window, inline emoji panel and "try it" chips
     home.css — landing page layout
     pointer.css — iPadOS-style pointer: dot, platter and text beam
-    thank-you.css — thank-you and 404 layout, confetti canvas
+    thank-you.css — thank-you and 404 layout
   index.html — landing page with the live ::term demo
   js/ — scripts, no dependencies
-    confetti.js — party-popper confetti and glitter shower canvas
+    confetti-sprites.js — confetti shapes with their glow, painted once and cached
+    confetti.js — click-anywhere confetti on every page, side poppers and the 🎉 party shower
     demo.js — working copy of the inline panel (trigger rule + EmojiSearch ranking)
     pointer.js — iPadOS-style pointer and button parallax, ported from the Octopus site
     release.js — latest release's .dmg from the GitHub API, Releases-page fallback

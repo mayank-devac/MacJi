@@ -34,6 +34,8 @@
   <script src="js/theme.js"></script>
   <script src="js/release.js" defer></script>
   <script src="js/demo.js" defer></script>
+  <script src="js/confetti-sprites.js" defer></script>
+  <script src="js/confetti.js" defer></script>
   <script src="js/pointer.js" defer></script>
 </head>
 
@@ -74,33 +76,24 @@
     <!-- //// Hero: pitch on the left, the working panel on the right -->
     <section class="hero">
       <div class="hero-copy">
-        <img class="app-icon rise d0" src="assets/icon/icon-256.webp" alt="MacJi app icon" width="96" height="96" fetchpriority="high">
-        <p class="eyebrow rise d1">Free · Open source · macOS 14.6 or later</p>
-        <h1 class="rise d1">
+        <h1 class="rise d0">
           <span class="h1-line">Emoji anywhere</span>
-          <span class="h1-line"><span class="grad">you type.</span><span class="caret" aria-hidden="true"></span></span>
+          <span class="h1-line"><span class="h1-accent">you type.</span><span class="caret" aria-hidden="true"></span></span>
         </h1>
-        <p class="lede rise d2">Type <code>::rocket</code> in any Mac app, press Return, and it becomes 🚀.</p>
-        <div class="cta rise d3">
+        <p class="lede rise d1">Type <code>::rocket</code> in any Mac app, press Return, and it becomes 🚀.</p>
+        <div class="cta rise d2">
           <a class="btn" href="thank-you.html" data-fx="6">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M12 4v11M7 10.5l5 5 5-5M5 20h14" />
             </svg>
             Download for Mac
           </a>
-          <a class="btn ghost" href="https://github.com/mayank-devac/MacJi" data-fx="4">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M8.5 7 3.5 12l5 5M15.5 7l5 5-5 5" />
-            </svg>
-            View source
-          </a>
+          <a class="source" href="https://github.com/mayank-devac/MacJi">View source</a>
         </div>
-        <p class="note rise d4">
-          <span hidden data-release="version-line">Version <span data-release="version"></span> · <span data-release="size"></span> · </span>Universal app for Apple silicon and Intel
-        </p>
+        <p class="note rise d3">Free and open source · macOS 14.6 or later</p>
       </div>
 
-      <div class="demo rise d3" id="demo">
+      <div class="demo rise d2" id="demo">
         <div class="window">
           <div class="titlebar">
             <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>

@@ -1,7 +1,7 @@
 /*
   pointer.css · MacJi website · Created: 2026-11-26
-  The iPadOS-style pointer drawn by js/pointer.js: a dot, a platter behind small controls, a
-  text beam, and nothing at all while a large button lifts. Ported from the Octopus site.
+  The iPadOS-style pointer drawn by js/pointer.js: a dot, a platter behind small controls and a
+  text beam. It disappears over large buttons. Ported from the Octopus site.
 */
 
 /* ////////////////////
@@ -36,7 +36,8 @@
     scale 0.18s var(--spring),
     background-color 0.2s var(--ease),
     box-shadow 0.2s var(--ease);
-  will-change: translate, width, height, opacity;
+  contain: layout;
+  will-change: translate, opacity;
 }
 .ptr[data-mode="platter"] {
   background: var(--ptr-platter);

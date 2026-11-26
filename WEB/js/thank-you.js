@@ -1,14 +1,19 @@
 /*
   thank-you.js · MacJi website · Created: 2026-11-26
-  Starts the .dmg download, celebrates with the party poppers and explains what to do if
-  GitHub can't be reached.
+  Starts the .dmg download, celebrates with confetti and explains what to do if GitHub
+  can't be reached.
 */
 
 (function () {
   "use strict";
 
   var START_DELAY_MS = 900;
-  var SHOWER_MS = 5200;
+  var SHOWER_MS = 3200;
+  //// A page is never told that a download has ended, so the shower waits about as long as the
+  //// file should take on a modest connection.
+  var BYTES_PER_MS = 1500;
+  var MIN_DOWNLOAD_MS = 2500;
+  var MAX_DOWNLOAD_MS = 8000;
   var STARTED_KEY = "macji-download-started";
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -18,32 +23,38 @@
 
     ////////////////////
     //// Celebrate
-    /// Poppers from both bottom corners, then glitter from the top; a click anywhere pops again.
+    /// Poppers from both bottom corners when a download starts, then glitter spraying out of the
+    /// 🎉 once it has likely finished and the visitor can see this page. Clicking the 🎉 fires
+    /// both at once; a click on empty space pops (js/confetti.js).
 
-    if (confetti) {
-      setTimeout(function () {
-        confetti.poppers();
-        confetti.shower(SHOWER_MS);
-      }, 250);
-      document.addEventListener("pointerdown", function (event) {
-        if (event.target.closest("a, button, kbd, code")) return;
-        confetti.popAt(event.clientX, event.clientY);
-      });
-      var again = document.getElementById("pop-again");
-      if (again) {
-        again.addEventListener("click", function () {
-          confetti.poppers();
-          confetti.shower(SHOWER_MS / 2);
-        });
-      }
+    var popper = document.getElementById("pop-again");
+    var showerTimer = 0;
+    function showerWhenSeen() {
+      if (document.visibilityState === "visible") confetti.partyShower(popper, SHOWER_MS);
+      else document.addEventListener("visibilitychange", showerWhenSeen, { once: true });
     }
+    function celebrateDownload(bytes) {
+      if (!confetti) return;
+      confetti.poppers();
+      var wait = Math.max(MIN_DOWNLOAD_MS, Math.min(MAX_DOWNLOAD_MS, bytes / BYTES_PER_MS));
+      clearTimeout(showerTimer);
+      showerTimer = setTimeout(showerWhenSeen, wait);
+    }
+    popper.addEventListener("click", function () {
+      if (!confetti) return;
+      confetti.poppers();
+      confetti.partyShower(popper, SHOWER_MS / 2);
+    });
 
-    //// Links and buttons keep their normal click; only empty space pops.
     //////////////////
 
     ////////////////////
     //// Download
-    /// Start once per tab session per version, so a reload doesn't download a second copy.
+    /// Every arrival from a Download button starts it. A reload, or coming back through history,
+    /// doesn't download a second copy of a version this tab already started.
+
+    var visit = performance.getEntriesByType("navigation")[0];
+    var revisit = Boolean(visit) && visit.type !== "navigate";
 
     window.MacJiRelease.latest().then(function (release) {
       if (!release) {
@@ -53,17 +64,21 @@
         return;
       }
       button.setAttribute("href", release.url);
+      button.addEventListener("click", function () {
+        celebrateDownload(release.size);
+      });
       var started = null;
       try {
         started = sessionStorage.getItem(STARTED_KEY);
       } catch (error) {}
-      if (started === release.version) {
+      if (revisit && started === release.version) {
         status.textContent = "MacJi " + release.version + " is in your Downloads folder.";
         return;
       }
       status.textContent = "Your download of MacJi " + release.version + " is starting…";
       setTimeout(function () {
         window.location.assign(release.url);
+        celebrateDownload(release.size);
         try {
           sessionStorage.setItem(STARTED_KEY, release.version);
         } catch (error) {}

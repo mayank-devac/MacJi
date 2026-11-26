@@ -22,6 +22,7 @@
   --text3: #6e6e73;
   --accent: #007aff;
   --accent-text: #0066d6;
+  --selection: #c9c1a5;
   --grad-a: #0062d1;
   --grad-b: #1a97ee;
   --panel: #ffffff;
@@ -34,7 +35,21 @@
   --nav: rgba(251, 251, 253, 0.72);
   --glow: rgba(0, 122, 255, 0.15);
   --glow-soft: rgba(0, 122, 255, 0.08);
-  --glow-sun: rgba(255, 196, 40, 0.18);
+  /* //// Eased stops: a two-stop radial gradient shows its rim as a band. */
+  --glow-fade:
+    var(--glow), color-mix(in srgb, var(--glow) 88%, transparent) 15%,
+    color-mix(in srgb, var(--glow) 66%, transparent) 30%,
+    color-mix(in srgb, var(--glow) 42%, transparent) 45%,
+    color-mix(in srgb, var(--glow) 23%, transparent) 60%,
+    color-mix(in srgb, var(--glow) 11%, transparent) 73%,
+    color-mix(in srgb, var(--glow) 3%, transparent) 86%, transparent;
+  --glow-soft-fade:
+    var(--glow-soft), color-mix(in srgb, var(--glow-soft) 88%, transparent) 15%,
+    color-mix(in srgb, var(--glow-soft) 66%, transparent) 30%,
+    color-mix(in srgb, var(--glow-soft) 42%, transparent) 45%,
+    color-mix(in srgb, var(--glow-soft) 23%, transparent) 60%,
+    color-mix(in srgb, var(--glow-soft) 11%, transparent) 73%,
+    color-mix(in srgb, var(--glow-soft) 3%, transparent) 86%, transparent;
   --shadow:
     0 1px 1px rgba(0, 0, 0, 0.03), 0 2px 2px rgba(0, 0, 0, 0.03),
     0 4px 4px rgba(0, 0, 0, 0.03), 0 8px 8px rgba(0, 0, 0, 0.03),
@@ -43,6 +58,8 @@
   --shot-shadow: 0 28px 48px -24px rgba(20, 30, 60, 0.36);
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --spring: cubic-bezier(0.32, 1.3, 0.5, 1);
+  /* //// Settles without overshoot, for things that follow the pointer. */
+  --glide: cubic-bezier(0.22, 1, 0.36, 1);
   --r-xl: 28px;
   --r-lg: 22px;
   --r-md: 14px;
@@ -67,6 +84,7 @@
     --text3: #86868b;
     --accent: #0a84ff;
     --accent-text: #4da3ff;
+    --selection: #c9c1a5;
     --grad-a: #3a98ff;
     --grad-b: #86dcff;
     --panel: #2c2c2e;
@@ -79,7 +97,6 @@
     --nav: rgba(14, 14, 16, 0.72);
     --glow: rgba(10, 132, 255, 0.24);
     --glow-soft: rgba(10, 132, 255, 0.12);
-    --glow-sun: rgba(255, 196, 40, 0.12);
     --shadow:
       0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.12),
       0 4px 4px rgba(0, 0, 0, 0.12), 0 8px 8px rgba(0, 0, 0, 0.12),
@@ -101,6 +118,7 @@
   --text3: #86868b;
   --accent: #0a84ff;
   --accent-text: #4da3ff;
+  --selection: #c9c1a5;
   --grad-a: #3a98ff;
   --grad-b: #86dcff;
   --panel: #2c2c2e;
@@ -113,7 +131,6 @@
   --nav: rgba(14, 14, 16, 0.72);
   --glow: rgba(10, 132, 255, 0.24);
   --glow-soft: rgba(10, 132, 255, 0.12);
-  --glow-sun: rgba(255, 196, 40, 0.12);
   --shadow:
     0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.12),
     0 4px 4px rgba(0, 0, 0, 0.12), 0 8px 8px rgba(0, 0, 0, 0.12),
@@ -125,6 +142,13 @@
 
 /* //// Every colour above has a dark twin; components only ever read tokens.
    ////////////////// */
+
+/* //// Large displays get a wider content column; home.css and demo.css scale the hero with it. */
+@media (min-width: 1700px) and (min-height: 900px) {
+  :root {
+    --max: 1440px;
+  }
+}
 
 * {
   box-sizing: border-box;
@@ -149,8 +173,8 @@ body {
   letter-spacing: -0.022em;
   -webkit-font-smoothing: antialiased;
 }
-/* //// The page glow, from the app icon's blue and sunshine. It spans the whole page width and
-   //// every gradient fades out inside it, so it never ends in a visible edge. */
+/* //// The page glow, in the app icon's blue. It spans the whole page width and every gradient
+   //// fades out inside it, so it never ends in a visible edge. */
 body::before {
   content: "";
   position: absolute;
@@ -159,12 +183,18 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(40% 44% at 70% 40%, var(--glow), transparent 70%),
-    radial-gradient(24% 30% at 80% 64%, var(--glow-sun), transparent 70%),
-    radial-gradient(36% 40% at 26% 26%, var(--glow-soft), transparent 70%);
+    radial-gradient(42% 46% at 70% 44%, var(--glow-fade)),
+    radial-gradient(40% 44% at 26% 30%, var(--glow-soft-fade));
+}
+/* //// js/confetti.js draws on this full-page canvas, above the page and under the pointer. */
+.confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
 }
 ::selection {
-  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  background: color-mix(in srgb, var(--selection) 28%, transparent);
 }
 :focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent) 60%, transparent);
@@ -346,6 +376,10 @@ code {
     transform 0.5s var(--spring),
     opacity 0.25s var(--ease);
 }
+a.theme svg {
+  width: 20px;
+  height: 20px;
+}
 .theme .sun {
   opacity: 0;
   transform: rotate(-90deg) scale(0.5);
@@ -434,21 +468,21 @@ a.theme:hover {
   transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0) scale(var(--sc, 1));
   touch-action: manipulation;
   transition:
-    transform 0.4s var(--spring),
+    transform 0.45s var(--glide),
     box-shadow 0.3s var(--ease),
     background-color 0.2s var(--ease),
     color 0.2s;
 }
 @media (hover: hover) and (pointer: fine) {
   .theme:hover {
-    --sc: 1.12;
+    --sc: 1.08;
     color: var(--text);
   }
   .btn:hover::after {
     opacity: 1;
   }
   .btn:hover {
-    --sc: 1.04;
+    --sc: 1.06;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.28),
       0 2px 2px color-mix(in srgb, var(--accent) 12%, transparent),

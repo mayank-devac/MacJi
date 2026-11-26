@@ -217,6 +217,7 @@ works in any UI and never reaches into a specific controller.
 ## Release rules
 
 - Follow `docs/RELEASING.md`; `scripts/release.py` does every step and stops on the first failure.
+- Include at least one relevant emoji in every release title or announcement, commit message, and pull request title or description. Keep version tags and other machine-readable identifiers emoji-free.
 - Releases are signed with the self-signed **`MacJi Release`** certificate, never ad-hoc, and are not
   notarized. Its name and certificate must never change.
 - Updates are EdDSA-signed by Sparkle. Never change the EdDSA key and the signing certificate in the same release.

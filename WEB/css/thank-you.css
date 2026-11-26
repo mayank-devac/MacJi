@@ -1,20 +1,11 @@
 /*
   thank-you.css · MacJi website · Created: 2026-11-26
-  Thank-you page: the popper, download status, first-launch steps and the confetti canvas.
+  Thank-you page: the popper, download status and first-launch steps.
 */
 
 /* //// The page glow, centred for this single column. */
 body::before {
-  background:
-    radial-gradient(38% 44% at 50% 30%, var(--glow), transparent 70%),
-    radial-gradient(20% 26% at 62% 42%, var(--glow-sun), transparent 70%);
-}
-
-.confetti {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  pointer-events: none;
+  background: radial-gradient(44% 46% at 50% 34%, var(--glow-fade));
 }
 
 /* ////////////////////
@@ -32,18 +23,11 @@ body::before {
   text-align: center;
   gap: 14px;
 }
-@keyframes pop {
-  0% {
-    transform: scale(0.4) rotate(-30deg);
-  }
-  45% {
-    transform: scale(1.18) rotate(8deg);
-  }
-  70% {
-    transform: scale(0.94) rotate(-4deg);
-  }
-  100% {
-    transform: none;
+/* //// One start frame and one curve, so the entrance overshoots once and never stops midway. */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.55) rotate(-16deg);
   }
 }
 .popper {
@@ -51,9 +35,7 @@ body::before {
   line-height: 1;
   padding: 8px;
   border-radius: 28px;
-  animation:
-    rise 0.9s var(--ease) backwards,
-    pop 0.9s var(--spring) 0.2s backwards;
+  animation: pop-in 0.8s cubic-bezier(0.34, 1.45, 0.5, 1) 0.1s backwards;
   transition: transform 0.4s var(--spring);
 }
 /* //// Only the thank-you popper is a button; the 404 face sits still. */

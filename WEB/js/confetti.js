@@ -1,7 +1,8 @@
 /*
   confetti.js · MacJi website · Created: 2026-11-26
-  Party-popper confetti on one full-page canvas: corner poppers, bursts at a point, and a glitter
-  shower that falls from the top centre in a widening cone. No dependencies.
+  Party-popper confetti on one full-page canvas: corner poppers, a pop wherever empty space is
+  clicked, and a glitter party shower that sprays out of the 🎉, spreads and drifts down.
+  No dependencies.
 */
 
 (function () {
@@ -9,11 +10,28 @@
 
   var COLORS_LIGHT = ["#ff3b30", "#ff9500", "#ffcc00", "#34c759", "#00c7be", "#007aff", "#5856d6", "#af52de", "#ff2d55"];
   var COLORS_DARK = ["#ff453a", "#ff9f0a", "#ffd60a", "#30d158", "#66d4cf", "#0a84ff", "#5e5ce6", "#bf5af2", "#ff375f"];
-  var GLITTER_LIGHT = ["#c9a227", "#b8860b", "#8e8e93", "#007aff", "#af52de"];
+  var GLITTER_LIGHT = ["#ffb000", "#ff7a00", "#ff2d92", "#af52de", "#007aff", "#00b8d4"];
   var GLITTER_DARK = ["#fff6d5", "#ffd60a", "#ffffff", "#9ecbff", "#e0b3ff", "#ffb4a2"];
   var EMOJI = ["🎉", "✨", "🚀", "🥳", "😀", "❤️", "🎊", "⭐️"];
+  //// Listed twice or more means thrown more often.
+  var SHAPES = ["strip", "strip", "strip", "dot", "dot", "triangle", "diamond", "ring", "heart", "squiggle", "star", "sparkle"];
+  //// Drawn diameter per unit of particle size; shapes not listed use 1.2.
+  var SCALE = { strip: 1.15, sparkle: 2.8, star: 1.7, squiggle: 2, heart: 1.5, ring: 1.3, triangle: 1.4, diamond: 1.4, emoji: 2.4 };
   var GRAVITY = 0.32;
-  var MAX_PARTICLES = 1400;
+  var MAX_PARTICLES = 700;
+  var SHOWER_BURST = 60;
+  var SHOWER_RATE = 3.5;
+  //// The 🎉 mouth, as a fraction of the element's box.
+  var MOUTH_X = 0.53;
+  var MOUTH_Y = 0.32;
+  //// The shower goes up, leaning a little the way the mouth opens, and fans out either side.
+  //// Radians, clockwise from the positive x axis.
+  var SHOWER_AIM = -1.4;
+  var SHOWER_CONE = 0.75;
+  //// Confetti thrown by each corner popper.
+  var POPPER_COUNT = 80;
+  //// Controls and the demo's note keep their normal click.
+  var QUIET = "a, button, input, textarea, label, summary, kbd, code, .window";
 
   var canvas = document.createElement("canvas");
   canvas.className = "confetti";
@@ -25,7 +43,12 @@
   var ratio = 1;
   var raf = 0;
   var last = 0;
+  var showerFrom = null;
   var showerUntil = 0;
+  var showerLength = 0;
+  var showerOwed = 0;
+  var showerAnimation = null;
+  var sprites = window.MacJiSprites;
   var reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function dark() {
@@ -50,51 +73,60 @@
 
   ////////////////////
   //// Particles
-  /// Confetti strips and dots flip as they fall (cosine of a spin phase squashes them),
-  /// glitter twinkles and drifts, emoji tumble. Everything shares gravity and air drag.
+  /// Flat confetti flips as it falls (cosine of a spin phase squashes it), glitter and sparkles
+  /// twinkle, emoji tumble. Everything shares air drag.
 
   function confetto(x, y, angle, speed) {
-    var kind = Math.random();
+    var shape = Math.random() < 0.06 ? "emoji" : pick(SHAPES);
     return {
-      type: kind < 0.07 ? "emoji" : kind < 0.62 ? "strip" : kind < 0.85 ? "dot" : "star",
+      shape: shape,
+      flat: shape !== "emoji" && shape !== "sparkle",
+      twinkle: shape === "sparkle",
       x: x,
       y: y,
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
       drag: between(0.955, 0.975),
       gravity: GRAVITY * between(0.7, 1.1),
-      size: between(6, 11),
+      size: between(7, 12),
+      scale: SCALE[shape] || 1.2,
       rotation: between(0, Math.PI * 2),
       spin: between(-0.25, 0.25),
       flip: between(0, Math.PI * 2),
       flipSpeed: between(0.08, 0.22),
       wobble: between(0, Math.PI * 2),
-      color: pick(dark() ? COLORS_DARK : COLORS_LIGHT),
-      emoji: pick(EMOJI),
+      color: shape === "emoji" ? pick(EMOJI) : pick(dark() ? COLORS_DARK : COLORS_LIGHT),
       life: 0,
       maxLife: between(260, 380),
     };
   }
 
-  function glitter(x, y) {
-    var spread = between(-1, 1) * between(0.2, 1.3);
+  //// Glitter is flung high out of the mouth, loses its speed to drag, then falls back down the
+  //// page. `strength` weakens the throw as the shower runs out.
+  function glitter(from, strength) {
+    var angle = SHOWER_AIM + between(-SHOWER_CONE, SHOWER_CONE);
+    var speed = between(7, 25) * strength;
+    var sparkle = Math.random() < 0.2;
     return {
-      type: Math.random() < 0.18 ? "star" : "speck",
-      x: x + between(-14, 14),
-      y: y,
-      vx: spread,
-      vy: between(0.6, 2.2),
-      drag: 0.992,
-      gravity: 0.012,
-      size: between(1.2, 3.2),
-      rotation: 0,
-      spin: between(-0.05, 0.05),
+      shape: sparkle ? "sparkle" : "speck",
+      flat: false,
+      twinkle: true,
+      x: from.x + between(-4, 4),
+      y: from.y + between(-4, 4),
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      drag: between(0.948, 0.968),
+      gravity: between(0.1, 0.17),
+      size: between(2, 4),
+      scale: sparkle ? 4 : 1.8,
+      rotation: between(0, Math.PI * 2),
+      spin: between(-0.06, 0.06),
       flip: between(0, Math.PI * 2),
-      flipSpeed: between(0.1, 0.35),
+      flipSpeed: between(0.08, 0.26),
       wobble: between(0, Math.PI * 2),
       color: pick(dark() ? GLITTER_DARK : GLITTER_LIGHT),
       life: 0,
-      maxLife: between(320, 520),
+      maxLife: between(180, 320),
     };
   }
 
@@ -102,54 +134,23 @@
     if (particles.length < MAX_PARTICLES) particles.push(particle);
   }
 
-  //// Glitter barely feels gravity, so the shower hangs in the air like the reference image.
   //////////////////
 
   ////////////////////
   //// Drawing
-
-  function drawStar(p, r) {
-    ctx.beginPath();
-    for (var i = 0; i < 8; i++) {
-      var radius = i % 2 === 0 ? r : r * 0.32;
-      var a = (i * Math.PI) / 4;
-      ctx.lineTo(Math.cos(a) * radius, Math.sin(a) * radius);
-    }
-    ctx.closePath();
-    ctx.fill();
-  }
+  /// js/confetti-sprites.js paints each glowing shape once; every frame only copies them.
 
   function draw(p) {
     var fade = Math.min(1, (p.maxLife - p.life) / 60);
+    //// Particles start small, so they seem to leave from inside whatever threw them.
+    var grow = Math.min(1, 0.2 + p.life / 14);
+    var side = p.size * p.scale * grow * sprites.room;
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.rotate(p.rotation);
-    ctx.fillStyle = p.color;
-    if (p.type === "speck" || p.type === "star") {
-      var twinkle = 0.55 + 0.45 * Math.sin(p.flip);
-      ctx.globalAlpha = fade * twinkle;
-      if (dark()) {
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = p.size * 3;
-      }
-      if (p.type === "star") drawStar(p, p.size * 2.2);
-      else ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-    } else if (p.type === "emoji") {
-      ctx.globalAlpha = fade;
-      ctx.font = p.size * 2.4 + "px -apple-system, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(p.emoji, 0, 0);
-    } else {
-      ctx.globalAlpha = fade;
-      ctx.scale(1, Math.cos(p.flip));
-      if (p.type === "strip") ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
-      else {
-        ctx.beginPath();
-        ctx.arc(0, 0, p.size / 2.6, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
+    if (p.flat) ctx.scale(1, Math.cos(p.flip));
+    ctx.globalAlpha = p.twinkle ? fade * (0.65 + 0.35 * Math.sin(p.flip)) : fade;
+    ctx.drawImage(sprites.get(p.shape, p.color, dark()), -side / 2, -side / 2, side, side);
     ctx.restore();
   }
 
@@ -157,9 +158,12 @@
     var step = Math.min(3, (now - (last || now)) / 16.67 || 1);
     last = now;
     if (now < showerUntil) {
-      var taper = Math.min(1, (showerUntil - now) / 1200);
-      var count = Math.round(7 * taper * step);
-      for (var n = 0; n < count; n++) add(glitter(width / 2, -6));
+      //// 1 at the start, 0 at the end: the stream thins and weakens like a real popper.
+      var left = (showerUntil - now) / showerLength;
+      var from = mouth(showerFrom);
+      //// The fraction carries over, so 60 Hz and 120 Hz displays pour the same amount.
+      showerOwed += SHOWER_RATE * Math.pow(left, 1.5) * step;
+      for (; showerOwed >= 1; showerOwed--) add(glitter(from, 0.55 + 0.45 * left));
     }
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     ctx.clearRect(0, 0, width, height);
@@ -184,15 +188,20 @@
     }
   }
 
-  function run() {
+  //// Adds the canvas on first use; until then the stage has no size.
+  function mount() {
     if (!canvas.isConnected) {
       document.body.appendChild(canvas);
       resize();
     }
+  }
+
+  function run() {
+    mount();
     if (!raf) raf = requestAnimationFrame(frame);
   }
 
-  //// The loop stops itself when the last particle lands, so an idle page costs nothing.
+  //// The loop stops itself when the last particle is gone, so an idle page costs nothing.
   //////////////////
 
   ////////////////////
@@ -208,14 +217,39 @@
   }
 
   function poppers() {
+    mount();
     var power = Math.max(15, Math.min(24, Math.hypot(width, height) / 55));
-    burst(-10, height + 10, -Math.PI / 3, 0.38, 140, power);
-    burst(width + 10, height + 10, (-2 * Math.PI) / 3, 0.38, 140, power);
+    burst(-10, height + 10, -Math.PI / 3, 0.38, POPPER_COUNT, power);
+    burst(width + 10, height + 10, (-2 * Math.PI) / 3, 0.38, POPPER_COUNT, power);
   }
 
-  function shower(ms) {
+  function mouth(element) {
+    var box = element.getBoundingClientRect();
+    return { x: box.left + box.width * MOUTH_X, y: box.top + box.height * MOUTH_Y };
+  }
+
+  function rotateShowerSource(element, ms) {
+    if (showerAnimation) showerAnimation.cancel();
+    var animation = element.animate(
+      [{ rotate: "-5deg" }, { rotate: "5deg" }],
+      { duration: 520, iterations: ms / 520, direction: "alternate", easing: "ease-in-out" }
+    );
+    showerAnimation = animation;
+    animation.onfinish = function () {
+      animation.cancel();
+      if (showerAnimation === animation) showerAnimation = null;
+    };
+  }
+
+  //// A puff of glitter from the element's mouth, then a thinning stream for `ms`.
+  function partyShower(element, ms) {
     if (reduceMotion) return;
+    rotateShowerSource(element, ms);
+    showerFrom = element;
+    showerLength = ms;
     showerUntil = performance.now() + ms;
+    var from = mouth(element);
+    for (var i = 0; i < SHOWER_BURST; i++) add(glitter(from, 1));
     run();
   }
 
@@ -223,11 +257,17 @@
     burst(x, y, -Math.PI / 2, Math.PI, 46, 11);
   }
 
+  //// detail is 0 for keyboard and script clicks, which have no pointer position.
+  document.addEventListener("click", function (event) {
+    if (!event.detail || event.target.closest(QUIET) || String(window.getSelection())) return;
+    popAt(event.clientX, event.clientY);
+  });
+
   window.addEventListener("resize", function () {
     if (canvas.isConnected) resize();
   });
 
-  window.MacJiConfetti = { poppers: poppers, shower: shower, popAt: popAt };
+  window.MacJiConfetti = { poppers: poppers, partyShower: partyShower };
 
   //////////////////
 })();
