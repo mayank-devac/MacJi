@@ -34,7 +34,7 @@ step "Building $MACJI_APP_NAME ($configuration)"
 log="$MACJI_ROOT/.build/build.log"
 mkdir -p "$MACJI_ROOT/.build"
 if ! xcodebuild -project "$MACJI_PROJECT" -scheme "$MACJI_SCHEME" -configuration "$configuration" \
-        -destination "platform=macOS" -derivedDataPath "$MACJI_DERIVED_DATA" build >"$log" 2>&1; then
+        -destination "$MACJI_DESTINATION" -derivedDataPath "$MACJI_DERIVED_DATA" build >"$log" 2>&1; then
     grep -E "error:" "$log" | sed "s|$MACJI_ROOT/||" | sort -u | head -20 >&2
     fail "Build failed (full log: .build/build.log)" "Fix the errors above, then run ./build.sh again."
 fi
@@ -42,25 +42,7 @@ fi
 ok "Built ${app#$MACJI_ROOT/}"
 $launch || exit 0
 
-####################
-#### Quit the previous copy
-### Match the resolved bundle path, so an installed MacJi (or Octopus) is never touched.
-# A refused or slow quit stops the script instead of starting a second copy.
-
-pids=$(pgrep -f "$app/Contents/MacOS/$MACJI_APP_NAME" || true)
-if [[ -n "$pids" ]]; then
-    step "Quitting the running build"
-    kill -TERM $pids
-    for _ in $(seq 1 50); do
-        pgrep -f "$app/Contents/MacOS/$MACJI_APP_NAME" >/dev/null || break
-        sleep 0.2
-    done
-    pgrep -f "$app/Contents/MacOS/$MACJI_APP_NAME" >/dev/null && fail "The previous build did not quit." "Quit MacJi from its menu, then rerun."
-fi
-
-#### SIGTERM lets AppKit run applicationWillTerminate, which removes the event tap.
-##################
-
+quit_app "$app"
 open -n "$app"
 sleep 1
 running=$(pgrep -f "$app/Contents/MacOS/$MACJI_APP_NAME" | head -1 || true)

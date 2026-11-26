@@ -9,10 +9,12 @@
 
 ////////////////////
 //// Pick one identity
-/// The self-signed "MacJi Release" certificate (see docs/RELEASING.md) needs no Apple account.
+/// Every line starts commented out, so a fresh copy (scripts/setup.sh makes one) keeps ad-hoc
+/// signing and builds on any Mac. Uncomment the identity you have in your Keychain.
+// The self-signed "MacJi Release" certificate (see docs/RELEASING.md) needs no Apple account.
 // An Apple Development certificate from a free personal team works too: set DEVELOPMENT_TEAM.
 
-CODE_SIGN_IDENTITY = MacJi Release
+// CODE_SIGN_IDENTITY = MacJi Release
 // CODE_SIGN_IDENTITY = Apple Development
 // DEVELOPMENT_TEAM = ABCDE12345
 

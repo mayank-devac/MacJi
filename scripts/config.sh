@@ -21,6 +21,7 @@ MACJI_BUNDLE_ID="io.github.mayank-devac.macji"
 MACJI_DEBUG_BUNDLE_ID="$MACJI_BUNDLE_ID.debug"
 MACJI_SIGNING_IDENTITY="MacJi Release"
 MACJI_SPARKLE_KEY_ACCOUNT="macji"
+MACJI_PLACEHOLDER_PUBLIC_KEY="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
 
 #### Keep in sync with Config/Base.xcconfig (MACJI_BUNDLE_ID) and scripts/config.py.
 ##################
@@ -29,12 +30,14 @@ MACJI_SPARKLE_KEY_ACCOUNT="macji"
 #### Paths and repositories
 
 MACJI_DERIVED_DATA="${DERIVED_DATA:-$MACJI_ROOT/.build/DerivedData}"
+MACJI_DESTINATION="platform=macOS,arch=$(uname -m)"
 MACJI_RELEASE_DIR="$MACJI_ROOT/.build/release"
 MACJI_XCCONFIG="$MACJI_ROOT/Config/Base.xcconfig"
 MACJI_APPICON_DIR="$MACJI_ROOT/MacJi/Resources/Assets.xcassets/AppIcon.appiconset"
-MACJI_SOURCE_REPO="mayank-devac/macji"
+MACJI_SOURCE_REPO="mayank-devac/MacJi"
 MACJI_DIST_REPO="mayank-devac/macji-dist"
 MACJI_OCTOPUS_PATH="$MACJI_ROOT/Upstream/octopus"
+MACJI_OCTOPUS_REPO="mayank-devac/octopus-mac"
 
 ##################
 
@@ -60,4 +63,26 @@ print_usage() {
 }
 
 #### Scripts that delete, reset or publish must call confirm first.
+##################
+
+####################
+#### Quit one MacJi.app
+### Matches the executable path inside the given bundle, so an installed MacJi (or Octopus)
+### is never touched when quitting a dev build. SIGTERM lets AppKit run applicationWillTerminate,
+### which removes the event tap.
+# A refused or slow quit fails the script instead of leaving two copies running.
+
+quit_app() {
+    local executable="$1/Contents/MacOS/$MACJI_APP_NAME" pids
+    pids=$(pgrep -f "$executable" || true)
+    [[ -z "$pids" ]] && return 0
+    step "Quitting ${1#$MACJI_ROOT/}"
+    kill -TERM $pids
+    for _ in $(seq 1 50); do
+        pgrep -f "$executable" >/dev/null || return 0
+        sleep 0.2
+    done
+    fail "MacJi did not quit." "Quit it from its menu-bar menu, then run the script again."
+}
+
 ##################
