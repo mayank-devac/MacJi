@@ -34,8 +34,8 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots/inline-panel-dark.gif">
-    <img src="assets/screenshots/inline-panel-light.gif" width="720" alt="Typing ::roc in a document opens the Emoji panel under the caret; the right arrow selects the rocket and Return replaces ::roc with 🚀">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/inline-panel-dark.gif">
+    <img src="assets/screenshots_by_agent/inline-panel-light.gif" width="720" alt="Typing ::roc in a document opens the Emoji panel under the caret; the right arrow selects the rocket and Return replaces ::roc with 🚀">
   </picture>
 </p>
 
@@ -139,6 +139,13 @@ The trigger never fires right after a letter or digit, so code like `std::string
 
 ### Symbol panel
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/symbol-panel-dark.gif">
+    <img src="assets/screenshots_by_agent/symbol-panel-light.gif" width="720" alt="Typing ##rarr in a document opens the Symbols panel with its category bar; Return replaces ##rarr with →">
+  </picture>
+</p>
+
 Type `##` and a word: `##arrow`, `##rarr`, `##euro`, `##sum`, `##cmd`, `##check`. The keys are the
 same as the emoji panel's, plus **Tab / Shift-Tab** to step through the categories (Arrows, Math,
 Greek, Currency, Punctuation, Letterlike, Numbers, Shapes, Signs, Technical). Names come from
@@ -147,12 +154,20 @@ Unicode and also match common short names such as `rarr`, `ne`, `inf`, `deg` and
 
 ### Emoticons
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/emoticon-panel-dark.gif">
+    <img src="assets/screenshots_by_agent/emoticon-panel-light.gif" width="720" alt="Typing ^_ after a sentence suggests ^_^ and ^_~; the down arrow selects ^_~ and Return inserts it">
+  </picture>
+</p>
+
 Type the start of an emoticon and the Emoticons panel suggests the rest: `^_` → ^_^ ^_~, `o_` → o_O,
 `(^` → (^_^) (^_^;), `:-` → :-) :-( :-P. Return inserts the selection in place of what you typed.
 
 - It waits for 2 typed characters by default (change it with **− +** in Settings › Emoticons, or
   set it to Off), and what you typed must include a symbol, so ordinary words never match.
-- Starts that are common in code, such as `--`, `//` and `==`, never open it.
+- Starts that are common in code and markup, such as `--`, `//`, `==`, `((`, `>=` and `</`, never
+  open it, so an open suggestion never takes your Return or Esc there.
 - Esc closes it for the rest of that word.
 - Set a **trigger** such as `;;` to search all emoticons by name: `;;shrug` → ¯\_(ツ)_/¯,
   `;;flip` → (╯°□°)╯︵┻━┻. It's blank (off) by default.
@@ -167,12 +182,19 @@ Matches are ordered by how well they fit what you typed: an exact short name (`:
 first, then short names that start with it, then names and keywords with a word that starts with
 it, then names that only contain it. With several words, every word must match.
 
-With **Rank frequently used emoji higher** on (the default), emoji you have inserted or copied
+With **Rank frequently used first** on (the default), emoji you have inserted or copied
 before jump ahead of that order, most used first, whenever a short name or a word of their name
 or keywords starts with what you typed. MacJi counts uses on your Mac only. Turn the setting off
 to get the plain order back. The picker keeps the plain order.
 
 ### Aliases (symbol conversion)
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/aliases-dark.gif">
+    <img src="assets/screenshots_by_agent/aliases-light.gif" width="720" alt="Typing build -> ship ... != (c) turns into build → ship … ≠ © as each alias completes">
+  </picture>
+</p>
 
 With **Aliases** on (the default), MacJi converts a short spelling into a symbol or emoji the
 moment you type its last character, in every app where the inline panel works. Delete right
@@ -197,6 +219,17 @@ after a conversion removes the symbol.
 
 #### Your own aliases
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/aliases-page-dark.png">
+    <img src="assets/screenshots_by_agent/aliases-page-light.png" width="360" alt="The Aliases page: your Long arrow alias first in Arrows with edit and delete buttons, then the built-in arrows with hide buttons and switches">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/alias-editor-dark.png">
+    <img src="assets/screenshots_by_agent/alias-editor-light.png" width="340" alt="The alias editor: name Long arrow, spellings --> and ==>, outputs ⟶ ⟹ ➜ with the first marked Typed">
+  </picture>
+</p>
+
 On the Aliases page, click **+** (or **Add Alias…** in a group) and fill in:
 
 - **Name**: what search finds. Name it "Check mark" and `::check`, `##check` or the picker shows
@@ -220,12 +253,22 @@ left out and why, and how to type each symbol on a Mac without MacJi.
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots/picker-dark.png">
-    <img src="assets/screenshots/picker-light.png" width="360" alt="The MacJi picker under its menu-bar icon, with Emoji, Symbols and Emoticons tabs, recently used emoji and the rocket selected">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/picker-dark.png">
+    <img src="assets/screenshots_by_agent/picker-light.png" width="360" alt="The MacJi picker under its menu-bar icon, with Emoji, Symbols and Emoticons tabs, recently used emoji and the rocket selected">
   </picture>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots/picker-search-dark.png">
-    <img src="assets/screenshots/picker-search-light.png" width="360" alt="The picker searching for heart, with Red Heart as the best match">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/picker-search-dark.png">
+    <img src="assets/screenshots_by_agent/picker-search-light.png" width="360" alt="The picker searching for heart, with Red Heart as the best match">
+  </picture>
+</p>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/picker-symbols-dark.png">
+    <img src="assets/screenshots_by_agent/picker-symbols-light.png" width="360" alt="The picker's Symbols tab with its category bar and the arrows">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/picker-emoticons-dark.png">
+    <img src="assets/screenshots_by_agent/picker-emoticons-light.png" width="360" alt="The picker's Emoticons tab listing emoticons and kaomoji one per row">
   </picture>
 </p>
 
@@ -246,8 +289,8 @@ Right-click the menu-bar icon for Settings, Check for Updates and Quit.
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots/settings-dark.png">
-    <img src="assets/screenshots/settings-light.png" width="420" alt="MacJi Settings: Accessibility status, picker shortcut and tabs, emoji and symbol panel switches and triggers">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/settings-dark.png">
+    <img src="assets/screenshots_by_agent/settings-light.png" width="420" alt="MacJi Settings: Accessibility status, Open at login, picker shortcut and tabs, emoji and symbol panel switches and triggers">
   </picture>
 </p>
 

@@ -221,8 +221,9 @@ MacJiTests/ — Swift Testing suites, mirroring MacJi/
     InlinePanel/ — inline panel tests
       InlinePanelTests.swift — trigger tracking, keys, validation, placement, caret, Secure Input
   Screenshots/ — opt-in README image generator (skipped in normal test runs)
-    ReadmeScreenshots.swift — renders picker, search, Settings and the inline-panel GIF frames, light and dark
+    ReadmeScreenshots.swift — renders picker tabs, search, Settings, Aliases page and editor, and the typing scripts, light and dark
     ScreenshotStage.swift — themes, backdrop, mock window chrome and the offscreen 2x renderer
+    TypingRecording.swift — typing scripts (emoji, symbols, emoticons, aliases) recorded into GIF frames with the real panel
   Settings/ — settings tests
     SettingsTests.swift — migrations, idempotence, per-key fallback
   Shared/ — shared code tests
@@ -245,6 +246,7 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
   assets/ — site-only copies of images and data
     data/ — data the live demo reads
       emoji.json — copy of MacJi/Shared/Glyphs/Resources/emoji.json; refresh it when that changes
+      symbols.json — copy of MacJi/Shared/Glyphs/Resources/symbols.json for the ## demo; refresh it when that changes
     icon/ — favicon and app icon from assets/icon (written by scripts/make-web-assets.sh)
     screenshots/ — WebP screenshots plus the link-preview PNG (written by scripts/make-web-assets.sh)
   css/ — stylesheets
@@ -265,23 +267,24 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
   thank-you.html — after Download: starts the .dmg, confetti, first-launch steps
 assets/ — app images
   icon/ — app icon PNGs for the README header
-  new_screenshots/ — TODO: describe
-    editor-dark.png — TODO: describe
-    editor-light.png — TODO: describe
-    panel-emoticons-dark.png — TODO: describe
-    panel-emoticons-light.png — TODO: describe
-    panel-symbols-dark.png — TODO: describe
-    panel-symbols-light.png — TODO: describe
-    picker-emoticons-dark.png — TODO: describe
-    picker-emoticons-light.png — TODO: describe
-    picker-symbols-dark.png — TODO: describe
-    picker-symbols-light.png — TODO: describe
+  new_screenshots/ — earlier offscreen renders of the 0.3.0 features, superseded by screenshots_by_agent/
+    editor-dark.png — alias editor, dark
+    editor-light.png — alias editor, light
+    panel-emoticons-dark.png — emoticon panel, dark
+    panel-emoticons-light.png — emoticon panel, light
+    panel-symbols-dark.png — symbol panel, dark
+    panel-symbols-light.png — symbol panel, light
+    picker-emoticons-dark.png — picker Emoticons tab, dark
+    picker-emoticons-light.png — picker Emoticons tab, light
+    picker-symbols-dark.png — picker Symbols tab, dark
+    picker-symbols-light.png — picker Symbols tab, light
   picker-buttons/ — picker images with the Settings button; not used by the README or website
     picker-dark.png — picker, dark
     picker-light.png — picker, light
     picker-search-dark.png — picker search, dark
     picker-search-light.png — picker search, light
-  screenshots/ — README images and GIFs, light and dark (written by scripts/make-screenshots.sh)
+  screenshots/ — 0.2.0 README images and GIFs, no longer referenced
+  screenshots_by_agent/ — README images and GIFs, light and dark (written by scripts/make-screenshots.sh)
 build.sh — build, quit the running MacJi, relaunch, print the running path
 dist/ — Sparkle update feed, served from main
   README.md — what the feed folder holds
@@ -292,7 +295,7 @@ docs/ — long-form documentation
   RELEASING.md — one-time certificate/key setup and the release steps
   convert-symbols.md — every text → symbol conversion: built in, left out and why, macOS ways
   icon-prompt.md — image prompt for the 1024 px app icon
-  zany-sprouting-origami-of.md — TODO: describe
+  zany-sprouting-origami-of.md — the 0.3.0 implementation plan (symbols, emoticons, custom aliases)
 repo_map.md — this file
 scripts/ — automation (see CLAUDE.md → Scripts)
   bump-version.sh — bump version/build and add a CHANGELOG heading

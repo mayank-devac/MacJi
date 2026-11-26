@@ -3,8 +3,8 @@
 //  MacJi
 //
 //  Created: 2026-11-26
-//  Opt-in generator for the README images: MacJi's real picker, inline panel and Settings views,
-//  in light and dark, plus the inline-panel GIF frames. Skipped unless make-screenshots.sh runs it.
+//  Opt-in generator for the README images: MacJi's real picker tabs, Settings, Aliases page and
+//  editor, in light and dark, plus the typing GIFs' frames. Skipped unless make-screenshots.sh runs it.
 //
 
 import AppKit
@@ -35,21 +35,71 @@ struct ReadmeScreenshots {
 
         for theme in ScreenshotTheme.allCases {
             let name = theme.rawValue
-            try await renderPicker(theme, library: library, recents: recents, query: "", to: output.appending(path: "picker-\(name).png"))
-            try await renderPicker(theme, library: library, recents: recents, query: "heart",
-                                   to: output.appending(path: "picker-search-\(name).png"))
-            try await renderSettings(theme, defaults: defaults, to: output.appending(path: "settings-\(name).png"))
-            try await recordInlinePanel(theme, catalog: library.emoji, output: output)
+            func file(_ stem: String) -> URL { output.appending(path: "\(stem)-\(name).png") }
+            try await renderPicker(theme, library: library, recents: recents, tab: .emoji, query: "", to: file("picker"))
+            try await renderPicker(theme, library: library, recents: recents, tab: .emoji, query: "heart", to: file("picker-search"))
+            try await renderPicker(theme, library: library, recents: recents, tab: .symbols, query: "", to: file("picker-symbols"))
+            try await renderPicker(theme, library: library, recents: recents, tab: .emoticons, query: "", to: file("picker-emoticons"))
+            try await renderSettings(theme, defaults: defaults, to: file("settings"))
+            try await renderAliasesPage(theme, to: file("aliases-page"))
+            try await renderAliasEditor(theme, to: file("alias-editor"))
+            for script in Self.typingScripts {
+                try await TypingRecorder.record(script, theme: theme, library: library, output: output)
+            }
         }
     }
 
     //////////////////
 
-    private func renderPicker(_ theme: ScreenshotTheme, library: GlyphLibrary, recents: GlyphRecents, query: String,
-                              to url: URL) async throws {
+    ////////////////////
+    //// Typing GIFs
+    /// One per typing feature: the emoji panel, the symbol panel with its category bar, emoticon
+    /// suggestions, and aliases converting as the last character is typed.
+
+    private static var typingScripts: [TypingScript] {
+        func emoji(_ term: String) -> InlinePanelModel.Search {
+            .init(kind: .emoji, typed: "::" + term, term: term, isAutocomplete: false)
+        }
+        func symbol(_ term: String) -> InlinePanelModel.Search {
+            .init(kind: .symbols, typed: "##" + term, term: term, isAutocomplete: false)
+        }
+        let suggestion = InlinePanelModel.Search(kind: .emoticons, typed: "^_", term: "^_", isAutocomplete: true)
+        return [
+            TypingScript(name: "inline-panel", windowTitle: "Launch notes", lineStart: "Tell the team we ship today", steps: [
+                .text(":", hold: .milliseconds(130)), .text("::", hold: .milliseconds(130)),
+                .search("::r", emoji("r"), hold: .milliseconds(120)), .search("::ro", emoji("ro"), hold: .milliseconds(150)),
+                .search("::roc", emoji("roc"), hold: .milliseconds(650)), .move(.right, hold: .milliseconds(250)),
+                .still(hold: .milliseconds(1600)), .pick,
+            ]),
+            TypingScript(name: "symbol-panel", windowTitle: "Launch notes", lineStart: "Next: tests", steps: [
+                .text("#", hold: .milliseconds(130)), .text("##", hold: .milliseconds(130)),
+                .search("##r", symbol("r"), hold: .milliseconds(120)), .search("##ra", symbol("ra"), hold: .milliseconds(150)),
+                .search("##rar", symbol("rar"), hold: .milliseconds(150)), .search("##rarr", symbol("rarr"), hold: .milliseconds(650)),
+                .still(hold: .milliseconds(1600)), .pick, .text("→ ship", hold: .milliseconds(300)),
+            ]),
+            TypingScript(name: "emoticon-panel", windowTitle: "Launch notes", lineStart: "Thanks for the help!", steps: [
+                .text("^", hold: .milliseconds(200)), .search("^_", suggestion, hold: .milliseconds(650)),
+                .move(.down, hold: .milliseconds(300)), .still(hold: .milliseconds(1600)), .pick,
+            ]),
+            TypingScript(name: "aliases", windowTitle: "Launch notes", lineStart: "Flow:", steps: [
+                .text("build", hold: .milliseconds(250)), .text("build -", hold: .milliseconds(160)),
+                .text("build →", hold: .milliseconds(500)), .text("build → ship", hold: .milliseconds(250)),
+                .text("build → ship ..", hold: .milliseconds(160)), .text("build → ship …", hold: .milliseconds(500)),
+                .text("build → ship … !", hold: .milliseconds(160)), .text("build → ship … ≠", hold: .milliseconds(500)),
+                .text("build → ship … ≠ (c", hold: .milliseconds(160)), .text("build → ship … ≠ ©", hold: .milliseconds(500)),
+                .still(hold: .milliseconds(1200)),
+            ]),
+        ]
+    }
+
+    //////////////////
+
+    private func renderPicker(_ theme: ScreenshotTheme, library: GlyphLibrary, recents: GlyphRecents, tab: PickerTab,
+                              query: String, to url: URL) async throws {
         let model = EmojiPickerModel(recents: recents)
         model.library = library
         model.setVisibleTabs(PickerTab.allCases)
+        model.tab = tab
         model.prepareForOpen()
         let window = SnapshotWindow(theme: theme) { PickerScene(model: model, theme: theme) }
         defer { window.close() }
@@ -68,140 +118,55 @@ struct ReadmeScreenshots {
         let permissions = PermissionStatus()
         let loginItem = LoginItem()
         let updates = UpdateController()
+        try await renderWindow(theme, height: 560, to: url) {
+            SettingsView(settings: settings, permissions: permissions, loginItem: loginItem, updates: updates,
+                         onGrantAccess: {}, onQuit: {})
+        }
+    }
+
+    ////////////////////
+    //// Aliases page and editor
+    /// The page at its top, where one alias of your own leads Arrows, and the editor open on it.
+
+    private static let sampleAlias = TextAlias(id: CustomTextAliasCodec.idPrefix + "sample", texts: ["-->", "==>"],
+                                               replacements: ["⟶", "⟹", "➜"], group: .arrows, boundary: .anywhere,
+                                               name: "Long arrow")
+
+    private func renderAliasesPage(_ theme: ScreenshotTheme, to url: URL) async throws {
+        try await renderWindow(theme, height: 560, to: url) {
+            TextAliasesPage(builtIn: TextAliasCatalog.all, custom: .constant([Self.sampleAlias]),
+                            disabled: .constant(Set(TextAliasCatalog.offByDefault)), hidden: .constant([]),
+                            triggers: ["::", "##"], onBack: {})
+        }
+    }
+
+    private func renderAliasEditor(_ theme: ScreenshotTheme, to url: URL) async throws {
+        // The sheet has a fixed size, so the window grows by its title bar and divider.
+        let height = SettingsMetrics.editorHeight + Stage.titleBarHeight + 1
+        try await renderWindow(theme, height: height, width: SettingsMetrics.editorWidth, to: url) {
+            AliasEditorSheet(editing: Self.sampleAlias, initialGroup: .arrows, others: [], triggers: ["::", "##"],
+                             onSave: { _ in }, onDelete: {})
+        }
+    }
+
+    //////////////////
+
+    private func renderWindow<Content: View>(_ theme: ScreenshotTheme, height: CGFloat, width: CGFloat = SettingsMetrics.width,
+                                             to url: URL, @ViewBuilder content: () -> Content) async throws {
         let window = SnapshotWindow(theme: theme) {
             Backdrop(theme: theme) {
-                MockWindow(title: SettingsStrings.windowTitle, size: CGSize(width: SettingsMetrics.width, height: 560)) {
-                    SettingsView(settings: settings, permissions: permissions, loginItem: loginItem, updates: updates,
-                                 onGrantAccess: {}, onQuit: {})
-                }
+                MockWindow(title: SettingsStrings.windowTitle, size: CGSize(width: width, height: height), content: content)
             }
         }
         defer { window.close() }
         try await window.settle(.milliseconds(500))
         try window.capture().writePNG(to: url)
     }
-
-    ////////////////////
-    //// The inline-panel GIF
-    /// Types "::roc" after a sentence, lets the panel grow in with its real animation, presses →
-    /// to move from 🪨 to 🚀, waits for its name, then presses Return: "::roc" becomes the emoji.
-    // Each frame's duration is its screen time in the GIF; the last frame of each state holds it.
-
-    private func recordInlinePanel(_ theme: ScreenshotTheme, catalog: EmojiCatalog, output: URL) async throws {
-        let panel = InlinePanelModel()
-        panel.library = GlyphLibrary(emoji: catalog, symbols: .empty, emoticons: .empty)
-        let editor = EditorState()
-        let frames = try FrameRecorder(directory: output.appending(path: "inline-panel-\(theme.rawValue)-frames"))
-        let window = SnapshotWindow(theme: theme) { EditorScene(state: editor, panel: panel, theme: theme) }
-        defer { window.close() }
-        try await window.settle(.milliseconds(400))
-
-        func shot(_ duration: Duration, after wait: Duration = .milliseconds(60)) async throws -> NSBitmapImageRep {
-            try await window.settle(wait)
-            let frame = try window.capture()
-            try frames.add(frame, duration: duration)
-            return frame
-        }
-
-        for visible in [true, false, true] {
-            editor.caretVisible = visible
-            _ = try await shot(.milliseconds(420))
-        }
-        for typed in [":", "::"] {
-            editor.typed = typed
-            _ = try await shot(.milliseconds(130))
-        }
-
-        editor.typed = "::r"
-        panel.beginPresentation(growsFrom: .topLeading, useCounts: [:])
-        panel.update(.init(kind: .emoji, typed: "::r", term: "r", isAutocomplete: false))
-        editor.panelShown = true
-        for _ in 0..<6 { _ = try await shot(.milliseconds(40), after: .milliseconds(35)) }
-        _ = try await shot(.milliseconds(120))
-        for query in ["ro", "roc"] {
-            editor.typed = "::" + query
-            panel.update(.init(kind: .emoji, typed: "::" + query, term: query, isAutocomplete: false))
-            _ = try await shot(.milliseconds(query == "roc" ? 650 : 150))
-        }
-        panel.moveSelection(.right)
-        _ = try await shot(.milliseconds(250))
-        let named = try await shot(.milliseconds(1600), after: PanelMotion.nameRevealDelay + .milliseconds(250))
-        try named.writePNG(to: output.appending(path: "inline-panel-\(theme.rawValue).png"))
-
-        let chosen = try #require(panel.chosenGlyph)
-        editor.typed = chosen.text
-        editor.panelOpacity = 0.35
-        _ = try await shot(.milliseconds(50), after: .milliseconds(20))
-        editor.panelShown = false
-        for visible in [true, false, true, false, true] {
-            editor.caretVisible = visible
-            _ = try await shot(.milliseconds(visible ? 600 : 420))
-        }
-        try frames.finish()
-    }
-
-    //////////////////
 }
 
 ////////////////////
 //// Scenes
 /// Real MacJi views placed in mock macOS chrome. Only the chrome is fake.
-
-@MainActor
-private final class EditorState: ObservableObject {
-    @Published var typed = ""
-    @Published var caretVisible = true
-    @Published var panelShown = false
-    @Published var panelOpacity = 1.0
-}
-
-/// A document window with a sentence being typed and the inline panel under its caret.
-private struct EditorScene: View {
-    @ObservedObject var state: EditorState
-    let panel: InlinePanelModel
-    let theme: ScreenshotTheme
-    private static let windowSize = CGSize(width: 700, height: 470)
-    private static let caretHeight: CGFloat = 19
-
-    var body: some View {
-        Backdrop(theme: theme) {
-            MockWindow(title: "Launch notes", size: Self.windowSize) {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Launch checklist").font(.system(size: 22, weight: .bold))
-                    Text("✅  Tests pass on CI")
-                    Text("✅  Release notes written")
-                    HStack(spacing: 1) {
-                        Text("Tell the team we ship today\u{00A0}" + state.typed)
-                        caret
-                    }
-                }
-                .font(.system(size: 15))
-                .padding(28)
-            }
-        }
-    }
-
-    /// The panel hangs off the caret as InlinePanelPlacement places it: card top-left just under
-    /// the caret. Offscreen capture skips blur filters, so the card's blurred shadow would draw as
-    /// a hard band; the card is clipped to its own frame and given an equivalent soft shadow.
-    private var caret: some View {
-        Rectangle()
-            .fill(Color.accentColor)
-            .frame(width: 2, height: Self.caretHeight)
-            .opacity(state.caretVisible ? 1 : 0)
-            .overlay(alignment: .topLeading) {
-                if state.panelShown {
-                    InlinePanelView(model: panel, onPick: { _ in })
-                        .fixedSize()
-                        .padding(-MenuShadowMargin.size)
-                        .clipShape(RoundedRectangle(cornerRadius: PanelMetrics.cornerRadius, style: .continuous))
-                        .shadow(color: Palette.cardShadow, radius: PanelMetrics.shadowRadius / 2, y: PanelMetrics.shadowOffsetY)
-                        .opacity(state.panelOpacity)
-                        .offset(y: Self.caretHeight + PanelMetrics.caretGap)
-                }
-            }
-    }
-}
 
 /// The picker popover hanging from MacJi's menu-bar icon.
 private struct PickerScene: View {

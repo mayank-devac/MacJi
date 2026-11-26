@@ -4,8 +4,9 @@
 #  MacJi
 #
 #  Created: 2026-11-26
-#  Regenerates every README image from MacJi's real views: picker, search, Settings and the
-#  inline-panel GIF, each in light and dark, written to assets/screenshots_by_agent/.
+#  Regenerates every README image from MacJi's real views: picker tabs, search, Settings, the
+#  Aliases page and editor, and the typing GIFs, each in light and dark, written to
+#  assets/screenshots_by_agent/.
 #
 ####################
 #### Usage
@@ -38,17 +39,21 @@ TEST_RUNNER_MACJI_SCREENSHOTS_DIR="$render" "$MACJI_ROOT/scripts/test.sh" Readme
 
 ####################
 #### Encode the GIFs
-### One palette per GIF, built from all its frames; Sierra dithering keeps emoji gradients smooth.
+### Every *-frames folder becomes one GIF, with one palette built from all its frames; Sierra
+### dithering keeps emoji gradients smooth.
 # Frame durations come from frames.txt, so the GIF keeps the recorded timing (variable frame rate).
 
-for theme in light dark; do
-    frames="$render/inline-panel-$theme-frames"
-    [[ -f "$frames/frames.txt" ]] || fail "No GIF frames for $theme." "Check .build/test.log."
-    step "Encoding inline-panel-$theme.gif"
+shopt -s nullglob
+recordings=("$render"/*-frames)
+(( ${#recordings[@]} > 0 )) || fail "No GIF frames were rendered." "Check .build/test.log."
+for frames in "${recordings[@]}"; do
+    gif="$(basename "$frames" -frames).gif"
+    [[ -f "$frames/frames.txt" ]] || fail "No frame list for $gif." "Check .build/test.log."
+    step "Encoding $gif"
     ffmpeg -v error -y -f concat -safe 0 -i "$frames/frames.txt" -fps_mode vfr \
         -vf "scale=$gif_width:-1:flags=lanczos,split[a][b];[a]palettegen=stats_mode=full[p];[b][p]paletteuse=dither=sierra2_4a" \
-        -loop 0 "$render/inline-panel-$theme.gif" \
-        || fail "ffmpeg could not encode the $theme GIF." "Run the ffmpeg command by hand to see why."
+        -loop 0 "$render/$gif" \
+        || fail "ffmpeg could not encode $gif." "Run the ffmpeg command by hand to see why."
 done
 
 ##################
