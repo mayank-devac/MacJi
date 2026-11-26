@@ -1,8 +1,8 @@
 /*
   confetti.js · MacJi website · Created: 2026-11-26
   Party-popper confetti on one full-page canvas: corner poppers, a pop wherever empty space is
-  clicked, and a glitter party shower that sprays out of the 🎉, spreads and drifts down.
-  No dependencies.
+  clicked, and a glitter party shower that sprays out of the 🎉, spreads and drifts down. The
+  mouse pointer knocks the pieces away. No dependencies.
 */
 
 (function () {
@@ -30,6 +30,13 @@
   var SHOWER_CONE = 0.75;
   //// Confetti thrown by each corner popper.
   var POPPER_COUNT = 80;
+  //// The pointer's solid radius, a little wider than its dot so hits are easy to see.
+  var POINTER_RADIUS = 22;
+  //// Share of the closing speed a piece keeps when it bounces off the pointer.
+  var BOUNCE = 0.2;
+  //// The most of a swipe's speed a piece can pick up, in pixels per 60 Hz frame.
+  var SWIPE_MAX = 8;
+  var HIT_SPIN = 0.35;
   //// Controls and the demo's note keep their normal click.
   var QUIET = "a, button, input, textarea, label, summary, kbd, code, .window";
 
@@ -48,6 +55,9 @@
   var showerLength = 0;
   var showerOwed = 0;
   var showerAnimation = null;
+  //// Where the mouse is now, and where it was on the previous frame.
+  var pointer = null;
+  var pointerBefore = null;
   var sprites = window.MacJiSprites;
   var reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -137,6 +147,47 @@
   //////////////////
 
   ////////////////////
+  //// Pointer collision
+  /// The pointer is a solid disc: pieces bounce off it, and a swipe flicks them away.
+  // Only pieces closing in are hit, so a pop thrown from under the pointer leaves cleanly.
+
+  //// The pointer's path since the previous frame, or null while the mouse is off the page.
+  function swipe(step) {
+    var from = pointerBefore || pointer;
+    pointerBefore = pointer;
+    if (!pointer) return null;
+    var dx = pointer.x - from.x;
+    var dy = pointer.y - from.y;
+    var length = Math.hypot(dx, dy);
+    var capped = Math.min(1, SWIPE_MAX / (length / step)) / step;
+    //// A fast swipe is checked at points along its path, so it can't jump over a piece.
+    var stops = Math.max(1, Math.ceil(length / POINTER_RADIUS));
+    return { x: from.x, y: from.y, dx: dx, dy: dy, vx: dx * capped, vy: dy * capped, stops: stops };
+  }
+
+  function collide(p, path) {
+    var reach = POINTER_RADIUS + (p.size * p.scale) / 2;
+    for (var i = 1; i <= path.stops; i++) {
+      var x = path.x + (path.dx * i) / path.stops;
+      var y = path.y + (path.dy * i) / path.stops;
+      var distance = Math.hypot(p.x - x, p.y - y);
+      if (distance >= reach) continue;
+      var nx = distance ? (p.x - x) / distance : 0;
+      var ny = distance ? (p.y - y) / distance : -1;
+      var closing = (p.vx - path.vx) * nx + (p.vy - path.vy) * ny;
+      if (closing >= 0) continue;
+      p.vx -= (1 + BOUNCE) * closing * nx;
+      p.vy -= (1 + BOUNCE) * closing * ny;
+      p.x = x + nx * reach;
+      p.y = y + ny * reach;
+      p.spin = between(-HIT_SPIN, HIT_SPIN);
+      return;
+    }
+  }
+
+  //////////////////
+
+  ////////////////////
   //// Drawing
   /// js/confetti-sprites.js paints each glowing shape once; every frame only copies them.
 
@@ -167,6 +218,7 @@
     }
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     ctx.clearRect(0, 0, width, height);
+    var path = swipe(step);
     for (var i = particles.length - 1; i >= 0; i--) {
       var p = particles[i];
       p.vx *= Math.pow(p.drag, step);
@@ -177,6 +229,7 @@
       p.rotation += p.spin * step;
       p.flip += p.flipSpeed * step;
       p.life += step;
+      if (path) collide(p, path);
       if (p.y > height + 40 || p.life > p.maxLife) particles.splice(i, 1);
       else draw(p);
     }
@@ -184,6 +237,7 @@
     else {
       raf = 0;
       last = 0;
+      pointerBefore = null;
       ctx.clearRect(0, 0, width, height);
     }
   }
@@ -261,6 +315,16 @@
   document.addEventListener("click", function (event) {
     if (!event.detail || event.target.closest(QUIET) || String(window.getSelection())) return;
     popAt(event.clientX, event.clientY);
+  });
+
+  //// A finger scrolls rather than pushes, and reduced motion adds no extra movement.
+  document.addEventListener("pointermove", function (event) {
+    if (reduceMotion || event.pointerType === "touch") return;
+    pointer = { x: event.clientX, y: event.clientY };
+  }, { passive: true });
+  //// Forgetting both positions stops a swipe being drawn from where the mouse left.
+  document.documentElement.addEventListener("pointerleave", function () {
+    pointer = pointerBefore = null;
   });
 
   window.addEventListener("resize", function () {

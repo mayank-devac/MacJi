@@ -214,7 +214,7 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
   index.html — landing page with the live ::term demo
   js/ — scripts, no dependencies
     confetti-sprites.js — confetti shapes with their glow, painted once and cached
-    confetti.js — click-anywhere confetti on every page, side poppers and the 🎉 party shower
+    confetti.js — click-anywhere confetti on every page, side poppers, the 🎉 party shower and pointer collisions
     demo.js — working copy of the inline panel (trigger rule + EmojiSearch ranking)
     pointer.js — iPadOS-style pointer and button parallax, ported from the Octopus site
     release.js — latest release's .dmg from the GitHub API, Releases-page fallback
