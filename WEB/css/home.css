@@ -1,27 +1,8 @@
 /*
   home.css · MacJi website · Created: 2026-11-26
-  Landing page layout: hero, the inline-panel demo window, bento cards, tiles, shortcuts,
-  privacy, install steps and the closing call to action.
+  Landing page layout: hero, bento cards, tiles, shortcuts, privacy, install steps and the
+  closing call to action. The hero's demo window is in demo.css.
 */
-
-.d0 { --i: 0; }
-.d1 { --i: 1; }
-.d2 { --i: 2; }
-.d3 { --i: 3; }
-.d4 { --i: 4; }
-
-.eyebrow {
-  margin: 0;
-  color: var(--accent-text);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.note {
-  margin: 0;
-  color: var(--text3);
-  font-size: 13px;
-}
 
 /* //// Screenshots come in pairs; the pair member that matches the theme is shown. */
 .shot-dark {
@@ -36,352 +17,80 @@
 
 /* ////////////////////
    //// Hero
-   /// Pitch left, live demo right, on a soft blue-and-sunshine glow taken from the app icon. */
+   /// Pitch left, live demo right. The headline is two fixed lines ending in a typing caret. */
 
 .hero {
-  position: relative;
   max-width: var(--max);
   margin: 0 auto;
-  padding: clamp(32px, 6vw, 72px) var(--gutter) 48px;
+  padding: clamp(28px, 6vw, 76px) var(--gutter) 56px;
   display: grid;
-  grid-template-columns: minmax(300px, 440px) minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 72px);
+  grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+  gap: clamp(32px, 4.5vw, 64px);
   align-items: center;
-}
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: -80px -10% -40px;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(36% 46% at 72% 42%, var(--glow), transparent 70%),
-    radial-gradient(26% 34% at 88% 78%, rgba(255, 201, 60, 0.16), transparent 70%),
-    radial-gradient(30% 40% at 10% 10%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 70%);
 }
 .hero-copy {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 18px;
+  gap: 20px;
 }
+/* //// The icon PNG carries the macOS grid's transparent margin; pull the tile onto the column. */
 .app-icon {
-  width: 112px;
-  height: 112px;
-  margin: -12px 0 -4px -10px;
-  filter: drop-shadow(0 12px 24px rgba(0, 60, 160, 0.22));
+  width: 96px;
+  height: 96px;
+  margin: -10px 0 -6px -9px;
+  filter: drop-shadow(0 14px 24px rgba(0, 70, 200, 0.28));
+}
+.hero .eyebrow {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 11%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  font-size: 13px;
 }
 h1 {
   margin: 0;
-  font:
-    700 clamp(44px, 6vw, 72px)/1.03 -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    "Helvetica Neue",
-    sans-serif;
-  letter-spacing: -0.045em;
+  font: 700 clamp(42px, 5.1vw, 66px) / 1.05 var(--font-display);
+  letter-spacing: -0.042em;
+}
+.h1-line {
+  display: block;
   text-wrap: balance;
+}
+.grad {
+  background: linear-gradient(95deg, var(--grad-a), var(--grad-b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.caret {
+  display: inline-block;
+  width: 0.065em;
+  height: 0.8em;
+  margin-left: 0.07em;
+  vertical-align: -0.06em;
+  border-radius: 99px;
+  background: var(--grad-b);
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
 .lede {
   margin: 0;
   color: var(--text2);
-  font-size: 19px;
-  line-height: 1.5;
-  max-width: 38ch;
+  font-size: clamp(18px, 1.6vw, 20px);
+  line-height: 1.55;
+  max-width: 36ch;
   text-wrap: pretty;
 }
 .cta {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 8px;
-}
-
-/* ////////////////// */
-
-/* ////////////////////
-   //// Demo window
-   /// A macOS document window. The input's font must match .mirror exactly: the mirror measures
-   /// the text before "::" so the panel lands under the trigger, like the real caret placement. */
-
-.demo {
-  min-width: 0;
-}
-.window {
-  position: relative;
-  background: var(--window);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: var(--shadow), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
-  transition:
-    box-shadow 0.3s var(--ease),
-    background-color 0.4s var(--ease);
-}
-.window:focus-within {
-  box-shadow: var(--shadow), 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
-}
-.titlebar {
-  position: relative;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--window-bar);
-  border-bottom: 1px solid var(--line2);
-  border-radius: 14px 14px 0 0;
-}
-.lights {
-  position: absolute;
-  left: 14px;
-  display: flex;
-  gap: 8px;
-}
-.lights i {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ff5f57;
-  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
-}
-.lights i:nth-child(2) {
-  background: #febc2e;
-}
-.lights i:nth-child(3) {
-  background: #28c840;
-}
-.title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text2);
-}
-.doc {
-  position: relative;
-  min-height: 400px;
-  padding: 26px clamp(18px, 3vw, 34px) 32px;
-  font-size: 18px;
-}
-.doc-title {
-  margin: 0 0 12px;
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-}
-.doc p {
-  margin: 0 0 8px;
-}
-.line {
-  position: relative;
-}
-.line input,
-.mirror {
-  font: 400 18px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
-  letter-spacing: -0.022em;
-}
-.line input {
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  caret-color: var(--accent);
-  outline: none;
-}
-.line input:focus-visible {
-  box-shadow: none;
-}
-.line input::placeholder {
-  color: var(--text3);
-}
-.mirror {
-  position: absolute;
-  top: 0;
-  left: 0;
-  visibility: hidden;
-  white-space: pre;
-  pointer-events: none;
-}
-.demo.playing .line input {
-  caret-color: transparent;
-}
-
-/* //// The panel itself: card, header, eight-column grid, footer with key hints. */
-
-.panel {
-  position: absolute;
-  z-index: 3;
-  width: min(320px, calc(100% - 24px));
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--panel) 88%, transparent);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid var(--line);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.06),
-    0 12px 28px rgba(0, 0, 0, 0.16),
-    0 24px 60px rgba(0, 0, 0, 0.12);
-  opacity: 0;
-  transform: translateY(-4px) scale(0.97);
-  transform-origin: 20px 0;
-  transition:
-    opacity 0.16s var(--ease),
-    transform 0.28s var(--spring);
-  overflow: hidden;
-}
-.panel.shown {
-  opacity: 1;
-  transform: none;
-}
-.panel-head {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 10px 14px 9px;
-  border-bottom: 1px solid var(--line2);
-  font-size: 13px;
-}
-.panel-app {
-  font-weight: 600;
-  color: var(--text2);
-}
-.panel-term {
-  font: 600 14px/1 ui-monospace, "SF Mono", Menlo, monospace;
-  letter-spacing: 0;
-}
-.panel-count {
-  margin-left: auto;
-  color: var(--text3);
-  font-variant-numeric: tabular-nums;
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 2px;
-  padding: 8px;
-  height: 128px;
-  overflow-y: auto;
-  align-content: start;
-  scrollbar-width: thin;
-}
-.cell {
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  font-size: 24px;
-  line-height: 1;
-  cursor: default;
-  transition: background-color 0.12s var(--ease);
-}
-.cell:hover {
-  background: var(--chip-h);
-}
-.cell.on {
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
-}
-.panel-empty {
-  grid-column: 1 / -1;
-  margin: 0;
-  padding: 10px 6px;
-  color: var(--text2);
-  font-size: 13px;
-}
-.panel-foot {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 6px 12px;
-  border-top: 1px solid var(--line2);
-}
-.pick-emoji {
-  font-size: 22px;
-  line-height: 1;
-}
-.pick-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 14px;
-  font-weight: 500;
-}
-.hints {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--text2);
-  font-size: 12px;
-  white-space: nowrap;
-}
-.hints kbd {
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  font-size: 11px;
-  border-bottom-width: 1px;
-}
-.hints kbd + kbd,
-.hints kbd:not(:first-child) {
-  margin-left: 4px;
-}
-.copied {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-  font-size: 14px;
-  font-weight: 600;
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.9);
-  transition:
-    opacity 0.18s var(--ease),
-    transform 0.3s var(--spring);
-  pointer-events: none;
-}
-.copied.shown {
-  opacity: 1;
-  transform: translate(-50%, -50%);
-}
-@keyframes float-up {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-46px) scale(1.7);
-  }
-}
-.float {
-  position: absolute;
-  z-index: 4;
-  font-size: 22px;
-  line-height: 1.6;
-  pointer-events: none;
-  animation: float-up 1s var(--ease) forwards;
-}
-.demo-hint {
-  margin: 16px 0 0;
-  text-align: center;
-  color: var(--text2);
-  font-size: 14px;
-  opacity: 0;
-  transform: translateY(6px);
-  transition:
-    opacity 0.5s var(--ease),
-    transform 0.5s var(--ease);
-}
-.demo-hint.shown {
-  opacity: 1;
-  transform: none;
-}
-.window noscript img {
-  border-radius: 0 0 14px 14px;
+  margin-top: 6px;
 }
 
 /* ////////////////// */
@@ -391,7 +100,7 @@ h1 {
 .strip {
   list-style: none;
   max-width: var(--max);
-  margin: 8px auto 0;
+  margin: 0 auto;
   padding: 0 var(--gutter);
   display: flex;
   flex-wrap: wrap;
@@ -402,9 +111,11 @@ h1 {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
+  padding: 8px 15px 8px 13px;
   border-radius: 999px;
-  background: var(--chip);
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  box-shadow: var(--card-shadow), inset 0 1px 0 var(--sheen);
   color: var(--text2);
   font-size: 14px;
   font-weight: 500;
@@ -416,27 +127,28 @@ h1 {
 .section {
   max-width: var(--max);
   margin: 0 auto;
-  padding: clamp(72px, 10vw, 120px) var(--gutter) 0;
+  padding: clamp(80px, 10vw, 136px) var(--gutter) 0;
 }
 .section-head {
-  max-width: 720px;
-  margin: 0 auto 44px;
+  max-width: 880px;
+  margin: 0 auto 48px;
   text-align: center;
 }
 .section h2,
 .final h2 {
-  margin: 8px 0 0;
-  font:
-    700 clamp(32px, 4.4vw, 52px)/1.08 -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    sans-serif;
-  letter-spacing: -0.04em;
+  margin: 10px 0 0;
+  font: 700 clamp(32px, 4.4vw, 52px) / 1.08 var(--font-display);
+  letter-spacing: -0.035em;
   text-wrap: balance;
+}
+/* //// Emoji set inside a headline keep their own spacing despite the tight tracking. */
+.glyph {
+  margin-left: 0.05em;
+  letter-spacing: 0;
 }
 .section-lede {
   margin: 16px auto 0;
-  max-width: 56ch;
+  max-width: 52ch;
   color: var(--text2);
   font-size: 19px;
   text-wrap: pretty;
@@ -448,78 +160,114 @@ h1 {
   letter-spacing: -0.025em;
 }
 
+/* //// Every card on the page shares one surface. */
+.card,
+.tile,
+.keys-card,
+.privacy-list li,
+.steps li,
+.details-body {
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  box-shadow: var(--card-shadow), inset 0 1px 0 var(--sheen);
+}
+
 /* //// Bento cards with screenshots */
 
 .bento {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
 }
 .card {
-  background: var(--bg2);
-  border: 1px solid var(--line2);
   border-radius: var(--r-xl);
   padding: clamp(24px, 3vw, 36px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 28px;
-  transition: background-color 0.4s var(--ease);
+  background-image: radial-gradient(90% 55% at 50% 105%, var(--glow-soft), transparent 70%);
 }
 .card p {
   margin: 0;
   color: var(--text2);
   font-size: 16px;
   max-width: 46ch;
+  text-wrap: pretty;
 }
 .card kbd {
-  margin-right: 2px;
+  margin-right: 3px;
 }
 .shot {
+  width: min(100%, 390px);
   margin: auto auto 0;
-  max-width: 300px;
 }
+/* //// The radius follows the corners already in the PNG, so the shadow hugs the picture. */
 .shot img {
-  border-radius: 18px;
-  box-shadow: var(--shadow);
+  width: 100%;
+  border-radius: 5.4% / 4.3%;
+  box-shadow: var(--shot-shadow);
+  transition: transform 0.6s var(--spring);
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .shot img {
+    transform: translateY(-6px);
+  }
 }
 .card-wide {
   grid-column: span 2;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   align-items: center;
   padding-bottom: 0;
 }
+.card-wide .card-text {
+  padding-bottom: clamp(24px, 3vw, 36px);
+}
 .shot-settings {
-  max-width: 400px;
-  max-height: 360px;
+  align-self: end;
+  width: min(100%, 440px);
+  max-height: 420px;
   margin: 0 auto;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent);
-  mask-image: linear-gradient(to bottom, #000 72%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent);
+  mask-image: linear-gradient(to bottom, #000 74%, transparent);
 }
 .shot-settings img {
-  border-radius: 18px 18px 0 0;
+  border-radius: 3.9% / 3.4%;
+  box-shadow: none;
 }
+
+/* //// Feature tiles */
 
 .tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
   margin-top: 20px;
 }
 .tile {
-  background: var(--bg2);
-  border: 1px solid var(--line2);
   border-radius: var(--r-lg);
-  padding: 26px;
-  transition: background-color 0.4s var(--ease);
+  padding: 28px;
 }
 .tile-icon {
-  display: block;
-  font-size: 32px;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 18px;
+  border-radius: 15px;
+  background: linear-gradient(160deg, var(--chip-h), var(--chip));
+  font-size: 28px;
   line-height: 1;
-  margin-bottom: 16px;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.45s var(--spring);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover .tile-icon {
+    transform: rotate(-7deg) scale(1.1);
+  }
 }
 .tile h3 {
   font-size: 18px;
@@ -528,22 +276,22 @@ h1 {
   margin: 0;
   color: var(--text2);
   font-size: 15px;
+  text-wrap: pretty;
 }
 
 /* ////////////////// */
 
-/* //// Shortcuts */
+/* //// Shortcuts: equal row heights keep the two cards' rules level with each other. */
 
 .keys {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
 }
 .keys-card {
-  background: var(--bg2);
-  border: 1px solid var(--line2);
   border-radius: var(--r-xl);
   padding: clamp(22px, 3vw, 32px);
+  padding-bottom: 14px;
 }
 .keys-card dl {
   margin: 12px 0 0;
@@ -553,38 +301,56 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 0;
+  min-height: 58px;
+  padding: 10px 0;
   border-top: 1px solid var(--line2);
 }
 .keys-card dt {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   flex: none;
   font-size: 15px;
   color: var(--text2);
+}
+.keys-card dt kbd {
+  min-width: 30px;
+  height: 28px;
 }
 .keys-card dd {
   margin: 0;
   font-size: 15px;
   text-align: right;
+  text-wrap: pretty;
 }
 
 /* //// Privacy */
 
 .privacy {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  gap: clamp(32px, 6vw, 80px);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 64px);
   align-items: center;
+}
+.privacy .privacy-intro h2 {
+  font-size: clamp(30px, 3.2vw, 42px);
 }
 .privacy-intro .section-lede {
   margin-left: 0;
 }
-.privacy-intro a {
+.more {
   display: inline-block;
-  margin-top: 18px;
+  margin-top: 20px;
   font-size: 16px;
+}
+.more::after {
+  content: "→";
+  display: inline-block;
+  margin-left: 6px;
+  transition: transform 0.35s var(--spring);
+}
+.more:hover::after {
+  transform: translateX(4px);
 }
 .privacy-list {
   list-style: none;
@@ -597,8 +363,6 @@ h1 {
   display: flex;
   gap: 16px;
   padding: 20px;
-  background: var(--bg2);
-  border: 1px solid var(--line2);
   border-radius: var(--r-lg);
 }
 .privacy-list li > span {
@@ -607,9 +371,11 @@ h1 {
   place-items: center;
   width: 46px;
   height: 46px;
-  border-radius: 12px;
-  background: var(--chip);
+  border-radius: 13px;
+  background: linear-gradient(160deg, var(--chip-h), var(--chip));
   font-size: 24px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .privacy-list h3 {
   font-size: 17px;
@@ -619,6 +385,7 @@ h1 {
   margin: 0;
   color: var(--text2);
   font-size: 15px;
+  text-wrap: pretty;
 }
 
 /* //// Install */
@@ -628,26 +395,27 @@ h1 {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
 }
 .steps li {
-  background: var(--bg2);
-  border: 1px solid var(--line2);
   border-radius: var(--r-lg);
   padding: 28px;
 }
 .step-num {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  margin-bottom: 16px;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 18px;
   border-radius: 50%;
-  background: var(--accent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #fff), var(--accent));
+  box-shadow: 0 6px 14px -6px var(--accent);
   color: #fff;
   font-weight: 600;
   font-size: 15px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .steps h3 {
   font-size: 19px;
@@ -656,6 +424,10 @@ h1 {
   margin: 0;
   color: var(--text2);
   font-size: 15px;
+  text-wrap: pretty;
+}
+.steps code {
+  overflow-wrap: anywhere;
 }
 .steps b {
   color: var(--text);
@@ -668,16 +440,52 @@ h1 {
   font-size: 15px;
 }
 .details summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 8px 16px;
+  border-radius: 999px;
   cursor: pointer;
   color: var(--accent-text);
-  text-align: center;
   font-size: 16px;
+  list-style: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.details summary::-webkit-details-marker {
+  display: none;
+}
+.details summary::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin-top: -3px;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  transition:
+    transform 0.35s var(--spring),
+    margin 0.35s var(--spring);
+}
+.details[open] summary::after {
+  margin-top: 4px;
+  transform: rotate(-135deg);
+}
+.details-body {
+  margin-top: 12px;
+  padding: 20px 22px 6px;
+  border-radius: var(--r-lg);
+  animation: rise 0.4s var(--ease);
+}
+.details-body p {
+  margin: 0;
 }
 .details pre {
   margin: 10px 0 16px;
   padding: 14px 16px;
   background: var(--bg2);
-  border: 1px solid var(--line2);
   border-radius: 12px;
   overflow-x: auto;
 }
@@ -693,7 +501,7 @@ h1 {
   position: relative;
   max-width: var(--max);
   margin: 0 auto;
-  padding: clamp(96px, 12vw, 150px) var(--gutter) 40px;
+  padding: clamp(104px, 12vw, 160px) var(--gutter) 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -703,17 +511,17 @@ h1 {
 .final::before {
   content: "";
   position: absolute;
-  inset: 20% 10% -10%;
+  inset: 12% 0 -6%;
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(40% 50% at 50% 45%, var(--glow), transparent 70%),
-    radial-gradient(22% 30% at 62% 60%, rgba(255, 201, 60, 0.14), transparent 70%);
+    radial-gradient(34% 50% at 50% 45%, var(--glow), transparent 70%),
+    radial-gradient(18% 30% at 60% 60%, var(--glow-sun), transparent 70%);
 }
 .final img {
   width: 96px;
   height: 96px;
-  filter: drop-shadow(0 12px 24px rgba(0, 60, 160, 0.22));
+  filter: drop-shadow(0 14px 24px rgba(0, 70, 200, 0.28));
 }
 .final > p {
   margin: 0 0 10px;
@@ -721,13 +529,9 @@ h1 {
   font-size: 19px;
 }
 .final .note {
-  margin-top: 4px;
+  margin: 4px 0 0;
   font-size: 13px;
   color: var(--text3);
-}
-.footer-credits {
-  max-width: var(--max);
-  margin: 14px auto 0;
 }
 
 /* ////////////////////
@@ -737,13 +541,14 @@ h1 {
 @media (max-width: 960px) {
   .hero {
     grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
   }
   .hero-copy {
     align-items: center;
     text-align: center;
   }
   .app-icon {
-    margin: 0;
+    margin: -8px 0 -6px;
   }
   .cta {
     justify-content: center;
@@ -754,15 +559,31 @@ h1 {
   .steps {
     grid-template-columns: minmax(0, 1fr);
   }
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .card-wide {
     grid-column: auto;
     grid-template-columns: minmax(0, 1fr);
+  }
+  .card-wide .card-text {
+    padding-bottom: 0;
   }
   .privacy-intro {
     text-align: center;
   }
   .privacy-intro .section-lede {
     margin-left: auto;
+  }
+}
+@media (max-width: 760px) {
+  br.wide {
+    display: none;
+  }
+}
+@media (max-width: 620px) {
+  .tiles {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 520px) {
@@ -773,12 +594,10 @@ h1 {
   .cta .btn {
     width: 100%;
   }
-  .hints {
-    display: none;
-  }
   .keys-card dl div {
     flex-direction: column;
     align-items: flex-start;
+    justify-content: center;
     gap: 6px;
   }
   .keys-card dd {

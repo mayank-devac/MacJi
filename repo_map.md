@@ -29,7 +29,7 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 | Emoji data | `scripts/update-emoji-data.py` → `MacJi/Shared/EmojiData/Resources/emoji.json` |
 | Release steps | `docs/RELEASING.md`, `scripts/release.py` |
 | README screenshots and GIFs | `scripts/make-screenshots.sh` → `assets/screenshots/` (scenes in `MacJiTests/Screenshots/`) |
-| Website (GitHub Pages) | `WEB/` (deployed by `.github/workflows/pages.yml`) |
+| Website (GitHub Pages) | `WEB/` (deployed by `.github/workflows/pages.yml`; images via `scripts/make-web-assets.sh`) |
 | Shared script values (bundle ID, cert name, repos) | `scripts/config.sh`, `scripts/config.py` |
 
 ## Tree
@@ -201,19 +201,22 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
   assets/ — site-only copies of images and data
     data/ — data the live demo reads
       emoji.json — copy of MacJi/Shared/EmojiData/Resources/emoji.json; refresh it when that changes
-    icon/ — favicon and app icon copied from assets/icon
-    screenshots/ — picker, search, settings and panel shots copied from assets/screenshots
+    icon/ — favicon and app icon from assets/icon (written by scripts/make-web-assets.sh)
+    screenshots/ — WebP screenshots plus the link-preview PNG (written by scripts/make-web-assets.sh)
   css/ — stylesheets
-    base.css — design tokens (light + dark), nav, buttons, keycaps, footer
-    home.css — landing page layout and the inline-panel demo window
+    base.css — design tokens (light + dark), page glow, nav, buttons, keycaps, footer, motion
+    demo.css — the hero's note window, inline emoji panel and "try it" chips
+    home.css — landing page layout
+    pointer.css — iPadOS-style pointer: dot, platter and text beam
     thank-you.css — thank-you and 404 layout, confetti canvas
   index.html — landing page with the live ::term demo
   js/ — scripts, no dependencies
     confetti.js — party-popper confetti and glitter shower canvas
     demo.js — working copy of the inline panel (trigger rule + EmojiSearch ranking)
+    pointer.js — iPadOS-style pointer and button parallax, ported from the Octopus site
     release.js — latest release's .dmg from the GitHub API, Releases-page fallback
     thank-you.js — starts the download, fires the confetti
-    theme.js — light/dark theme, scrolled nav, pointer parallax
+    theme.js — light/dark theme, scrolled nav and current section
   thank-you.html — after Download: starts the .dmg, confetti, first-launch steps
 assets/ — images used by the README
   icon/ — app icon PNGs for the README header
@@ -237,6 +240,7 @@ scripts/ — automation (see CLAUDE.md → Scripts)
   make-icon.sh — every AppIcon size and Contents.json from one 1024 px PNG
   make-placeholder-icon.swift — draws the placeholder icon
   make-screenshots.sh — regenerate README images and GIFs from the real views (needs ffmpeg)
+  make-web-assets.sh — refresh WEB/assets: WebP screenshots and icon, emoji data (needs cwebp)
   new-file.sh — new Swift file with the standard header
   release.py — full signed release; --dry-run publishes nothing
   repo-map.py — regenerate the tree in repo_map.md

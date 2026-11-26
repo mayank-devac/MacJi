@@ -75,7 +75,8 @@ tried the change in (for example TextEdit, Safari, Notes, an Electron app, Termi
 - Keep each pull request to one change, and say **why** in the commit message.
 - `scripts/check.sh` and `scripts/test.sh` must pass; CI runs both.
 - Update `repo_map.md`, `docs/` and `CHANGELOG.md` (under **Unreleased**) in the same pull request.
-- Changed something visible? Run `scripts/make-screenshots.sh` and commit the refreshed README images.
+- Changed something visible? Run `scripts/make-screenshots.sh`, then `scripts/make-web-assets.sh`,
+  and commit the refreshed README and website images.
 - No new dependencies, analytics, network calls or permissions without discussing it in an issue
   first.
 

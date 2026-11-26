@@ -3,11 +3,12 @@
   Thank-you page: the popper, download status, first-launch steps and the confetti canvas.
 */
 
-.d0 { --i: 0; }
-.d1 { --i: 1; }
-.d2 { --i: 2; }
-.d3 { --i: 3; }
-.d4 { --i: 4; }
+/* //// The page glow, centred for this single column. */
+body::before {
+  background:
+    radial-gradient(38% 44% at 50% 30%, var(--glow), transparent 70%),
+    radial-gradient(20% 26% at 62% 42%, var(--glow-sun), transparent 70%);
+}
 
 .confetti {
   position: fixed;
@@ -21,9 +22,8 @@
    /// One centred column on a glow that matches the landing page. */
 
 .thanks {
-  position: relative;
   max-width: 720px;
-  min-height: calc(100dvh - 56px - 120px);
+  min-height: calc(100dvh - 60px - 200px);
   margin: 0 auto;
   padding: clamp(32px, 7vw, 72px) var(--gutter) 24px;
   display: flex;
@@ -31,16 +31,6 @@
   align-items: center;
   text-align: center;
   gap: 14px;
-}
-.thanks::before {
-  content: "";
-  position: absolute;
-  inset: -60px -30% 40%;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(40% 50% at 50% 30%, var(--glow), transparent 70%),
-    radial-gradient(24% 30% at 64% 40%, rgba(255, 201, 60, 0.16), transparent 70%);
 }
 @keyframes pop {
   0% {
@@ -61,27 +51,23 @@
   line-height: 1;
   padding: 8px;
   border-radius: 28px;
-  cursor: pointer;
   animation:
-    rise 0.9s var(--ease) both,
-    pop 0.9s var(--spring) 0.2s both;
+    rise 0.9s var(--ease) backwards,
+    pop 0.9s var(--spring) 0.2s backwards;
   transition: transform 0.4s var(--spring);
 }
+/* //// Only the thank-you popper is a button; the 404 face sits still. */
 @media (hover: hover) and (pointer: fine) {
-  .popper:hover {
+  button.popper:hover {
     transform: scale(1.08) rotate(-6deg);
   }
 }
-.popper:active {
+button.popper:active {
   transform: scale(0.92);
 }
 .thanks h1 {
   margin: 0;
-  font:
-    700 clamp(44px, 7vw, 76px)/1.03 -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    sans-serif;
+  font: 700 clamp(44px, 7vw, 76px) / 1.03 var(--font-display);
   letter-spacing: -0.045em;
 }
 .status {
@@ -98,11 +84,6 @@
   justify-content: center;
   gap: 12px;
   margin-top: 10px;
-}
-.note {
-  margin: 0;
-  color: var(--text3);
-  font-size: 13px;
 }
 
 /* ////////////////// */
@@ -123,10 +104,10 @@
   gap: 16px;
   align-items: flex-start;
   padding: 20px;
-  background: var(--bg2);
-  border: 1px solid var(--line2);
+  background: var(--card);
+  border: 1px solid var(--card-line);
   border-radius: var(--r-lg);
-  transition: background-color 0.4s var(--ease);
+  box-shadow: var(--card-shadow), inset 0 1px 0 var(--sheen);
 }
 .step-emoji {
   flex: none;
@@ -135,8 +116,10 @@
   width: 46px;
   height: 46px;
   border-radius: 12px;
-  background: var(--chip);
+  background: linear-gradient(160deg, var(--chip-h), var(--chip));
   font-size: 24px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .steps h2 {
   margin: 2px 0 4px;

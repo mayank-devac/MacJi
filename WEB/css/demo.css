@@ -1,0 +1,350 @@
+/*
+  demo.css · MacJi website · Created: 2026-11-26
+  The hero's live demo: the macOS note window, the inline emoji panel and the "try it" chips.
+*/
+
+/* ////////////////////
+   //// Demo window
+   /// A macOS document window. The input's font must match .mirror exactly: the mirror measures
+   /// the text before "::" so the panel lands under the trigger, like the real caret placement. */
+
+.demo {
+  min-width: 0;
+}
+.window {
+  position: relative;
+  background: var(--window);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow), inset 0 1px 0 var(--sheen);
+  transition: box-shadow 0.3s var(--ease);
+}
+.window:focus-within {
+  box-shadow: var(--shadow), 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.titlebar {
+  position: relative;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--window-bar);
+  border-bottom: 1px solid var(--line2);
+  border-radius: 13px 13px 0 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.lights {
+  position: absolute;
+  left: 15px;
+  display: flex;
+  gap: 8px;
+}
+.lights i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+}
+.lights i:nth-child(2) {
+  background: #febc2e;
+}
+.lights i:nth-child(3) {
+  background: #28c840;
+}
+.title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+}
+.doc {
+  position: relative;
+  /* Tall enough for the open panel under the typing line. */
+  min-height: 430px;
+  padding: 14px clamp(18px, 3vw, 34px) 32px;
+  font-size: 18px;
+  cursor: text;
+}
+.doc-date {
+  margin: 0 0 12px;
+  color: var(--text3);
+  font-size: 12px;
+  text-align: center;
+}
+.doc-title {
+  margin: 0 0 12px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.doc p:not(.doc-date) {
+  margin: 0 0 8px;
+}
+.tick {
+  margin-right: 0.15em;
+  letter-spacing: 0;
+}
+.line {
+  position: relative;
+}
+.line input,
+.mirror {
+  font: 400 18px/1.6 var(--font);
+  letter-spacing: -0.022em;
+}
+.line input {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  caret-color: var(--accent);
+  outline: none;
+}
+.line input::placeholder {
+  color: var(--text3);
+}
+.mirror {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  white-space: pre;
+  pointer-events: none;
+}
+.demo.playing .line input {
+  caret-color: transparent;
+}
+.window noscript img {
+  border-radius: 0 0 13px 13px;
+}
+
+/* ////////////////// */
+
+/* ////////////////////
+   //// Inline panel
+   /// Card, header, eight-column grid and a footer with key hints, as in the app. */
+
+.panel {
+  position: absolute;
+  z-index: 3;
+  width: min(320px, calc(100% - 24px));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--panel) 86%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--line);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 12px 28px rgba(0, 0, 0, 0.18),
+    0 24px 60px rgba(0, 0, 0, 0.14);
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  opacity: 0;
+  transform: translateY(-4px) scale(0.97);
+  transform-origin: 20px 0;
+  transition:
+    opacity 0.16s var(--ease),
+    transform 0.28s var(--spring);
+  overflow: hidden;
+}
+.panel.shown {
+  opacity: 1;
+  transform: none;
+}
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 14px 9px;
+  border-bottom: 1px solid var(--line2);
+  font-size: 13px;
+}
+.panel-app {
+  font-weight: 600;
+  color: var(--text2);
+}
+.panel-term {
+  font: 600 14px/1 var(--font-mono);
+  letter-spacing: 0;
+}
+.panel-count {
+  margin-left: auto;
+  color: var(--text3);
+  font-variant-numeric: tabular-nums;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+  padding: 8px;
+  height: 128px;
+  overflow-y: auto;
+  align-content: start;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+}
+.cell {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  font-size: 24px;
+  line-height: 1;
+  cursor: default;
+  transition: background-color 0.12s var(--ease);
+}
+.cell:hover {
+  background: var(--chip-h);
+}
+.cell.on {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.panel-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 10px 6px;
+  color: var(--text2);
+  font-size: 13px;
+}
+.panel-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border-top: 1px solid var(--line2);
+}
+.pick-emoji {
+  font-size: 22px;
+  line-height: 1;
+}
+.pick-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+}
+.hints {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text2);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.hints kbd {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  font-size: 11px;
+  border-bottom-width: 1px;
+}
+.hints kbd:not(:first-child) {
+  margin-left: 4px;
+}
+.copied {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.9);
+  transition:
+    opacity 0.18s var(--ease),
+    transform 0.3s var(--spring);
+  pointer-events: none;
+}
+.copied.shown {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+@keyframes float-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-46px) scale(1.7);
+  }
+}
+.float {
+  position: absolute;
+  z-index: 4;
+  font-size: 22px;
+  line-height: 1.6;
+  pointer-events: none;
+  animation: float-up 1s var(--ease) forwards;
+}
+
+/* ////////////////// */
+
+/* //// "Try it" line under the window; hidden (and unfocusable) while the demo types itself. */
+
+.demo-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 18px 0 0;
+  color: var(--text2);
+  font-size: 14px;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.5s var(--ease),
+    transform 0.5s var(--ease),
+    visibility 0.5s;
+}
+.demo-hint.shown {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+}
+.try {
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: var(--chip);
+  border: 1px solid var(--line2);
+  color: var(--text);
+  font: 500 13px/1 var(--font-mono);
+  letter-spacing: 0;
+  transition:
+    background-color 0.2s var(--ease),
+    transform 0.3s var(--spring);
+}
+.try:hover {
+  background: var(--chip-h);
+}
+.try:active {
+  transform: scale(0.95);
+}
+@media (pointer: coarse) {
+  .try {
+    min-height: 40px;
+    padding: 0 14px;
+  }
+}
+@media (max-width: 520px) {
+  .hints {
+    display: none;
+  }
+}
+
+/* ////////////////// */

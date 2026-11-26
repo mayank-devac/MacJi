@@ -1,7 +1,7 @@
 /*
   theme.js · MacJi website · Created: 2026-11-26
-  Light/dark theme (system default, visitor's choice remembered), the scrolled nav material and
-  the iPadOS-style pointer parallax on buttons. Loaded in <head> so the theme is set before paint.
+  Light/dark theme (system default, visitor's choice remembered) and the nav bar: its scrolled
+  material and the current section. Loaded in <head> so the theme is set before paint.
 */
 
 (function () {
@@ -9,8 +9,9 @@
 
   var root = document.documentElement;
   var STORAGE_KEY = "macji-theme";
-  var BAR_COLOR = { light: "#fbfbfd", dark: "#1c1c1e" };
+  var BAR_COLOR = { light: "#fbfbfd", dark: "#0e0e10" };
   var systemDark = matchMedia("(prefers-color-scheme: dark)");
+  var calm = matchMedia("(prefers-reduced-motion: reduce)");
 
   ////////////////////
   //// Theme
@@ -52,7 +53,7 @@
     if (button) {
       button.addEventListener("click", function () {
         var next = root.dataset.theme === "dark" ? "light" : "dark";
-        applyTheme(next);
+        spread(button, next);
         try {
           localStorage.setItem(STORAGE_KEY, next);
         } catch (error) {}
@@ -66,36 +67,42 @@
       };
       window.addEventListener("scroll", onScroll, { passive: true });
       onScroll();
+      markCurrentSection(nav);
     }
-
-    ////////////////////
-    //// Pointer parallax
-    /// The button follows the pointer a few pixels, as iPadOS buttons do. Mouse and trackpad only.
-
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    document.querySelectorAll("[data-fx]").forEach(function (el) {
-      var max = Number(el.dataset.fx) || 4;
-      var tx = 0;
-      var ty = 0;
-      function set(x, y) {
-        tx = x;
-        ty = y;
-        el.style.setProperty("--tx", x.toFixed(2) + "px");
-        el.style.setProperty("--ty", y.toFixed(2) + "px");
-      }
-      el.addEventListener("pointermove", function (event) {
-        if (event.pointerType === "touch") return;
-        var box = el.getBoundingClientRect();
-        var nx = (event.clientX - (box.left + box.width / 2 - tx)) / (box.width / 2);
-        var ny = (event.clientY - (box.top + box.height / 2 - ty)) / (box.height / 2);
-        set(Math.max(-1, Math.min(1, nx)) * max, Math.max(-1, Math.min(1, ny)) * max);
-      });
-      el.addEventListener("pointerleave", function () {
-        set(0, 0);
-      });
-    });
-
-    //// Clamped so a fast flick never throws the button off its spot.
-    //////////////////
   });
+
+  //// The new theme spreads out from the toggle where the browser supports view transitions.
+  function spread(button, theme) {
+    if (!document.startViewTransition || calm.matches) {
+      applyTheme(theme);
+      return;
+    }
+    var box = button.getBoundingClientRect();
+    root.style.setProperty("--wipe-x", box.left + box.width / 2 + "px");
+    root.style.setProperty("--wipe-y", box.top + box.height / 2 + "px");
+    document.startViewTransition(function () {
+      applyTheme(theme);
+    });
+  }
+
+  ////////////////////
+  //// Current section
+  /// The nav link of the section crossing the middle of the window is marked, none above them.
+
+  function markCurrentSection(nav) {
+    if (!("IntersectionObserver" in window)) return;
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = nav.querySelector('.nav-links a[href="#' + entry.target.id + '"]');
+        if (entry.isIntersecting) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      });
+    }, { rootMargin: "-45% 0px -54% 0px" });
+    nav.querySelectorAll('.nav-links a[href^="#"]').forEach(function (link) {
+      var section = document.querySelector(link.getAttribute("href"));
+      if (section) spy.observe(section);
+    });
+  }
+
+  //////////////////
 })();

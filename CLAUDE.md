@@ -77,6 +77,7 @@ scripts/check.sh                    # repo hygiene (run before every commit; CI 
 | `scripts/verify-update.swift` | Check an archive's EdDSA signature, version and appcast entry |
 | `scripts/make-icon.sh <1024.png>` | Every AppIcon size + `Contents.json` |
 | `scripts/make-screenshots.sh` | README images and GIFs from the real views, light + dark, into `assets/screenshots/` (needs ffmpeg) |
+| `scripts/make-web-assets.sh` | Website copies in `WEB/assets/`: WebP screenshots and icon, emoji data (needs cwebp) |
 | `scripts/make-placeholder-icon.swift` | Draw the placeholder 1024 px icon (yellow face on blue tile) |
 | `scripts/update-emoji-data.py <gemoji.json>` | Strip a gemoji `emoji.json` to the fields MacJi reads |
 | `scripts/sync-from-octopus.sh [file]` | Update the Octopus submodule and diff every ported file's origin |

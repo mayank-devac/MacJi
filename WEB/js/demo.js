@@ -286,9 +286,48 @@
 
   input.addEventListener("input", update);
   input.addEventListener("click", update);
-  input.addEventListener("blur", function () { setTimeout(close, 120); });
+  input.addEventListener("blur", function () {
+    setTimeout(function () {
+      if (document.activeElement !== input) close();
+    }, 120);
+  });
   input.addEventListener("pointerdown", function () { if (autoplay.running) stopAutoplay(); });
   window.addEventListener("resize", function () { if (state.open) place(state.start); });
+
+  //////////////////
+
+  ////////////////////
+  //// Ways in
+  /// The whole note is a text area, as in a real editor, and the chips under it type a term.
+  // Clicks inside the panel never take the focus, just like the app's panel.
+
+  function writeAtEnd(value) {
+    if (input.disabled) return;
+    if (autoplay.running) stopAutoplay();
+    input.value = value;
+    input.focus({ preventScroll: true });
+    input.setSelectionRange(value.length, value.length);
+    state.dismissedAt = -1;
+    update();
+  }
+
+  panel.addEventListener("mousedown", function (event) { event.preventDefault(); });
+
+  doc.addEventListener("click", function (event) {
+    if (event.target.closest("input, #demo-panel") || String(window.getSelection())) return;
+    writeAtEnd(input.value);
+  });
+
+  //// Keeps the sentence already in the note when the new term still fits on its line.
+  document.querySelectorAll("[data-try]").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      var term = "::" + chip.dataset.try;
+      var kept = input.value.replace(/::[A-Za-z0-9_+\-]*$/, "").trim();
+      var line = kept ? kept + " " + term : term;
+      mirror.textContent = line;
+      writeAtEnd(mirror.offsetWidth < input.clientWidth ? line : term);
+    });
+  });
 
   //////////////////
 
@@ -306,10 +345,9 @@
   }
 
   function stopAutoplay() {
-    autoplay.running = false;
     autoplay.timers.forEach(clearTimeout);
     autoplay.timers = [];
-    demo.classList.remove("playing");
+    finish();
   }
 
   function finish() {
@@ -368,6 +406,7 @@
     .catch(function () {
       input.disabled = true;
       input.placeholder = "The live demo couldn't load. Reload the page to try again.";
+      hint.hidden = true;
     });
 
   //// Autoplay only runs for an empty note the visitor hasn't touched.

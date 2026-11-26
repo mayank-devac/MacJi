@@ -1,0 +1,65 @@
+/*
+  pointer.css · MacJi website · Created: 2026-11-26
+  The iPadOS-style pointer drawn by js/pointer.js: a dot, a platter behind small controls, a
+  text beam, and nothing at all while a large button lifts. Ported from the Octopus site.
+*/
+
+/* ////////////////////
+   //// Pointer
+   /// js/pointer.js moves and sizes it; the colours and the press scale live here. */
+
+:root {
+  --ptr-dot: rgba(88, 88, 94, 0.55);
+  --ptr-platter: rgba(88, 88, 94, 0.16);
+  --ptr-beam: rgba(60, 60, 66, 0.85);
+  --ptr-edge: 0 0 0 0.5px rgba(255, 255, 255, 0.55), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+:root[data-theme="dark"] {
+  --ptr-dot: rgba(235, 235, 245, 0.6);
+  --ptr-platter: rgba(235, 235, 245, 0.17);
+  --ptr-beam: rgba(235, 235, 245, 0.88);
+  --ptr-edge: 0 0 0 0.5px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+.ptr {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2147483000;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  background: var(--ptr-dot);
+  box-shadow: var(--ptr-edge);
+  transition:
+    scale 0.18s var(--spring),
+    background-color 0.2s var(--ease),
+    box-shadow 0.2s var(--ease);
+  will-change: translate, width, height, opacity;
+}
+.ptr[data-mode="platter"] {
+  background: var(--ptr-platter);
+  box-shadow: none;
+}
+.ptr[data-mode="beam"] {
+  background: var(--ptr-beam);
+  box-shadow: none;
+}
+.ptr.down {
+  scale: 0.8;
+}
+.ptr.down[data-mode="platter"] {
+  scale: 0.95;
+}
+html.fx-cursor,
+html.fx-cursor * {
+  cursor: none !important;
+}
+@media print {
+  .ptr {
+    display: none;
+  }
+}
+
+/* ////////////////// */
