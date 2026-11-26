@@ -25,10 +25,16 @@ enum AliasStrings {
     static let yours = String(localized: "Yours")
     static let edit = String(localized: "Edit…")
     static let delete = String(localized: "Delete…")
-    static let emoticonsFooter = String(localized: "Symbols in brackets and emoticons convert only at the start of a word, so \"note:)\" and the trigger stay as typed.")
+    static let hide = String(localized: "Hide")
+    static let hideHelp = String(localized: "Hide this alias and stop converting it. Show Hidden brings it back.")
+    static let emoticonsFooter = String(localized: "Emoticons start off: turn on the ones you want. Like symbols in brackets, they convert only after a space or at the start of a line, so \"note:)\" and the trigger stay as typed.")
     static let footer = String(localized: "An alias converts as you type its last character, in every app. Turn off any you type in code, such as -> or !=. Your own aliases also show in every panel's search, by name.")
     static let turnAllOn = String(localized: "Turn All On")
     static let noMatches = String(localized: "No aliases match.")
+
+    static func showHidden(_ count: Int) -> String {
+        String(localized: "Show \(count) Hidden")
+    }
 
     static func onCount(_ on: Int, of total: Int) -> String {
         String(localized: "\(on) of \(total) on")
@@ -65,7 +71,7 @@ enum AliasStrings {
     static let typedBadge = String(localized: "Typed")
     static let useWhenTyping = String(localized: "Type this one")
     static let removeRow = String(localized: "Remove")
-    static let wordStartOnly = String(localized: "Only at the start of a word")
+    static let wordStartOnly = String(localized: "Only after a space or at the start of a line")
     static let wordStartOnlyHint = String(localized: "Recommended: \"note[x]\" and code stay as typed.")
     static let outputsFooter = String(localized: "Typing a spelling gives the first output. Search shows them all.")
     static let save = String(localized: "Save")

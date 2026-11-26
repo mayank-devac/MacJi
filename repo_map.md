@@ -135,24 +135,25 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
   Settings/ — Settings window and stored settings
     AppSettings.swift — typed accessors, registered defaults, change publishers
     Components/ — reusable Settings rows
-      AliasRow.swift — one alias row: spellings → outputs, name, switch, edit and delete for yours
+      AliasRow.swift — one alias row: spellings → outputs, name, edit (yours), delete or hide, switch
       SettingsHint.swift — small explanatory or error line under a control
       SettingsStatusRow.swift — status row with symbol, explanation and optional fix-it button
       TriggerField.swift — trigger text field with live validation and the reason for a rejection
     LoginItem.swift — SMAppService wrapper with real status and errors
     Pages/ — Settings pages that slide in over the main Form
       AliasEditorSheet.swift — add or edit one of your aliases: name, group, + spellings, + outputs, live validation
-      TextAliasesPage.swift — Aliases page: filter, groups with yours first, group switches, + to add, Turn All On
+      TextAliasesPage.swift — Aliases page: filter, groups with yours first, group switches, + to add, Turn All On, Show Hidden
     Sections/ — one view per Settings section
       AboutSection.swift — version, links, Built on Octopus
       AliasesSection.swift — Aliases switch, Customize…, show-in-search switch, and a note when nothing watches the keyboard
       EmojiPickerSection.swift — picker shortcut recorder and reset, Symbols and Emoticons tab switches
-      EmoticonsSection.swift — Emoticons switch, autocomplete − N + stepper (with Off), optional trigger
-      GeneralSection.swift — open at login, automatic updates, Check Now
+      EmoticonsSection.swift — Emoticons switch, "Suggest as you type" − N + stepper (with Off), optional trigger
       InlinePanelsSection.swift — emoji and symbol panel switches and triggers, frequency ranking
+      LoginItemSection.swift — Open at login switch, under Accessibility, with approval and error hints
       MenuBarSection.swift — show/hide the menu-bar icon
       PermissionSection.swift — Accessibility and Secure Input status rows
       QuitSection.swift — Quit MacJi button at the bottom of Settings
+      UpdatesSection.swift — automatic updates, Check Now and the last check time
     SettingsMigrator.swift — schema version and ordered, idempotent migrations
     SettingsView.swift — the single grouped Form
     SettingsWindowController.swift — the Settings window: size limits, position autosave, activation

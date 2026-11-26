@@ -32,7 +32,8 @@ struct SettingsView: View {
                 .disabled(showsAliases)
                 .accessibilityHidden(showsAliases)
             TextAliasesPage(builtIn: TextAliasCatalog.all, custom: $settings.customTextAliases,
-                            disabled: $settings.disabledTextAliases, triggers: Array(settings.triggers.values),
+                            disabled: $settings.disabledTextAliases, hidden: $settings.hiddenTextAliases,
+                            triggers: Array(settings.triggers.values),
                             onBack: { showsAliases = false })
                 .offset(x: showsAliases ? 0 : SettingsMetrics.width)
                 .disabled(!showsAliases)
@@ -50,6 +51,7 @@ struct SettingsView: View {
             PermissionSection(accessibilityGranted: permissions.accessibilityGranted,
                               secureInputHolder: permissions.secureInputHolder,
                               onGrantAccess: onGrantAccess)
+            LoginItemSection(loginItem: loginItem)
             EmojiPickerSection(showsSymbols: $settings.pickerShowsSymbols, showsEmoticons: $settings.pickerShowsEmoticons)
             InlinePanelsSection(emojiEnabled: $settings.inlinePanelEnabled, symbolsEnabled: $settings.symbolPanelEnabled,
                                 trigger: settings.trigger(for:), setTrigger: settings.setTrigger(_:for:),
@@ -65,7 +67,7 @@ struct SettingsView: View {
                            everythingTypedIsOff: settings.watchesNoTyping,
                            onCustomize: { showsAliases = true })
             MenuBarSection(isShown: $settings.showMenuBarIcon)
-            GeneralSection(loginItem: loginItem, updates: updates)
+            UpdatesSection(updates: updates)
             AboutSection()
             QuitSection(onQuit: onQuit)
         }

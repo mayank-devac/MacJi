@@ -11,9 +11,10 @@
 import Foundation
 
 struct TextAlias: Identifiable, Equatable, Sendable {
-    /// Raw values are stored with your own aliases; never rename one.
+    /// Raw values are stored with your own aliases; never rename one. Case order is the
+    /// Settings order.
     enum Group: String, CaseIterable, Identifiable, Sendable {
-        case arrows, math, symbols, emoticons, emoji
+        case arrows, math, symbols, emoji, emoticons
         var id: Self { self }
     }
 

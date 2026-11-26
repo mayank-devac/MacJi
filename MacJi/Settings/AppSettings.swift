@@ -38,10 +38,11 @@ final class AppSettings: ObservableObject {
     }
     /// IDs from `TextAliasCatalog`; unknown IDs (from a newer MacJi) are kept.
     @Published var disabledTextAliases: Set<String> {
-        didSet {
-            guard disabledTextAliases != oldValue else { return }
-            defaults.set(disabledTextAliases.sorted(), forKey: PreferenceKeys.disabledTextAliases)
-        }
+        didSet { store(disabledTextAliases, oldValue, PreferenceKeys.disabledTextAliases) }
+    }
+    /// Built-in alias IDs hidden from the Aliases page; they don't convert either.
+    @Published var hiddenTextAliases: Set<String> {
+        didSet { store(hiddenTextAliases, oldValue, PreferenceKeys.hiddenTextAliases) }
     }
     /// Your own aliases, in Settings order. Entries this build can't read are kept on save.
     @Published var customTextAliases: [TextAlias] {
@@ -94,6 +95,7 @@ final class AppSettings: ObservableObject {
         rankFrequentlyUsedEmoji = Self.bool(defaults, PreferenceKeys.rankFrequentlyUsedEmoji, PreferenceDefaults.rankFrequentlyUsedEmoji)
         convertTextAliases = Self.bool(defaults, PreferenceKeys.convertTextAliases, PreferenceDefaults.convertTextAliases)
         disabledTextAliases = Set(defaults.stringArray(forKey: PreferenceKeys.disabledTextAliases) ?? [])
+        hiddenTextAliases = Set(defaults.stringArray(forKey: PreferenceKeys.hiddenTextAliases) ?? [])
         (customTextAliases, unreadableCustomAliases) = CustomTextAliasCodec.decode(defaults.object(forKey: PreferenceKeys.customTextAliases))
         showAliasesInSearch = Self.bool(defaults, PreferenceKeys.showAliasesInSearch, PreferenceDefaults.showAliasesInSearch)
         pickerShowsSymbols = Self.bool(defaults, PreferenceKeys.pickerShowsSymbols, PreferenceDefaults.pickerShowsSymbols)
@@ -161,5 +163,10 @@ final class AppSettings: ObservableObject {
     private func store(_ value: Bool, _ oldValue: Bool, _ key: String) {
         guard value != oldValue else { return }
         defaults.set(value, forKey: key)
+    }
+
+    private func store(_ value: Set<String>, _ oldValue: Set<String>, _ key: String) {
+        guard value != oldValue else { return }
+        defaults.set(value.sorted(), forKey: key)
     }
 }

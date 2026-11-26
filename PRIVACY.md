@@ -26,7 +26,7 @@ All of it stays on your Mac, in MacJi's preferences
 (`~/Library/Preferences/io.github.mayank-devac.macji.plist`):
 
 - your settings (triggers, shortcut, ranking, emoticon suggestions, picker tabs and the last one
-  you used, aliases you turned off, menu-bar icon, open at login, update checks)
+  you used, aliases you turned off or hid, menu-bar icon, open at login, update checks)
 - the aliases you added yourself: their names, spellings and outputs
 - up to 72 recently used emoji, symbols and emoticons, and how many times you inserted or copied
   each one

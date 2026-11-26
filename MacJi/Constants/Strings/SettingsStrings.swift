@@ -81,7 +81,7 @@ enum SettingsStrings {
     static let emoticonsHeader = String(localized: "Emoticons")
     static let emoticonsToggle = String(localized: "Emoticons")
     static let emoticonsExample = String(localized: "Suggests ^_^ and (^_^;) as you type ^_, and o_O as you type o_.")
-    static let autocompleteLabel = String(localized: "Autocomplete")
+    static let autocompleteLabel = String(localized: "Suggest as you type")
     static let autocompleteOff = String(localized: "Off")
     static let emoticonTriggerPlaceholder = String(localized: "None")
     static let emoticonTriggerHint = String(localized: "Optional. Set one, such as ;;, to search emoticons by name: ;;shrug.")
@@ -96,8 +96,8 @@ enum SettingsStrings {
     //// Aliases section
 
     static let aliasesHeader = String(localized: "Aliases")
-    static let aliasesToggle = String(localized: "Convert aliases while typing")
-    static let aliasesExample = String(localized: "-> becomes →, (c) becomes ©, :) becomes 🙂")
+    static let aliasesToggle = String(localized: "Convert as you type")
+    static let aliasesExample = String(localized: "Replace text spellings with symbols or emoji while typing")
     static let customizeAliases = String(localized: "Customize…")
     static let aliasesInSearch = String(localized: "Show your aliases in search")
     static let aliasesInSearchExample = String(localized: "Find their outputs by name in every panel and the picker: ::check gives ✓ ✔ ☑.")
@@ -115,9 +115,9 @@ enum SettingsStrings {
     //////////////////
 
     ////////////////////
-    //// General
+    //// Open at login and updates
 
-    static let generalHeader = String(localized: "General")
+    static let updatesHeader = String(localized: "Updates")
     static let openAtLogin = String(localized: "Open at login")
     static let loginNeedsApproval = String(localized: "Waiting for your approval in System Settings › General › Login Items.")
     static let openLoginItems = String(localized: "Open Login Items…")

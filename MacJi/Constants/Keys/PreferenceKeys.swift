@@ -34,8 +34,10 @@ enum PreferenceKeys {
     static let rankFrequentlyUsedEmoji = "rankFrequentlyUsedEmoji"
     /// Bool: typed text aliases ("->", ":)") are replaced with their symbol or emoji.
     static let convertTextAliases = "convertTextAliases"
-    /// [String]: IDs of the text aliases the user turned off; aliases added later start on.
+    /// [String]: IDs of the text aliases turned off; the default is the emoticons.
     static let disabledTextAliases = "disabledTextAliases"
+    /// [String]: IDs of built-in aliases the user hid: not listed and not converted.
+    static let hiddenTextAliases = "hiddenTextAliases"
     /// [[String: Any]]: the user's own aliases (fields in `CustomAliasKeys`), in Settings order.
     static let customTextAliases = "customTextAliases"
     /// Bool: your alias outputs appear first in panel and picker search, found by name or spelling.
@@ -109,10 +111,11 @@ enum PreferenceDefaults {
             PreferenceKeys.pickerShowsEmoticons: pickerShowsEmoticons,
             PreferenceKeys.rankFrequentlyUsedEmoji: rankFrequentlyUsedEmoji,
             PreferenceKeys.convertTextAliases: convertTextAliases,
+            PreferenceKeys.disabledTextAliases: TextAliasCatalog.offByDefault,
             PreferenceKeys.showMenuBarIcon: showMenuBarIcon,
         ]
     }
 }
 
-//// Recents, use counts, disabled aliases and the last picker tab (Emoji) need no registration.
+//// Recents, use counts, hidden aliases and the last picker tab (Emoji) need no registration.
 //////////////////

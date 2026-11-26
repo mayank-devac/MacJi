@@ -4,8 +4,8 @@
 //
 //  Created: 2026-11-26
 //  The Aliases page that slides in from Settings: a filter, then each group (arrows, math,
-//  symbols, emoticons, emoji) with your own aliases first, a switch per alias and per group,
-//  and + to add one. Adding or editing opens the alias editor sheet.
+//  symbols, emoji, emoticons) with your own aliases first, a switch per alias and per group,
+//  hide or delete per alias, and + to add one. Adding or editing opens the alias editor sheet.
 //
 
 import SwiftUI
@@ -15,6 +15,8 @@ struct TextAliasesPage: View {
     @Binding var custom: [TextAlias]
     /// IDs of the aliases turned off.
     @Binding var disabled: Set<String>
+    /// IDs of the built-in aliases hidden from this page.
+    @Binding var hidden: Set<String>
     /// Active panel triggers, which a spelling may not contain.
     let triggers: [String]
     let onBack: () -> Void
@@ -32,6 +34,7 @@ struct TextAliasesPage: View {
 
     private var isFiltering: Bool { !filter.trimmingCharacters(in: .whitespaces).isEmpty }
     private var atLimit: Bool { custom.count >= Limits.customAliasesMax }
+    private var listed: [TextAlias] { custom + builtIn.filter { !hidden.contains($0.id) } }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -44,8 +47,14 @@ struct TextAliasesPage: View {
                     Text(AliasStrings.noMatches).foregroundStyle(.secondary)
                 }
                 Section {
-                    Button(AliasStrings.turnAllOn) { disabled.subtract((custom + builtIn).map(\.id)) }
-                        .disabled((custom + builtIn).allSatisfy { !disabled.contains($0.id) })
+                    HStack {
+                        Button(AliasStrings.turnAllOn) { disabled.subtract(listed.map(\.id)) }
+                            .disabled(listed.allSatisfy { !disabled.contains($0.id) })
+                        Spacer()
+                        if !hidden.isEmpty {
+                            Button(AliasStrings.showHidden(hidden.count)) { hidden.removeAll() }
+                        }
+                    }
                 } footer: {
                     Text(AliasStrings.footer).foregroundStyle(.secondary)
                 }
@@ -95,12 +104,12 @@ struct TextAliasesPage: View {
 
     ////////////////////
     //// One group
-    /// Yours first, then the built-in ones. The header counts what is on and switches the whole
+    /// Yours first, then the built-in ones not hidden. The header counts what is on and switches the whole
     /// group (mixed when only some are on); the last row adds one of yours to this group.
     // While filtering, groups with no match are hidden, and so are the add rows.
 
     private func aliases(in group: TextAlias.Group) -> [TextAlias] {
-        (custom + builtIn).filter { $0.group == group && TextAliasNames.matches($0, filter: filter) }
+        listed.filter { $0.group == group && TextAliasNames.matches($0, filter: filter) }
     }
 
     @ViewBuilder
@@ -111,7 +120,7 @@ struct TextAliasesPage: View {
                 ForEach(rows) { alias in
                     AliasRow(alias: alias, isOn: isOn(alias),
                              onEdit: alias.isCustom ? { editor = EditorTarget(alias: alias, group: group) } : nil,
-                             onDelete: alias.isCustom ? { deleting = alias } : nil)
+                             onRemove: { if alias.isCustom { deleting = alias } else { hidden.insert(alias.id) } })
                 }
                 if !isFiltering {
                     Button { editor = EditorTarget(alias: nil, group: group) } label: {

@@ -12,13 +12,16 @@ Keep this file in step with it.
   becomes `→` (the `>` never reaches the app).
 - It works in every app the inline panels work in, whether or not a panel is on. It never runs
   in MacJi's own windows or while Secure Input is on (password fields).
-- **Convert aliases while typing** in Settings › Aliases turns them all on or off (default **on**,
-  all aliases). **Customize…** slides to a page with a filter, one switch per alias and one per
-  group. Turned-off aliases are stored by ID, so aliases added in a later version start on.
+- **Convert as you type** in Settings › Aliases turns them all on or off (default **on**; every
+  alias on except the emoticons, which start off). **Customize…** slides to a page with a filter,
+  one switch per alias and one per group, and a hide button per built-in alias (**Show Hidden**
+  brings them back). Turned-off and hidden aliases are stored by ID (`disabledTextAliases`,
+  `hiddenTextAliases`). Until you change a switch, the emoticons are off by default; after that
+  the stored set wins, so an alias added in a later version starts on.
 - Longer aliases build on shorter ones: `<->` is typed as `<-` (already `←`) then `>`, giving `↔`.
   This works whether or not `<-` is on.
-- Bracket symbols and emoticons convert only **at the start of a word** (after a space, a
-  line start, or a click). `note:)`, `f(c)` and the `::` trigger (`::D…`) stay as typed.
+- Bracket symbols and emoticons convert only **after a space or at the start of a line** (or
+  after a click). `note:)`, `f(c)` and the `::` trigger (`::D…`) stay as typed.
 - To keep an alias as typed, turn it off in **Customize…**. Delete after a conversion removes the symbol.
 
 ## Your own aliases
@@ -30,7 +33,7 @@ On the Aliases page, **+** or a group's **Add Alias…** opens the editor:
 | Name | 1–40 characters. What search finds: `::check`, `##check` and the picker list the outputs first. |
 | You type | One or more spellings (up to 8), each 2–16 characters, no spaces, with at least one character that isn't a letter or digit, and no panel trigger inside. Two of your aliases can't share one. |
 | Becomes | One or more outputs (up to 8), each up to 64 characters on one line. The first is typed; the rest only appear in search. |
-| Only at the start of a word | On by default, like the bracket and emoticon aliases below. |
+| Only after a space or at the start of a line | On by default, like the bracket and emoticon aliases below. |
 
 - A spelling of yours that a built-in alias also uses replaces the built-in one while yours is on;
   turn yours off and the built-in one is back. The editor says when that happens.

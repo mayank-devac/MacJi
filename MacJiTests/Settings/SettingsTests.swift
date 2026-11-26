@@ -89,6 +89,17 @@ struct SettingsTests {
         #expect(defaults.string(forKey: PreferenceKeys.symbolPanelTrigger) == "::")
     }
 
+    @Test func emoticonAliasesStartOffUntilTheUserChangesASwitch() throws {
+        let defaults = try freshDefaults()
+        AppSettings.registerDefaults(in: defaults)
+        let settings = AppSettings(defaults: defaults)
+
+        #expect(settings.disabledTextAliases.contains("smile"))
+        #expect(!settings.disabledTextAliases.contains("rightArrow"))
+        settings.disabledTextAliases.remove("smile")
+        #expect(AppSettings(defaults: defaults).disabledTextAliases == Set(TextAliasCatalog.offByDefault).subtracting(["smile"]))
+    }
+
     @Test func panelsThatAreOffDropTheirTriggersFromTheTap() {
         let configuration = InlinePanelConfiguration(emojiEnabled: true, symbolsEnabled: false, emoticonsEnabled: false,
                                                      triggers: [.emoji: "::", .symbols: "##", .emoticons: ";;"],

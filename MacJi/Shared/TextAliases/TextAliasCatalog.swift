@@ -12,13 +12,18 @@ import Foundation
 enum TextAliasCatalog {
     ////////////////////
     //// Built-in aliases
-    /// Every alias is on unless the user turns it off. IDs are stored, so never rename one.
+    /// Every alias is on unless the user turns it off, except the emoticons, which start off
+    /// (`offByDefault`). IDs are stored, so never rename one.
     /// Emoticons fire only after whitespace, so the "::" trigger, URLs and "note:)" stay intact.
     /// Emoticon spellings come from wooorm/emoticon (MIT, LICENSES/emoticon-MIT.txt), filtered
     /// to the ones that can't fire in ordinary text.
     // Longer aliases may build on shorter ones: "<->" is typed as "<-" (→ "←") then ">".
 
     static let all: [TextAlias] = arrows + math + symbols + emoticons
+
+    /// IDs registered as the default `disabledTextAliases`. Once the user changes any switch the
+    /// stored set wins, so an emoticon added in a later release starts on for them.
+    static var offByDefault: [String] { emoticons.map(\.id) }
 
     private static let arrows: [TextAlias] = [
         TextAlias(id: "rightArrow", texts: ["->"], replacement: "→", group: .arrows, boundary: .anywhere),

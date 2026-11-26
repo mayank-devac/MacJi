@@ -25,6 +25,8 @@ enum SymbolNames {
     static let add = "plus"
     static let remove = "minus.circle.fill"
     static let edit = "pencil"
+    static let delete = "trash"
+    static let hide = "eye.slash"
     static let makeFirst = "arrow.up.to.line"
     static let convertsTo = "arrow.right"
 }

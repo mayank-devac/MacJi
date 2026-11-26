@@ -183,14 +183,15 @@ after a conversion removes the symbol.
 | Arrows | `->` `<-` `<->` `=>` `<==` `<=>` | → ← ↔ ⇒ ⇐ ⇔ |
 | Math | `!=` `<=` `>=` `+-` `~=` | ≠ ≤ ≥ ± ≈ |
 | Symbols | `...` `(c)` `(r)` `(tm)` | … © ® ™ |
-| Emoticons | `:)` `:D` `;)` `:P` `:(` `:'(` `>:(` `<3` … | 🙂 😃 😉 😛 🙁 😢 😠 ❤️ … |
+| Emoticons (off until you turn them on) | `:)` `:D` `;)` `:P` `:(` `:'(` `>:(` `<3` … | 🙂 😃 😉 😛 🙁 😢 😠 ❤️ … |
 
-- Bracket symbols and emoticons convert only at the start of a word, so `note:)`, `f(c)` and
-  the `::` trigger stay as typed.
+- Bracket symbols and emoticons convert only after a space or at the start of a line, so
+  `note:)`, `f(c)` and the `::` trigger stay as typed.
 - Longer spellings build on shorter ones: `<->` becomes ↔ even though `<-` converts first.
 - Settings › Aliases › **Customize…** has a switch for every alias and every group, and a filter.
-  Turn off the ones you type in code, such as `->` or `!=`. Aliases added in a later version
-  start on. Aliases work whether or not the panels are on.
+  Turn off the ones you type in code, such as `->` or `!=`, or hide one you never want to see
+  (**Show Hidden** brings them back). The emoticon aliases start off; every other group starts on.
+  Aliases work whether or not the panels are on.
 - The emoticon spellings come from [wooorm/emoticon](https://github.com/wooorm/emoticon),
   minus the ones that would fire inside words, lists, URLs or code.
 
@@ -205,7 +206,9 @@ On the Aliases page, click **+** (or **Add Alias…** in a group) and fill in:
 - **Becomes**: one or more outputs, up to 64 characters each: a symbol, an emoji, an emoticon or a
   short text. The first is typed; **Add Output** adds more for search, and the arrow button makes
   another one the typed output. **Emoji & Symbols…** opens the Character Viewer.
-- **Only at the start of a word** (on by default) keeps `note[x]` and code as typed.
+- **Only after a space or at the start of a line** (on by default) keeps `note[x]` and code as typed.
+
+The pencil beside an alias's switch edits it; the trash button deletes it.
 
 A spelling of yours that a built-in alias also uses replaces it while yours is on. Turn off
 **Show your aliases in search** to keep them out of search.
@@ -251,18 +254,19 @@ Right-click the menu-bar icon for Settings, Check for Updates and Quit.
 MacJi opens Settings the first time it runs. Open it again from the menu-bar icon's right-click menu,
 or open MacJi again from Applications or Spotlight, which also works when the icon is hidden.
 
-- **Accessibility:** status, Grant Access, and a warning while Secure Input is on.
+- **Accessibility:** status, Grant Access, and a warning while Secure Input is on. Below it,
+  **Open at login**.
 - **Emoji Picker:** record a different shortcut, or reset it to ⌃⌥⌘Space. Show or hide the
   Symbols and Emoticons tabs.
 - **Inline Panels:** turn the emoji and symbol panels on or off and change their triggers (up to
   four characters, with a symbol such as `:` or `#` so they never fire inside ordinary words; no
   trigger may contain another). Turn frequency ranking on or off.
-- **Emoticons:** turn suggestions on or off, set how many characters autocomplete waits for (or
-  Off), and set an optional trigger.
+- **Emoticons:** turn emoticons on or off, set how many characters **Suggest as you type** waits
+  for (or Off), and set an optional trigger.
 - **Aliases:** turn conversion on or off, show or hide your aliases in search, and open
-  **Customize…** to switch single aliases and add your own.
+  **Customize…** to switch, hide or add aliases.
 - **Menu Bar:** show or hide the icon.
-- **General:** open at login, automatic update checks, Check Now.
+- **Updates:** automatic update checks, Check Now.
 
 Your settings, recents, shortcut and Accessibility access all carry over when MacJi updates.
 

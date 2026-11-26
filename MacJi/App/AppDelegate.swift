@@ -106,9 +106,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .removeDuplicates()
             .sink { [weak self] configuration in self?.inlinePanel.configure(configuration) }
             .store(in: &subscriptions)
-        settings.$convertTextAliases.combineLatest(settings.$disabledTextAliases, settings.$customTextAliases)
-            .sink { [weak self] on, disabled, custom in
-                let active = ActiveTextAliases.make(builtIn: TextAliasCatalog.all, custom: custom, disabled: disabled)
+        settings.$convertTextAliases.combineLatest(settings.$disabledTextAliases, settings.$hiddenTextAliases,
+                                                   settings.$customTextAliases)
+            .sink { [weak self] on, disabled, hidden, custom in
+                let active = ActiveTextAliases.make(builtIn: TextAliasCatalog.all, custom: custom,
+                                                    disabled: disabled.union(hidden))
                 self?.inlinePanel.setTextAliases(on ? active : [])
             }
             .store(in: &subscriptions)

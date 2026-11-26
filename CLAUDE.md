@@ -20,14 +20,16 @@ MacJi is an open-source macOS menu-bar app for emoji. Its features:
 4. **Text aliases** – `->` becomes →, `(c)` ©, `:)` 🙂 as the last character is typed
    (`TextAliasCatalog` → `ActiveTextAliases` → `TextAliasConverter`, run from the event tap's key
    path), whether or not a panel is on. Settings › Aliases + Customize… (`convertTextAliases`,
-   `disabledTextAliases`). Emoticon spellings come from wooorm/emoticon (MIT,
+   `disabledTextAliases`, registered default = the emoticons via `TextAliasCatalog.offByDefault`;
+   built-ins hidden from the page in `hiddenTextAliases`). Emoticon spellings come from wooorm/emoticon (MIT,
    `LICENSES/emoticon-MIT.txt`), filtered as `docs/convert-symbols.md` explains. Alias IDs are
    stored, so they are permanent; keep `docs/convert-symbols.md` in step with the catalog.
 5. **Symbol panel** – `##term` (`symbolPanelEnabled`, `symbolPanelTrigger`) opens the same inline
    panel on `symbols.json` (2,166 Unicode symbols, `scripts/update-symbol-data.py`) with a category
    bar that Tab cycles (`InlinePanelKind.symbols`, shared `CategoryBar`).
 6. **Emoticons** – `emoticons.json` (wooorm/emoticon ASCII emoticons + netromdk/kaomojidict kaomoji,
-   `scripts/update-emoticon-data.py`). Autocomplete (`EmoticonAutocomplete`) opens the panel when the
+   `scripts/update-emoticon-data.py`). Autocomplete (`EmoticonAutocomplete`, shown as "Suggest as
+   you type") opens the panel when the
    typed run is the start of an emoticon (`emoticonAutocompleteLength`, default 2, 0 = Off); an
    optional trigger (`emoticonPanelTrigger`, blank by default) searches by name. `emoticonsEnabled`
    switches both.
