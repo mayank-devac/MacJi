@@ -43,11 +43,7 @@ jobs:
         run: scripts/check.sh
 
       - name: Build Release (unsigned)
-        run: |
-          xcodebuild -project MacJi.xcodeproj -scheme MacJi -configuration Release \
-            -destination 'platform=macOS' -derivedDataPath .build/DerivedData \
-            CODE_SIGNING_ALLOWED=NO build > .build-release.log 2>&1 \
-            || { grep -E "error:" .build-release.log | sort -u | head -30; exit 1; }
+        run: CONFIGURATION=Release ./build.sh --no-launch --unsigned
 
       - name: Test
         run: scripts/test.sh --unsigned

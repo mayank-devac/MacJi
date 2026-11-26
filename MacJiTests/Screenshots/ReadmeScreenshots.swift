@@ -213,27 +213,27 @@ private struct PickerScene: View {
 
     var body: some View {
         let shape = RoundedRectangle(cornerRadius: Stage.windowCorner, style: .continuous)
-        let iconCenter = Self.canvasWidth - MockMenuBar.trailing - MockMenuBar.clockWidth - 10 - MockMenuBar.iconWidth / 2
-        let cardX = Self.cardInset
-        VStack(alignment: .leading, spacing: 0) {
-            MockMenuBar()
-            PopoverArrow()
-                .fill(theme.popoverFill)
-                .frame(width: Self.arrowSize.width, height: Self.arrowSize.height)
-                .offset(x: iconCenter - Self.arrowSize.width / 2, y: 0.5)
-                .padding(.top, Self.arrowGap)
-                .zIndex(1)
-            EmojiPickerView(model: model)
-                .background(theme.popoverFill)
-                .clipShape(shape)
-                .overlay(shape.strokeBorder(Stage.hairline, lineWidth: 0.5))
-                .shadow(color: Stage.shadow, radius: Stage.shadowRadius, y: Stage.shadowY)
-                .offset(x: cardX)
-                .padding(.bottom, Stage.margin)
+        let fill = Color(nsColor: theme.materialStandIn)
+        let iconCenter = Self.canvasWidth - MockMenuBar.trailing - MockMenuBar.clockWidth - MockMenuBar.spacing
+            - MockMenuBar.iconWidth / 2
+        Backdrop(theme: theme, insets: EdgeInsets(top: 0, leading: 0, bottom: Stage.margin, trailing: 0)) {
+            VStack(alignment: .leading, spacing: 0) {
+                MockMenuBar()
+                PopoverArrow()
+                    .fill(fill)
+                    .frame(width: Self.arrowSize.width, height: Self.arrowSize.height)
+                    .offset(x: iconCenter - Self.arrowSize.width / 2, y: 0.5)
+                    .padding(.top, Self.arrowGap)
+                    .zIndex(1)
+                EmojiPickerView(model: model)
+                    .background(fill)
+                    .clipShape(shape)
+                    .overlay(shape.strokeBorder(Stage.hairline, lineWidth: 0.5))
+                    .shadow(color: Stage.shadow, radius: Stage.shadowRadius, y: Stage.shadowY)
+                    .offset(x: Self.cardInset)
+            }
+            .frame(width: Self.canvasWidth, alignment: .leading)
         }
-        .frame(width: Self.canvasWidth, alignment: .leading)
-        .background(LinearGradient(colors: theme.backdrop, startPoint: .topLeading, endPoint: .bottomTrailing))
-        .clipShape(RoundedRectangle(cornerRadius: Stage.canvasCorner, style: .continuous))
     }
 }
 

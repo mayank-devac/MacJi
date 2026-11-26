@@ -37,10 +37,6 @@ enum ScreenshotTheme: String, CaseIterable {
         }
     }
 
-    var popoverFill: Color {
-        Color(nsColor: materialStandIn)
-    }
-
     /// What the popover material looks like on screen; cacheDisplay can't capture the live blur.
     var materialStandIn: NSColor {
         self == .light ? NSColor(white: 0.985, alpha: 1) : NSColor(white: 0.17, alpha: 1)
@@ -66,13 +62,15 @@ enum Stage {
 //////////////////
 
 /// Gradient canvas with rounded corners; the corners stay transparent so they take the page colour.
+/// `insets` defaults to the stage margin on every side; the picker scene keeps its menu bar flush.
 struct Backdrop<Content: View>: View {
     let theme: ScreenshotTheme
+    var insets = EdgeInsets(top: Stage.margin, leading: Stage.margin, bottom: Stage.margin, trailing: Stage.margin)
     @ViewBuilder let content: Content
 
     var body: some View {
         content
-            .padding(Stage.margin)
+            .padding(insets)
             .background(LinearGradient(colors: theme.backdrop, startPoint: .topLeading, endPoint: .bottomTrailing))
             .clipShape(RoundedRectangle(cornerRadius: Stage.canvasCorner, style: .continuous))
     }
@@ -116,9 +114,10 @@ struct MockMenuBar: View {
     static let iconWidth: CGFloat = 26
     static let clockWidth: CGFloat = 118
     static let trailing: CGFloat = 14
+    static let spacing: CGFloat = 10
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Self.spacing) {
             Spacer()
             Image(systemName: SymbolNames.menuBar)
                 .font(.system(size: 14, weight: .medium))
@@ -173,7 +172,7 @@ final class SnapshotWindow {
         window.orderFrontRegardless()
     }
 
-    func settle(_ duration: Duration = .milliseconds(120)) async throws {
+    func settle(_ duration: Duration) async throws {
         try await Task.sleep(for: duration)
     }
 
@@ -253,7 +252,6 @@ final class FrameRecorder {
     private let directory: URL
     private var list = ""
     private var count = 0
-    private var lastFile = ""
 
     init(directory: URL) throws {
         self.directory = directory
@@ -265,12 +263,12 @@ final class FrameRecorder {
         try frame.writePNG(to: directory.appending(path: file))
         let seconds = Double(duration.components.seconds) + Double(duration.components.attoseconds) / 1e18
         list += "file '\(file)'\nduration \(String(format: "%.3f", seconds))\n"
-        lastFile = file
         count += 1
     }
 
     /// ffmpeg's concat demuxer ignores the last duration unless the last file is listed again.
     func finish() throws {
+        let lastFile = String(format: "frame-%03d.png", count - 1)
         try (list + "file '\(lastFile)'\n").write(to: directory.appending(path: "frames.txt"), atomically: true, encoding: .utf8)
     }
 }

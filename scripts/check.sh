@@ -93,14 +93,12 @@ fi
 
 python_value() { sed -nE "s/^$1 = \"(.*)\"$/\1/p" scripts/config.py; }
 found=""
-[[ "$(python_value BUNDLE_ID)" == "$MACJI_BUNDLE_ID" ]] || found+="scripts/config.py: BUNDLE_ID differs from config.sh"$'\n'
-[[ "$(python_value SIGNING_IDENTITY)" == "$MACJI_SIGNING_IDENTITY" ]] || found+="scripts/config.py: SIGNING_IDENTITY differs from config.sh"$'\n'
-[[ "$(python_value SPARKLE_KEY_ACCOUNT)" == "$MACJI_SPARKLE_KEY_ACCOUNT" ]] || found+="scripts/config.py: SPARKLE_KEY_ACCOUNT differs from config.sh"$'\n'
-[[ "$(python_value SOURCE_REPO)" == "$MACJI_SOURCE_REPO" ]] || found+="scripts/config.py: SOURCE_REPO differs from config.sh"$'\n'
-[[ "$(python_value DIST_REPO)" == "$MACJI_DIST_REPO" ]] || found+="scripts/config.py: DIST_REPO differs from config.sh"$'\n'
-[[ "$(python_value PLACEHOLDER_PUBLIC_KEY)" == "$MACJI_PLACEHOLDER_PUBLIC_KEY" ]] || found+="scripts/config.py: PLACEHOLDER_PUBLIC_KEY differs from config.sh"$'\n'
+for key in BUNDLE_ID SIGNING_IDENTITY SPARKLE_KEY_ACCOUNT SOURCE_REPO DIST_REPO PLACEHOLDER_PUBLIC_KEY; do
+    shell_name="MACJI_$key"
+    [[ "$(python_value "$key")" == "${!shell_name}" ]] || found+="scripts/config.py: $key differs from config.sh"$'\n'
+done
 grep -qE "^MACJI_BUNDLE_ID = $MACJI_BUNDLE_ID\$" "$MACJI_XCCONFIG" || found+="Config/Base.xcconfig: MACJI_BUNDLE_ID differs from config.sh"$'\n'
-grep -qF "/$MACJI_DIST_REPO/main/appcast.xml" MacJi/Resources/Info.plist || found+="MacJi/Resources/Info.plist: SUFeedURL doesn't point at $MACJI_DIST_REPO"$'\n'
+grep -qF "/$MACJI_DIST_REPO/main/appcast.xml" "$MACJI_INFO_PLIST" || found+="MacJi/Resources/Info.plist: SUFeedURL doesn't point at $MACJI_DIST_REPO"$'\n'
 report "Shared values agree (config.sh, config.py, Base.xcconfig, Info.plist)" "${found%$'\n'}"
 
 #### 6. Signing material

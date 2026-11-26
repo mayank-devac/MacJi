@@ -33,6 +33,7 @@ MACJI_DERIVED_DATA="${DERIVED_DATA:-$MACJI_ROOT/.build/DerivedData}"
 MACJI_DESTINATION="platform=macOS,arch=$(uname -m)"
 MACJI_RELEASE_DIR="$MACJI_ROOT/.build/release"
 MACJI_XCCONFIG="$MACJI_ROOT/Config/Base.xcconfig"
+MACJI_INFO_PLIST="$MACJI_ROOT/MacJi/Resources/Info.plist"
 MACJI_APPICON_DIR="$MACJI_ROOT/MacJi/Resources/Assets.xcassets/AppIcon.appiconset"
 MACJI_SOURCE_REPO="mayank-devac/MacJi"
 MACJI_DIST_REPO="mayank-devac/macji-dist"
@@ -56,6 +57,10 @@ confirm() {
     local answer
     read -r -p "$1 [y/N] " answer
     [[ "$answer" == "y" || "$answer" == "Y" ]]
+}
+# Prints each distinct "error:" line of an xcodebuild log, paths relative to the repo.
+print_errors() {
+    { grep -E "error: " "$1" || true; } | sed "s|$MACJI_ROOT/||" | sort -u | head -20 >&2
 }
 # Prints a script's header comment (everything after the shebang up to the first code line).
 print_usage() {

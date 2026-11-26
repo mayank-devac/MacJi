@@ -35,8 +35,8 @@ ok "Xcode $xcode_version"
 #### Repository
 
 step "Fetching the Octopus reference submodule"
-if git submodule update --init Upstream/octopus >/dev/null 2>&1; then
-    ok "Upstream/octopus at $(git -C Upstream/octopus rev-parse --short HEAD)"
+if git submodule update --init "$MACJI_OCTOPUS_PATH" >/dev/null 2>&1; then
+    ok "Upstream/octopus at $(git -C "$MACJI_OCTOPUS_PATH" rev-parse --short HEAD)"
 else
     printf '! Upstream/octopus could not be fetched (offline?). It is reference only; the build does not need it.\n'
 fi
@@ -73,7 +73,7 @@ if security find-generic-password -s "https://sparkle-project.org" -a "$MACJI_SP
 else
     printf '· Sparkle EdDSA key not found (only needed for releases; see docs/RELEASING.md)\n'
 fi
-if grep -qF "$MACJI_PLACEHOLDER_PUBLIC_KEY" MacJi/Resources/Info.plist; then
+if grep -qF "$MACJI_PLACEHOLDER_PUBLIC_KEY" "$MACJI_INFO_PLIST"; then
     printf '· Info.plist still has the placeholder SUPublicEDKey; release.py refuses to run until it is replaced\n'
 fi
 

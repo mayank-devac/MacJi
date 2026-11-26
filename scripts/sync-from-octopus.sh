@@ -35,7 +35,7 @@ for arg in "$@"; do
 done
 [[ -z "$only" || -f "$only" ]] || fail "$only doesn't exist." "Pass a path like MacJi/Features/InlinePanel/TriggerTracker.swift."
 
-submodule="Upstream/octopus"
+submodule="${MACJI_OCTOPUS_PATH#$MACJI_ROOT/}"
 pinned=$(git ls-files -s "$submodule" | awk '{print $2}')
 [[ -n "$pinned" ]] || fail "$submodule is not a submodule here." "Restore .gitmodules and the submodule from git."
 

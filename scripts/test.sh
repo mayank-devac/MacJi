@@ -64,11 +64,11 @@ suites=$( { grep -E "^Test case '.*' (passed|failed)" "$log" || true; } | { grep
 
 if (( failed > 0 )); then
     grep -E "^Test case '.*' failed" "$log" | sed -E "s/^Test case '([^']*)'.*/  ✗ \1/" >&2
-    { grep -E "error: " "$log" || true; } | sed "s|$MACJI_ROOT/||" | sort -u | head -20 >&2
+    print_errors "$log"
     fail "$failed of $((passed + failed)) tests failed (full log: .build/test.log)" "Fix the failures above, then run scripts/test.sh again."
 fi
 if (( status != 0 )); then
-    { grep -E "error: " "$log" || true; } | sed "s|$MACJI_ROOT/||" | sort -u | head -20 >&2
+    print_errors "$log"
     fail "xcodebuild failed before any test failed (full log: .build/test.log)" "Fix the build errors above."
 fi
 if (( passed == 0 )); then
