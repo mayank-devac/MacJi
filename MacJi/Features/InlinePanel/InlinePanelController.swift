@@ -128,7 +128,8 @@ final class InlinePanelController {
     ////////////////////
     //// Key handling (runs inside the event tap)
     /// While a panel is open, its keys are consumed and handled on the next main-queue turn.
-    /// A key that completes a text alias is consumed and its replacement typed instead; every
+    /// A key that completes a text alias is consumed and its replacement posted right here, before
+    /// the callback returns, so a key typed straight after it can't reach the app first; every
     /// other key passes through and updates the buffer.
     // The buffer is updated synchronously so fast typing never races the panel. Nothing is
     // queued while nothing is being typed for a panel and no panel is showing. Typing in MacJi's
@@ -153,9 +154,7 @@ final class InlinePanelController {
         if let conversion {
             for _ in 0..<conversion.deleteCount { tracker.apply(.deleteBackward) }
             tracker.apply(.text(conversion.replacement))
-            DispatchQueue.main.async {
-                TextInserter.replace(characterCount: conversion.deleteCount, with: conversion.replacement)
-            }
+            TextInserter.replace(characterCount: conversion.deleteCount, with: conversion.replacement)
         } else {
             tracker.apply(key)
         }

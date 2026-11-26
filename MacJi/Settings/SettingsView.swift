@@ -33,7 +33,7 @@ struct SettingsView: View {
                 .accessibilityHidden(showsAliases)
             TextAliasesPage(builtIn: TextAliasCatalog.all, custom: $settings.customTextAliases,
                             disabled: $settings.disabledTextAliases, hidden: $settings.hiddenTextAliases,
-                            triggers: Array(settings.triggers.values),
+                            triggers: settings.activeTriggers,
                             onBack: { showsAliases = false })
                 .offset(x: showsAliases ? 0 : SettingsMetrics.width)
                 .disabled(!showsAliases)

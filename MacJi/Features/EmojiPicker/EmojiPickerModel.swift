@@ -24,7 +24,7 @@ final class EmojiPickerModel: ObservableObject {
         didSet {
             guard tab != oldValue else { return }
             refreshGroups(selectFirst: true)
-            onTabChanged(tab)
+            if !isFallingBack { onTabChanged(tab) }
         }
     }
     /// `nil` shows all categories. Each tab keeps its own filter.
@@ -44,6 +44,7 @@ final class EmojiPickerModel: ObservableObject {
 
     /// Reported so the composition root can remember the last tab.
     var onTabChanged: (PickerTab) -> Void = { _ in }
+    private var isFallingBack = false
     private let recents: GlyphRecents
     var library = GlyphLibrary.empty { didSet { refreshGroups(selectFirst: false) } }
     /// Your aliases' outputs, listed first in search results; empty while that is off.
@@ -68,10 +69,14 @@ final class EmojiPickerModel: ObservableObject {
         focusedGlyph.flatMap { AliasGlyphs.spelling(of: $0, in: aliases) }
     }
 
-    /// A hidden tab falls back to Emoji.
+    /// A hidden tab falls back to Emoji without reporting it, so the remembered tab comes back
+    /// when its tab is turned on again.
     func setVisibleTabs(_ tabs: [PickerTab]) {
         visibleTabs = tabs
-        if !tabs.contains(tab) { tab = .emoji }
+        guard !tabs.contains(tab) else { return }
+        isFallingBack = true
+        tab = .emoji
+        isFallingBack = false
     }
 
     /// Starts each open fresh: empty search, all categories, nothing selected, recents re-read.

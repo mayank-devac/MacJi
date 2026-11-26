@@ -129,11 +129,19 @@ final class AppSettings: ObservableObject {
 
     /// True when no panel, emoticon suggestion or alias needs the keyboard, so the tap is removed.
     var watchesNoTyping: Bool {
-        let panels = InlinePanelConfiguration(emojiEnabled: inlinePanelEnabled, symbolsEnabled: symbolPanelEnabled,
-                                              emoticonsEnabled: emoticonsEnabled, triggers: triggers,
-                                              emoticonAutocompleteLength: emoticonAutocompleteLength,
-                                              ranksFrequentlyUsed: rankFrequentlyUsedEmoji)
-        return !panels.watchesTyping && !convertTextAliases
+        !panelConfiguration.watchesTyping && !convertTextAliases
+    }
+
+    /// Triggers of the panels that are on, which open a panel when typed.
+    var activeTriggers: [String] {
+        Array(panelConfiguration.triggers.values)
+    }
+
+    private var panelConfiguration: InlinePanelConfiguration {
+        InlinePanelConfiguration(emojiEnabled: inlinePanelEnabled, symbolsEnabled: symbolPanelEnabled,
+                                 emoticonsEnabled: emoticonsEnabled, triggers: triggers,
+                                 emoticonAutocompleteLength: emoticonAutocompleteLength,
+                                 ranksFrequentlyUsed: rankFrequentlyUsedEmoji)
     }
 
     /// Stores `raw` and returns nil when it is a valid trigger for `kind`; otherwise keeps the

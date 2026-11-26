@@ -22,10 +22,15 @@ struct EmoticonAutocomplete {
     ////////////////////
     //// Building the prefix set
     /// Only proper prefixes: typing a whole emoticon ("8)") suggests nothing, so Return passes.
-    /// Starts common in code, paths and URLs never suggest, though those emoticons stay searchable.
+    /// Starts common in code, markup, paths, times and ranges never suggest, though those
+    /// emoticons stay searchable: an open suggestion takes Return, Esc, the arrows and Tab.
+    // The second line covers calls and groups ("((", "(*", "\(" Swift interpolation), closing
+    // tags, comparisons, "0:30" and "8-10".
 
     static let deniedStarts = ["--", "//", "/*", "*/", "./", "../", "~/", "==", "=-", "=>", "**", "__",
-                               "<!", "${", "#{", "&&", "||", ":=", "+=", "-=", "<<", ">>", "?.", "!!"]
+                               "<!", "${", "#{", "&&", "||", ":=", "+=", "-=", "<<", ">>", "?.", "!!",
+                               "((", "(*", "(.", "(-", "(?", "(=", "(>", "(;", "<(", "\\(", "</", ">=",
+                               "]=", "':", "'=", "0:", "8-"]
 
     init(emoticons: [String], minimumLength: Int, triggers: [String]) {
         self.minimumLength = minimumLength

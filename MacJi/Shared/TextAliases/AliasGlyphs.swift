@@ -30,16 +30,17 @@ enum AliasGlyphs {
     ////////////////////
     //// Building the catalog
     /// Each output becomes a glyph named after its alias, tagged with the spellings, so "check"
-    /// finds ✓ ✔ ☑ and, in the picker, "[x]" does too. An output two aliases share appears once,
-    // for the first alias.
+    /// finds ✓ ✔ ☑ and, in the picker, "[x]" does too. Only the typed (first) output carries the
+    /// spellings as its aliases, which is what the "Type [x]" hint reads.
+    // An output two aliases share appears once, for the first alias.
 
     static func catalog(from aliases: [TextAlias]) -> AliasCatalog {
         var seen = Set<String>()
         var glyphs: [Glyph] = []
         for alias in aliases {
             for output in alias.replacements where seen.insert(output).inserted {
-                glyphs.append(Glyph(text: output, description: TextAliasNames.name(of: alias),
-                                    category: alias.group.rawValue, aliases: [], tags: alias.texts))
+                glyphs.append(Glyph(text: output, description: TextAliasNames.name(of: alias), category: alias.group.rawValue,
+                                    aliases: output == alias.replacement ? alias.texts : [], tags: alias.texts))
             }
         }
         return AliasCatalog(glyphs: glyphs)
@@ -53,8 +54,8 @@ enum AliasGlyphs {
         return aliases + results.filter { !listed.contains($0.text) }
     }
 
-    /// The first spelling that types `glyph`, for the "Type [x]" hint; nil when it is no alias output.
+    /// The first spelling that types `glyph`, for the "Type [x]" hint; nil when no spelling types it.
     static func spelling(of glyph: Glyph, in catalog: AliasCatalog) -> String? {
-        catalog.entries.first { $0.glyph.text == glyph.text }?.glyph.tags.first
+        catalog.entries.first { $0.glyph.text == glyph.text }?.glyph.aliases.first
     }
 }

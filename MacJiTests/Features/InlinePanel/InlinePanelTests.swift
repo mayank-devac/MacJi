@@ -83,7 +83,8 @@ struct InlinePanelTests {
     // starts an emoticon. Esc silences it until the next word.
 
     private func autocomplete(_ length: Int = 2, triggers: [String] = ["::", "##"]) -> EmoticonAutocomplete {
-        EmoticonAutocomplete(emoticons: ["^_^", "^_~", "owo", ":-)", "--_--", "8)", "XD"], minimumLength: length,
+        EmoticonAutocomplete(emoticons: ["^_^", "^_~", "owo", ":-)", "--_--", "8)", "XD", "((>_<))", "</3?", ">=)", "\\(^o^)/"],
+                             minimumLength: length,
                              triggers: triggers)
     }
 
@@ -106,6 +107,11 @@ struct InlinePanelTests {
         #expect(suggest.run(in: "xd") == nil)
         #expect(suggest.run(in: "--") == nil)
         #expect(suggest.run(in: ":-") == nil)
+        #expect(suggest.run(in: "f((") == nil)
+        #expect(suggest.run(in: "if ((") == nil)
+        #expect(suggest.run(in: "a </") == nil)
+        #expect(suggest.run(in: "b >=") == nil)
+        #expect(suggest.run(in: "\\(") == nil)
     }
 
     @Test func escSilencesTheRunUntilTheNextWord() {
