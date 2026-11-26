@@ -6,6 +6,25 @@ Write notes under **Unreleased**; `scripts/bump-version.sh` moves them under a d
 
 ## [Unreleased]
 
+Symbols, emoticons and your own aliases 🔣
+
+### Added
+- 🔣 Symbol panel: type `##` and a word (`##arrow`, `##euro`, `##cmd`) for more than 2,000
+  Unicode symbols. Tab and Shift-Tab switch between categories.
+- 😄 Emoticons: start typing one (`^_`, `o_`) and MacJi suggests the rest, from more than 450
+  ASCII emoticons and kaomoji. Settings sets how many characters it waits for, or turns it off,
+  and you can add a trigger to search emoticons by name.
+- ✍️ Aliases: `->` becomes →, `!=` ≠, `(c)` © as you type, in any app. Turn single aliases off,
+  hide the ones you never want to see, and add your own with several spellings and outputs.
+  Emoticon aliases such as `:)` → 🙂 start off; turn on the ones you want.
+- 🔎 Your aliases show first when you search any panel or the picker, by name.
+- 🧭 Emoji, Symbols and Emoticons tabs in the picker (⌘1–⌘3), each with its own recents.
+- 🌠 The panels list the glyphs you use most first.
+
+### Changed
+- ⚙️ Open at login sits right under Accessibility in Settings; the rest of General is now Updates.
+- 🧹 With every typing feature off, MacJi stops watching the keyboard entirely.
+
 ## [0.2.0] - 2026-11-26
 
 ### Added
