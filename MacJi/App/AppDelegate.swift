@@ -126,9 +126,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func loadCatalog() {
         Task { [weak self] in
-            let catalog = await EmojiCatalog.loadBundled(GlyphResources.emoji)
-            self?.inlinePanel.setCatalog(catalog)
-            self?.picker.setCatalog(catalog)
+            let library = await GlyphLibrary.loadBundled()
+            self?.inlinePanel.setCatalog(library.emoji)
+            self?.picker.setCatalog(library.emoji)
         }
     }
 

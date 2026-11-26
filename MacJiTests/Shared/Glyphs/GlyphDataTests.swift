@@ -7,6 +7,7 @@
 //  Ported from Octopus: octopusTests/EmojiPickerTests.swift, octopusTests/MacJiTests.swift
 //
 
+import Foundation
 import Testing
 @testable import MacJi
 
@@ -62,4 +63,36 @@ struct GlyphDataTests {
         #expect(GlyphRecents.adding("🐶", to: ["😍", "🐶", "❤️"], limit: 2) == ["🐶", "😍"])
         #expect(catalog.glyphs(for: ["🆕", "❤️"]).map(\.text) == ["❤️"])
     }
+
+    ////////////////////
+    //// Bundled symbol and emoticon data
+    /// A category the Swift enum doesn't know silently drops records, so every record must load.
+    // Symbols shown as emoji by default would duplicate the emoji panel.
+
+    @Test func everyBundledSymbolAndEmoticonHasAKnownCategory() throws {
+        #expect(try bundledRecords(GlyphResources.symbols).count == SymbolCatalog.load(GlyphResources.symbols, from: .main).entries.count)
+        #expect(try bundledRecords(GlyphResources.emoticons).count == EmoticonCatalog.load(GlyphResources.emoticons, from: .main).entries.count)
+    }
+
+    @Test func symbolsNeverRepeatAnEmojiOrThemselves() throws {
+        let symbols = try bundledRecords(GlyphResources.symbols).map(\.text)
+        let emoji = Set(try bundledRecords(GlyphResources.emoji).map(\.text))
+        #expect(Set(symbols).count == symbols.count)
+        #expect(emoji.isDisjoint(with: symbols))
+    }
+
+    @Test func symbolKeywordsFindTheSymbolFirst() {
+        let symbols = SymbolCatalog.load(GlyphResources.symbols, from: .main)
+        #expect(GlyphSearch.ranked("rarr", in: symbols, limit: 1).map(\.text) == ["→"])
+        #expect(GlyphSearch.ranked("cmd", in: symbols, limit: 1).map(\.text) == ["⌘"])
+        #expect(GlyphSearch.ranked("shrug", in: EmoticonCatalog.load(GlyphResources.emoticons, from: .main), limit: 1)
+            .map(\.text) == ["¯\\_(ツ)_/¯"])
+    }
+
+    private func bundledRecords(_ resource: String) throws -> [Glyph] {
+        let url = try #require(Bundle.main.url(forResource: resource, withExtension: "json"))
+        return try JSONDecoder().decode([Glyph].self, from: Data(contentsOf: url))
+    }
+
+    //////////////////
 }

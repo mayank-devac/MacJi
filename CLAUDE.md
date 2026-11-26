@@ -92,6 +92,8 @@ scripts/check.sh                    # repo hygiene (run before every commit; CI 
 | `scripts/make-web-assets.sh` | Website copies in `WEB/assets/`: WebP screenshots and icon, emoji data (needs cwebp) |
 | `scripts/make-placeholder-icon.swift` | Draw the placeholder 1024 px icon (yellow face on blue tile) |
 | `scripts/update-emoji-data.py <gemoji.json>` | Strip a gemoji `emoji.json` to the fields MacJi reads |
+| `scripts/update-symbol-data.py` | Build `symbols.json` from Python's Unicode names (curated blocks, keywords such as `rarr`) |
+| `scripts/update-emoticon-data.py <index.js> <kaomoji.json>` | Build `emoticons.json` from wooorm/emoticon and netromdk/kaomojidict (parsed as data, never run) |
 | `scripts/sync-from-octopus.sh [file]` | Update the Octopus submodule and diff every ported file's origin |
 | `scripts/reset-permissions.sh` | Dev only: reset MacJi's Accessibility grant and relaunch (asks first) |
 | `scripts/clean.sh` | Remove build output and release artefacts (shows the list, asks first) |

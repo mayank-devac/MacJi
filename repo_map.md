@@ -28,6 +28,8 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 | Menu-bar icon | `MacJi/Constants/Theme/SymbolNames.swift` (`menuBar`) |
 | Text aliases (`->` → `→`, `:)` → 🙂) | `MacJi/Features/InlinePanel/TextAliasCatalog.swift`, documented in `docs/convert-symbols.md` |
 | Emoji data | `scripts/update-emoji-data.py` → `MacJi/Shared/Glyphs/Resources/emoji.json` |
+| Symbol data (names, keywords like `rarr`) | `scripts/update-symbol-data.py` → `MacJi/Shared/Glyphs/Resources/symbols.json` |
+| Emoticon data (ASCII faces, kaomoji) | `scripts/update-emoticon-data.py <index.js> <kaomoji.json>` → `MacJi/Shared/Glyphs/Resources/emoticons.json` |
 | Release steps | `docs/RELEASING.md`, `scripts/release.py` |
 | README screenshots and GIFs | `scripts/make-screenshots.sh` → `assets/screenshots/` (scenes in `MacJiTests/Screenshots/`) |
 | Website (GitHub Pages) | `WEB/` (deployed by `.github/workflows/pages.yml`; images via `scripts/make-web-assets.sh`) |
@@ -57,6 +59,8 @@ LICENSES/ — notices for code and data MacJi includes
   Octopus-MIT.txt — original Octopus MIT notice (required)
   emoticon-MIT.txt — wooorm/emoticon licence (source of the emoticon aliases)
   gemoji-MIT.txt — gemoji emoji data licence
+  kaomojidict-MIT.txt — netromdk/kaomojidict licence (source of the kaomoji)
+  unicode-LICENSE.txt — Unicode License v3 (symbol names and code points)
 MacJi/ — the app target (synchronised folder: new files are picked up automatically)
   App/ — entry point and composition root
     AppDelegate.swift — composition root: creates, wires, starts and stops every controller
@@ -150,15 +154,20 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       GlyphCell.swift — one glyph button with selection, hover and press feedback
       KeyHint.swift — footer keycap with caption
     Glyphs/ — glyph data shared by both features: emoji, symbols, emoticons
+      EmoticonCategory.swift — emoticon filters (Happy, Love, Sad, … Flip, Animals)
       Glyph.swift — Glyph and GlyphSection value types
       GlyphCatalog.swift — loads and indexes one data file once, generic over its categories
       GlyphCategory.swift — the GlyphCategory protocol and EmojiCategory
       GlyphClipboard.swift — copies a glyph to the pasteboard
       GlyphGrid.swift — splits items into fixed-column rows for drawing and arrow keys
+      GlyphLibrary.swift — the emoji, symbol and emoticon catalogs, loaded together off the main thread
       GlyphRecents.swift — recently used glyphs (persisted, capped) and per-glyph use counts
       GlyphSearch.swift — ranked search used by the panel and the picker
       Resources/ — data files
         emoji.json — gemoji data stripped to the fields MacJi reads
+        emoticons.json — ASCII emoticons and kaomoji (written by scripts/update-emoticon-data.py)
+        symbols.json — Unicode symbols with search keywords (written by scripts/update-symbol-data.py)
+      SymbolCategory.swift — symbol filters (Arrows, Math, Greek, … Technical)
     Logging/ — diagnostics
       Log.swift — os.Logger categories (never print)
     MenuKit/ — panel chrome and keyboard helpers
@@ -267,6 +276,8 @@ scripts/ — automation (see CLAUDE.md → Scripts)
   sync-from-octopus.sh — diff ported files against their Octopus origins
   test.sh — run tests; fails when zero tests ran
   update-emoji-data.py — strip a gemoji emoji.json to MacJi's fields
+  update-emoticon-data.py — build emoticons.json from wooorm/emoticon and kaomojidict
+  update-symbol-data.py — build symbols.json from Python’s Unicode names
   verify-update.swift — check an archive's EdDSA signature, version and appcast entry
 ```
 <!-- repo-map:tree:end -->
