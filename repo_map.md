@@ -86,6 +86,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       PanelMotion.swift — springs, fades, copy-close and name-reveal delays
       Timing.swift — non-animation intervals: revocation probe, guide polling, recovery, AX timeout
     Strings/ — user-visible text
+      AliasStrings.swift — Aliases page and alias editor, including the editor’s problem messages
       MenuBarStrings.swift — status item and its menu
       PanelStrings.swift — inline panel
       PermissionStrings.swift — Accessibility guide and Secure Input messages
@@ -130,12 +131,14 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
   Settings/ — Settings window and stored settings
     AppSettings.swift — typed accessors, registered defaults, change publishers
     Components/ — reusable Settings rows
+      AliasRow.swift — one alias row: spellings → outputs, name, switch, edit and delete for yours
       SettingsHint.swift — small explanatory or error line under a control
       SettingsStatusRow.swift — status row with symbol, explanation and optional fix-it button
       TriggerField.swift — trigger text field with live validation and the reason for a rejection
     LoginItem.swift — SMAppService wrapper with real status and errors
     Pages/ — Settings pages that slide in over the main Form
-      TextAliasesPage.swift — Aliases page: one switch per alias, Turn All On
+      AliasEditorSheet.swift — add or edit one of your aliases: name, group, + spellings, + outputs, live validation
+      TextAliasesPage.swift — Aliases page: filter, groups with yours first, group switches, + to add, Turn All On
     Sections/ — one view per Settings section
       AboutSection.swift — version, links, Built on Octopus
       AliasesSection.swift — Aliases switch, Customize…, and a note when nothing watches the keyboard
@@ -201,6 +204,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       CustomTextAliasValidator.swift — rules for your aliases (name, spellings, outputs) and the editor draft
       TextAlias.swift — one text alias: spellings, outputs, group, word-start rule, your name for it
       TextAliasCatalog.swift — the built-in aliases (arrows, math, symbols, emoticons); IDs are stored
+      TextAliasNames.swift — the name an alias shows and is searched by, and the page filter
   Updates/ — software updates
     UpdateController.swift — Sparkle updater: check now, automatic checks, last check
 MacJi.xcodeproj/ — Xcode project (synchronised folders, shared scheme)

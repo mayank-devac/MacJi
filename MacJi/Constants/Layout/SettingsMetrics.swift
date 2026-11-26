@@ -27,4 +27,9 @@ enum SettingsMetrics {
     static let aliasSpacing: CGFloat = 8
     static let aliasTextWidth: CGFloat = 96
     static let pageHeaderPadding: CGFloat = 12
+    static let tagHorizontalPadding: CGFloat = 5
+
+    // Alias editor sheet
+    static let editorWidth: CGFloat = 440
+    static let editorHeight: CGFloat = 560
 }

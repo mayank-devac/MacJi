@@ -10,6 +10,8 @@ import SwiftUI
 
 struct AliasesSection: View {
     @Binding var convertsTextAliases: Bool
+    /// How many of your own aliases there are, shown under the switch.
+    let customCount: Int
     /// Shows the note that nothing watches the keyboard.
     let everythingTypedIsOff: Bool
     let onCustomize: () -> Void
@@ -25,7 +27,8 @@ struct AliasesSection: View {
                 }
             } label: {
                 Text(SettingsStrings.aliasesToggle)
-                Text(SettingsStrings.aliasesExample)
+                Text(customCount == 0 ? SettingsStrings.aliasesExample
+                                      : AliasStrings.example(SettingsStrings.aliasesExample, yours: customCount))
             }
         } header: {
             Text(SettingsStrings.aliasesHeader)

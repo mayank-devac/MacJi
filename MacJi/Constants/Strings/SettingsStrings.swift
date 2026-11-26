@@ -103,22 +103,6 @@ enum SettingsStrings {
     //////////////////
 
     ////////////////////
-    //// Aliases page
-
-    static let aliasesBack = String(localized: "Settings")
-    static let aliasesTitle = String(localized: "Aliases")
-    static let aliasesArrows = String(localized: "Arrows")
-    static let aliasesMath = String(localized: "Math")
-    static let aliasesSymbols = String(localized: "Symbols")
-    static let aliasesEmoticons = String(localized: "Emoticons")
-    static let aliasesEmoji = String(localized: "Emoji")
-    static let aliasesEmoticonsFooter = String(localized: "Symbols in brackets and emoticons convert only at the start of a word, so \"note:)\" and the trigger stay as typed.")
-    static let aliasesFooter = String(localized: "An alias converts as you type its last character, in every app. Turn off any you type in code, such as -> or !=.")
-    static let turnAllOn = String(localized: "Turn All On")
-
-    //////////////////
-
-    ////////////////////
     //// Menu Bar
 
     static let menuBarHeader = String(localized: "Menu Bar")

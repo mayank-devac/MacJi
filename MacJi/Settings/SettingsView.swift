@@ -31,7 +31,8 @@ struct SettingsView: View {
                 .offset(x: showsAliases ? -SettingsMetrics.width : 0)
                 .disabled(showsAliases)
                 .accessibilityHidden(showsAliases)
-            TextAliasesPage(aliases: TextAliasCatalog.all, disabled: $settings.disabledTextAliases,
+            TextAliasesPage(builtIn: TextAliasCatalog.all, custom: $settings.customTextAliases,
+                            disabled: $settings.disabledTextAliases, triggers: Array(settings.triggers.values),
                             onBack: { showsAliases = false })
                 .offset(x: showsAliases ? 0 : SettingsMetrics.width)
                 .disabled(!showsAliases)
@@ -59,6 +60,7 @@ struct SettingsView: View {
                              trigger: settings.trigger(for: .emoticons),
                              setTrigger: { settings.setTrigger($0, for: .emoticons) })
             AliasesSection(convertsTextAliases: $settings.convertTextAliases,
+                           customCount: settings.customTextAliases.count,
                            everythingTypedIsOff: settings.watchesNoTyping,
                            onCustomize: { showsAliases = true })
             MenuBarSection(isShown: $settings.showMenuBarIcon)

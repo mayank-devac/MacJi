@@ -15,7 +15,6 @@ enum PanelStrings {
     static let emoticonsTitle = String(localized: "Emoticons")
     static let insert = String(localized: "Insert")
     static let copy = String(localized: "Copy")
-    static let filter = String(localized: "Filter")
     static let noResultsHint = String(localized: "Keep typing, or press esc")
     static let noResultsInFilterHint = String(localized: "Press tab for another category, or esc")
 

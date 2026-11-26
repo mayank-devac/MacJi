@@ -22,4 +22,9 @@ enum SymbolNames {
     static let lock = "lock.fill"
     static let settings = "gearshape"
     static let back = "chevron.left"
-    static let convertsTo = "arrow.right"}
+    static let add = "plus"
+    static let remove = "minus.circle.fill"
+    static let edit = "pencil"
+    static let makeFirst = "arrow.up.to.line"
+    static let convertsTo = "arrow.right"
+}
