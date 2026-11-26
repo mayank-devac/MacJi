@@ -12,6 +12,19 @@
 <p align="center"><b>Emoji anywhere you type.</b> Type <code>::rocket</code> in any Mac app, press Return, and it becomes 🚀.</p>
 
 <p align="center">
+  <a href="https://github.com/mayank-devac/MacJi/releases/latest"><img src="https://img.shields.io/github/v/release/mayank-devac/MacJi?label=latest" alt="Latest version"></a>
+  <img src="https://img.shields.io/badge/platform-macOS%2014.6%2B-lightgrey?logo=apple" alt="Platform: macOS 14.6 or later">
+  <img src="https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white" alt="Swift 6">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/mayank-devac/MacJi" alt="MIT licence"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/mayank-devac/MacJi/releases"><img src="https://img.shields.io/github/downloads/mayank-devac/MacJi/total?label=downloads" alt="Total downloads"></a>
+  <a href="https://github.com/mayank-devac/MacJi/releases/latest"><img src="https://img.shields.io/github/downloads/mayank-devac/MacJi/latest/total?label=downloads%40latest" alt="Downloads of the latest release"></a>
+  <img src="https://img.shields.io/github/release-date/mayank-devac/MacJi?label=released" alt="Latest release date">
+</p>
+
+<p align="center">
   <a href="https://github.com/mayank-devac/MacJi/releases/latest">Download</a> ·
   <a href="#first-launch">First launch</a> ·
   <a href="#usage">Usage</a> ·
@@ -173,7 +186,9 @@ scripts/test.sh      # runs the tests
 
 Debug builds use a separate bundle ID (`…macji.debug`), so they never share settings or permissions
 with an installed MacJi. They're signed ad-hoc by default, which makes macOS forget the Accessibility
-grant after each rebuild. Set a signing identity in `Config/LocalSigning.xcconfig` to keep it.
+grant after each rebuild. Set a signing identity in `Config/LocalSigning.xcconfig` to keep it. When
+the signature changes between builds, `./build.sh` offers to reset the old grant so you can allow
+the new build with one switch.
 
 Releases are built by `scripts/release.py`; see [docs/RELEASING.md](docs/RELEASING.md). How the code
 fits together is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

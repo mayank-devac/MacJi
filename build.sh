@@ -47,6 +47,37 @@ ok "Built ${app#$MACJI_ROOT/}"
 $launch || exit 0
 
 quit_app "$app"
+
+####################
+#### Keep the Accessibility grant matching this build
+### macOS stores the app's designated requirement with the grant. When a build's requirement differs
+### (ad-hoc signing, a new certificate), the old entry still shows "on" in System Settings but no
+### longer matches, and switching it on again changes nothing. Resetting that one entry lets the
+### new build be allowed with a single switch instead of removing and re-adding it by hand.
+# An ad-hoc requirement pins each build's own hash, so it changes every build: only warn for that.
+
+bundle_id="$MACJI_BUNDLE_ID"
+[[ "$configuration" == "Debug" ]] && bundle_id="$MACJI_DEBUG_BUNDLE_ID"
+requirement=$(codesign -d -r- "$app" 2>/dev/null | sed -n 's/^designated => //p' || true)
+record="$MACJI_ROOT/.build/designated-requirement-$configuration.txt"
+previous=$(cat "$record" 2>/dev/null || true)
+if [[ -z "$requirement" || "$requirement" == cdhash* ]]; then
+    printf '· Signed ad-hoc: macOS forgets the Accessibility grant after every build\n'
+    printf '  fix: set CODE_SIGN_IDENTITY in Config/LocalSigning.xcconfig\n'
+elif [[ -n "$previous" && "$previous" != "$requirement" ]]; then
+    printf '· The signature changed since the last build, so the saved Accessibility grant for %s no longer matches.\n' "$bundle_id"
+    if confirm "Reset that grant so this build can be allowed with one switch?"; then
+        tccutil reset Accessibility "$bundle_id" >/dev/null && ok "Accessibility grant reset for $bundle_id" \
+            || printf '· tccutil failed; remove MacJi in System Settings › Privacy & Security › Accessibility\n'
+    else
+        printf '· Kept it; remove and re-add MacJi in Accessibility, or run scripts/reset-permissions.sh\n'
+    fi
+fi
+printf '%s\n' "$requirement" >"$record"
+
+#### A stable signing identity keeps the requirement, and so the grant, across every rebuild.
+##################
+
 open -n "$app"
 running=""
 for _ in $(seq 1 30); do
