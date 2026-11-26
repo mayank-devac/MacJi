@@ -22,8 +22,13 @@
   var COLUMNS = 8;
   var RESULT_LIMIT = 64;
   var QUERY_MAX = 32;
-  var SCRIPT = "Tell the team we ship today ::roc";
-  var TARGET = "🚀";
+  /// What autoplay types, in order; "pick" is the glyph it takes from the panel that opens.
+  var SCRIPT = [
+    { type: "Tell the team we ship today ::roc", pick: "🚀" },
+    { type: " 0.2 ##rarr", pick: "→" },
+    { type: " 0.3" },
+  ];
+  var SCRIPT_RESULT = "Tell the team we ship today 🚀 0.2 → 0.3";
   var TRIGGER = new RegExp("(^|[^A-Za-z0-9:#])(::|##)([A-Za-z0-9_+\\-]{0," + QUERY_MAX + "})$");
 
   var demo = document.getElementById("demo");
@@ -48,7 +53,7 @@
   ////////////////////
   //// Catalog and ranking
   /// Mirrors GlyphCatalog + GlyphSearch: 0 exact alias · 1 alias prefix · 2 word prefix · 3 anywhere.
-  /// Each panel's data loads once, the symbols only when "##" is first typed.
+  /// Each panel's data loads once; the symbols wait until autoplay or the visitor needs them.
   // Buckets keep catalog order inside each rank, exactly like the app, so "roc" shows 🪨 then 🚀.
 
   function load(panel) {
@@ -351,7 +356,8 @@
 
   ////////////////////
   //// Autoplay
-  /// Once the note scrolls into view, type the README's example, pick 🚀 and press Return.
+  /// Once the note scrolls into view, type the README's example, pick 🚀 and press Return, then
+  /// carry on with "##" to put a symbol in the same line.
   // Any real key or click hands control to the visitor at once.
 
   function later(fn, ms) {
@@ -374,37 +380,65 @@
     hint.classList.add("shown");
   }
 
+  function typeText(text, done) {
+    var at = 0;
+    text.split("").forEach(function (character) {
+      at += character === " " ? 90 : 40 + Math.random() * 55;
+      later(function () {
+        input.value += character;
+        input.setSelectionRange(input.value.length, input.value.length);
+        // A narrow note doesn't follow a scripted caret by itself.
+        input.scrollLeft = input.scrollWidth;
+        update();
+      }, at);
+    });
+    later(done, at);
+  }
+
+  function pick(glyph, done) {
+    var index = state.results.findIndex(function (entry) { return entry.emoji === glyph; });
+    if (index > state.selected) {
+      press("ArrowRight");
+      later(function () { pick(glyph, done); }, 380);
+      return;
+    }
+    later(function () {
+      press("Enter");
+      // Let the inserted glyph's lift play out before the line moves on.
+      later(done, 600);
+    }, 520);
+  }
+
+  function playStep(number) {
+    var step = SCRIPT[number];
+    if (!step) {
+      later(finish, 500);
+      return;
+    }
+    var next = function () { playStep(number + 1); };
+    typeText(step.type, function () {
+      if (!step.pick) {
+        next();
+        return;
+      }
+      later(function () { pick(step.pick, next); }, 650);
+    });
+  }
+
   function play() {
     autoplay.running = true;
     demo.classList.add("playing");
     input.value = "";
-    var at = 300;
-    SCRIPT.split("").forEach(function (character, index) {
-      at += character === " " ? 90 : 40 + Math.random() * 55;
-      later(function () {
-        input.value = SCRIPT.slice(0, index + 1);
-        input.setSelectionRange(input.value.length, input.value.length);
-        update();
-      }, at);
-    });
-    at += 650;
-    later(function stepToTarget() {
-      var index = state.results.findIndex(function (entry) { return entry.emoji === TARGET; });
-      if (index > state.selected) {
-        press("ArrowRight");
-        later(stepToTarget, 380);
-        return;
-      }
-      later(function () {
-        press("Enter");
-        later(finish, 500);
-      }, 520);
-    }, at);
+    later(function () { playStep(0); }, 300);
   }
 
   function showResult() {
-    input.value = SCRIPT.replace("::roc", TARGET);
+    input.value = SCRIPT_RESULT;
     finish();
+  }
+
+  function untouched() {
+    return document.activeElement !== input && !input.value;
   }
 
   load(PANELS["::"])
@@ -417,7 +451,10 @@
       var seen = new IntersectionObserver(function (entries) {
         if (!entries[0].isIntersecting) return;
         seen.disconnect();
-        if (document.activeElement !== input && !input.value) play();
+        // Symbols load first, so the "##" panel never opens late under the script.
+        load(PANELS["##"]).then(function () {
+          if (untouched()) play();
+        }, finish);
       }, { threshold: 0.6 });
       seen.observe(demo);
     })
