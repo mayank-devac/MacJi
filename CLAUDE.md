@@ -11,16 +11,31 @@ MacJi is an open-source macOS menu-bar app for emoji. Its features:
    panel opens under the caret. Return replaces `::roc` with the emoji, Shift-Return copies it,
    Esc closes, Space or punctuation closes it as you keep typing.
 2. **Emoji picker** – a menu-bar popover (also opened by a global shortcut) with search,
-   categories, recents and keyboard navigation. Return copies, Option-Return copies and stays open.
-3. **Frequent-emoji ranking** – the inline panel lists used emoji first, most used first, when they
+   categories, recents and keyboard navigation, on Emoji / Symbols / Emoticons tabs (⌘1–⌘3,
+   `PickerTab`; `pickerShowsSymbols`, `pickerShowsEmoticons`, last tab in `pickerLastTab`).
+   Return copies, Option-Return copies and stays open.
+3. **Frequent-emoji ranking** – the inline panels list used glyphs first, most used first, when they
    match by prefix (`GlyphSearch.ranked(useCounts:)`, counts in `GlyphRecents`). Setting
    `rankFrequentlyUsedEmoji`, default on. The picker keeps the plain ranking.
-4. **Text aliases** – while the inline panel is on, `->` becomes →, `(c)` ©, `:)` 🙂 as the last
-   character is typed (`TextAliasCatalog` → `TextAliasConverter`, run from the event tap's key
-   path). Settings › Inline Panel › Aliases + Customize… (`convertTextAliases`,
+4. **Text aliases** – `->` becomes →, `(c)` ©, `:)` 🙂 as the last character is typed
+   (`TextAliasCatalog` → `ActiveTextAliases` → `TextAliasConverter`, run from the event tap's key
+   path), whether or not a panel is on. Settings › Aliases + Customize… (`convertTextAliases`,
    `disabledTextAliases`). Emoticon spellings come from wooorm/emoticon (MIT,
    `LICENSES/emoticon-MIT.txt`), filtered as `docs/convert-symbols.md` explains. Alias IDs are
    stored, so they are permanent; keep `docs/convert-symbols.md` in step with the catalog.
+5. **Symbol panel** – `##term` (`symbolPanelEnabled`, `symbolPanelTrigger`) opens the same inline
+   panel on `symbols.json` (2,166 Unicode symbols, `scripts/update-symbol-data.py`) with a category
+   bar that Tab cycles (`InlinePanelKind.symbols`, shared `CategoryBar`).
+6. **Emoticons** – `emoticons.json` (wooorm/emoticon ASCII emoticons + netromdk/kaomojidict kaomoji,
+   `scripts/update-emoticon-data.py`). Autocomplete (`EmoticonAutocomplete`) opens the panel when the
+   typed run is the start of an emoticon (`emoticonAutocompleteLength`, default 2, 0 = Off); an
+   optional trigger (`emoticonPanelTrigger`, blank by default) searches by name. `emoticonsEnabled`
+   switches both.
+7. **Custom aliases** – your own aliases: a name, several spellings, several outputs (first is typed)
+   in `customTextAliases` (`CustomTextAliasCodec`, rules in `CustomTextAliasValidator`), edited on
+   the Aliases page (`AliasEditorSheet`). Yours win over a built-in spelling. Their outputs show first
+   in every panel's and the picker's search, by name or spelling (`AliasGlyphs`,
+   `showAliasesInSearch`).
 
 - macOS **14.6+** for the app, **15+** for the test target. Swift 6 language mode with complete
   strict concurrency. SwiftUI + AppKit. Accessory app (`LSUIElement`), no Dock icon.
@@ -111,11 +126,12 @@ Features never import or reference each other.
 | Folder | What belongs there |
 |---|---|
 | `MacJi/App/` | App entry, composition root, launch/reopen policy, the menu-bar status item |
-| `MacJi/Features/InlinePanel/` | The `::term` panel: event tap, trigger tracking, keys, model, window, placement, view, text insertion, Secure Input, text aliases |
-| `MacJi/Features/EmojiPicker/` | The picker popover: controller, model, view, keys, anchor for the hidden-icon case |
+| `MacJi/Features/InlinePanel/` | The `::term` / `##term` / emoticon panel: event tap, trigger tracking, emoticon autocomplete, keys, model, window, placement, view, text insertion, Secure Input, alias conversion |
+| `MacJi/Features/EmojiPicker/` | The picker popover: controller, model, tabs, view, keys, anchor for the hidden-icon case |
 | `MacJi/Shared/Glyphs/` | Glyph model, generic catalog, ranked search, recents store, clipboard, grid rows, the bundled data files — used by both features |
-| `MacJi/Shared/GlyphUI/` | Glyph cell, key hints, "Copied" badge — reusable glyph views |
-| `MacJi/Shared/MenuKit/` | Panel chrome and keyboard helpers: card background, shadow margin, appear/fade, grid navigation |
+| `MacJi/Shared/GlyphUI/` | Glyph cell and row, key hints, "Copied" badge — reusable glyph views |
+| `MacJi/Shared/TextAliases/` | Alias model, built-in catalog, your aliases' storage and rules, active set, search catalog |
+| `MacJi/Shared/MenuKit/` | Panel chrome and keyboard helpers: card background, shadow margin, appear/fade, grid navigation, category bar |
 | `MacJi/Shared/Permissions/` | Accessibility status, permission guide, event-tap trust and revocation recovery |
 | `MacJi/Shared/AX/` | Checked AX value reads and the caret locator |
 | `MacJi/Shared/Logging/` | `os.Logger` categories |
@@ -196,6 +212,22 @@ works in any UI and never reaches into a specific controller.
   `Settings/SettingsMigrator.swift`; never just change the key.
 - An invalid stored value falls back to its default **at read time**, for that key only. It is
   never deleted, so a value written by a newer MacJi survives a downgrade.
+
+## Glyph, trigger and alias rules
+
+- **No trigger may contain another** (`InlineTrigger.problem(with:for:others:)`), so one keystroke
+  never opens two panels. Only the emoticon trigger may be blank. A clashing stored trigger falls
+  back at read time, in panel order.
+- **The tap runs while anything needs it**: a panel, emoticon autocomplete or aliases
+  (`InlinePanelConfiguration.watchesTyping` or converting aliases). With all off it is removed.
+- **Glyph text identity is canonical.** Swift compares strings by canonical equivalence, so the data
+  scripts drop characters that normalise to another (Ω OHM SIGN) and dedupe on NFC.
+- **Synthetic text goes in ≤20 UTF-16-unit chunks** on character boundaries (`TextInserter.chunks`);
+  longer key events are truncated by apps.
+- **Custom alias IDs start with `custom-`**; entries `CustomTextAliasCodec` can't read are kept and
+  written back, never dropped. `CustomAliasKeys` field names are permanent.
+- **Recents are one store** (`emojiRecents`, up to 72); each picker tab shows its own 24 by catalog
+  lookup, so an older MacJi still reads them.
 
 ## Hard-won rules (carried over from Octopus)
 

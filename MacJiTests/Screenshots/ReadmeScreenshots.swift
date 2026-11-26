@@ -31,24 +31,25 @@ struct ReadmeScreenshots {
         AppSettings.registerDefaults(in: defaults)
         let recents = GlyphRecents(defaults: defaults)
         for emoji in Self.recentEmoji.reversed() { recents.record(emoji) }
-        let catalog = await EmojiCatalog.loadBundled(GlyphResources.emoji)
+        let library = await GlyphLibrary.loadBundled()
 
         for theme in ScreenshotTheme.allCases {
             let name = theme.rawValue
-            try await renderPicker(theme, catalog: catalog, recents: recents, query: "", to: output.appending(path: "picker-\(name).png"))
-            try await renderPicker(theme, catalog: catalog, recents: recents, query: "heart",
+            try await renderPicker(theme, library: library, recents: recents, query: "", to: output.appending(path: "picker-\(name).png"))
+            try await renderPicker(theme, library: library, recents: recents, query: "heart",
                                    to: output.appending(path: "picker-search-\(name).png"))
             try await renderSettings(theme, defaults: defaults, to: output.appending(path: "settings-\(name).png"))
-            try await recordInlinePanel(theme, catalog: catalog, output: output)
+            try await recordInlinePanel(theme, catalog: library.emoji, output: output)
         }
     }
 
     //////////////////
 
-    private func renderPicker(_ theme: ScreenshotTheme, catalog: EmojiCatalog, recents: GlyphRecents, query: String,
+    private func renderPicker(_ theme: ScreenshotTheme, library: GlyphLibrary, recents: GlyphRecents, query: String,
                               to url: URL) async throws {
         let model = EmojiPickerModel(recents: recents)
-        model.library = GlyphLibrary(emoji: catalog, symbols: .empty, emoticons: .empty)
+        model.library = library
+        model.setVisibleTabs(PickerTab.allCases)
         model.prepareForOpen()
         let window = SnapshotWindow(theme: theme) { PickerScene(model: model, theme: theme) }
         defer { window.close() }

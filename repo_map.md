@@ -8,7 +8,11 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 
 | I want to change… | File |
 |---|---|
-| Trigger default (`::`) or its rules | `MacJi/Constants/Keys/PreferenceKeys.swift` (`PreferenceDefaults.trigger`), `MacJi/Features/InlinePanel/InlineTrigger.swift` |
+| Trigger defaults (`::`, `##`, blank emoticon trigger) or their rules | `MacJi/Constants/Keys/PreferenceKeys.swift` (`PreferenceDefaults`), `MacJi/Features/InlinePanel/InlineTrigger.swift` |
+| Emoticon autocomplete rules (deny list, minimum length) | `MacJi/Features/InlinePanel/EmoticonAutocomplete.swift`, `MacJi/Constants/Limits/Limits.swift` |
+| Symbol or emoticon categories and their icons | `MacJi/Shared/Glyphs/SymbolCategory.swift`, `MacJi/Shared/Glyphs/EmoticonCategory.swift` (match the data scripts) |
+| Rules and limits for your own aliases | `MacJi/Shared/TextAliases/CustomTextAliasValidator.swift`, `MacJi/Constants/Limits/Limits.swift` |
+| How your aliases are stored | `MacJi/Shared/TextAliases/CustomTextAliasCodec.swift`, `CustomAliasKeys` in `MacJi/Constants/Keys/PreferenceKeys.swift` (permanent) |
 | Copy-close delay, fades, springs, name-reveal delay | `MacJi/Constants/Motion/PanelMotion.swift` |
 | Inline panel size, grid columns, caret gap | `MacJi/Constants/Layout/PanelMetrics.swift` |
 | Picker size and columns | `MacJi/Constants/Layout/PickerMetrics.swift` |

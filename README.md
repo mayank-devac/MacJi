@@ -9,7 +9,8 @@
 
 <h1 align="center">MacJi</h1>
 
-<p align="center"><b>Emoji anywhere you type.</b> Type <code>::rocket</code> in any Mac app, press Return, and it becomes 🚀.</p>
+<p align="center"><b>Emoji anywhere you type.</b> Type <code>::rocket</code> in any Mac app, press Return, and it becomes 🚀.
+<code>##arrow</code> gives →, and <code>^_</code> suggests ^_^.</p>
 
 <p align="center">
   <a href="https://github.com/mayank-devac/MacJi/releases/latest"><img src="https://img.shields.io/github/v/release/mayank-devac/MacJi?label=latest" alt="Latest version"></a>
@@ -34,7 +35,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots/inline-panel-dark.gif">
-    <img src="assets/screenshots/inline-panel-light.gif" width="720" alt="Typing ::roc in a document opens the MacJi panel under the caret; the right arrow selects the rocket and Return replaces ::roc with 🚀">
+    <img src="assets/screenshots/inline-panel-light.gif" width="720" alt="Typing ::roc in a document opens the Emoji panel under the caret; the right arrow selects the rocket and Return replaces ::roc with 🚀">
   </picture>
 </p>
 
@@ -46,14 +47,27 @@ account and no analytics.
 - **Inline panel.** Type the trigger (`::` by default) and a word in any app. A panel of matching
   emoji opens under the caret. Return replaces `::roc` with the emoji, Shift-Return copies it, Esc
   closes the panel. Keep typing a space or punctuation and it gets out of your way.
-- **Learns your favourites.** The inline panel puts the emoji you use most at the top of its
-  matches, so `::h` offers your usual ❤️ before 🏠.
+- **Symbol panel.** `##arrow` gives → ← ↔, `##euro` €, `##cmd` ⌘. More than 2,000 arrows, math
+  and Greek letters, currency, punctuation, shapes and Mac keys, with a category bar that Tab
+  cycles and the code point in the footer.
+- **Emoticons.** Start typing one, `^_` or `o_`, and MacJi suggests ^_^, (^_^;) or o_O. Over 450
+  ASCII emoticons and kaomoji. Choose how many characters it waits for, set a trigger such as `;;`
+  to search them by name (`;;shrug` → ¯\_(ツ)_/¯), or turn it off.
+- **Learns your favourites.** The panels put what you use most at the top of their matches, so
+  `::h` offers your usual ❤️ before 🏠.
 - **Aliases.** Type `->` and get →, `!=` gives ≠, `(c)` gives ©, `:)` gives 🙂, in any app, as you
   type. 15 symbols and 28 emoticons in close to 90 spellings, each of which you can turn off.
+- **Your own aliases.** Add your own: a name, any number of spellings and any number of outputs,
+  such as `[x]` or `(v)` → ✓ ✔ ☑. Typing a spelling gives the first output, and searching the name
+  in any panel or the picker (`::check`) shows them all.
 - **Emoji picker.** Click the menu-bar icon or press **⌃⌥⌘Space** from any app. Search, browse by
-  category or pick from your recents with the keyboard alone. If the icon is hidden, the picker opens
-  at your caret, or at the pointer when the app doesn't report a caret.
-- **Shared recents.** Emoji you insert inline and emoji you copy from the picker go into one list.
+  category or pick from your recents with the keyboard alone, on the Emoji, Symbols and Emoticons
+  tabs. If the icon is hidden, the picker opens at your caret, or at the pointer when the app
+  doesn't report a caret.
+- **Every feature has a switch.** Each panel, emoticon suggestions, aliases, alias search and the
+  picker's extra tabs can be turned off on their own. With all typing features off, MacJi doesn't
+  watch the keyboard at all.
+- **Shared recents.** What you insert inline and what you copy from the picker go into one list.
 - **Tells you when it can't work.** When a password field or another app turns on Secure Input,
   macOS hides every keystroke from every app. MacJi says which app is holding it and how to release
   it, rather than failing silently.
@@ -123,6 +137,30 @@ once and restarts, so your keyboard never gets stuck.
 
 The trigger never fires right after a letter or digit, so code like `std::string` won't open it.
 
+### Symbol panel
+
+Type `##` and a word: `##arrow`, `##rarr`, `##euro`, `##sum`, `##cmd`, `##check`. The keys are the
+same as the emoji panel's, plus **Tab / Shift-Tab** to step through the categories (Arrows, Math,
+Greek, Currency, Punctuation, Letterlike, Numbers, Shapes, Signs, Technical). Names come from
+Unicode and also match common short names such as `rarr`, `ne`, `inf`, `deg` and `opt`. `## Heading`
+(with a space) and `a##b` never open it. Change the trigger in Settings › Inline Panels.
+
+### Emoticons
+
+Type the start of an emoticon and the Emoticons panel suggests the rest: `^_` → ^_^ ^_~, `o_` → o_O,
+`(^` → (^_^) (^_^;), `:-` → :-) :-( :-P. Return inserts the selection in place of what you typed.
+
+- It waits for 2 typed characters by default (change it with **− +** in Settings › Emoticons, or
+  set it to Off), and what you typed must include a symbol, so ordinary words never match.
+- Starts that are common in code, such as `--`, `//` and `==`, never open it.
+- Esc closes it for the rest of that word.
+- Set a **trigger** such as `;;` to search all emoticons by name: `;;shrug` → ¯\_(ツ)_/¯,
+  `;;flip` → (╯°□°)╯︵┻━┻. It's blank (off) by default.
+
+ASCII emoticons come from [wooorm/emoticon](https://github.com/wooorm/emoticon) and kaomoji from
+[netromdk/kaomojidict](https://github.com/netromdk/kaomojidict), both MIT, minus a few that mock
+companies or threaten.
+
 #### Ranking
 
 Matches are ordered by how well they fit what you typed: an exact short name (`::fire` → 🔥)
@@ -150,10 +188,27 @@ after a conversion removes the symbol.
 - Bracket symbols and emoticons convert only at the start of a word, so `note:)`, `f(c)` and
   the `::` trigger stay as typed.
 - Longer spellings build on shorter ones: `<->` becomes ↔ even though `<-` converts first.
-- Settings › Inline Panel › **Customize…** has a switch for every alias. Turn off the ones you
-  type in code, such as `->` or `!=`. Aliases added in a later version start on.
+- Settings › Aliases › **Customize…** has a switch for every alias and every group, and a filter.
+  Turn off the ones you type in code, such as `->` or `!=`. Aliases added in a later version
+  start on. Aliases work whether or not the panels are on.
 - The emoticon spellings come from [wooorm/emoticon](https://github.com/wooorm/emoticon),
   minus the ones that would fire inside words, lists, URLs or code.
+
+#### Your own aliases
+
+On the Aliases page, click **+** (or **Add Alias…** in a group) and fill in:
+
+- **Name**: what search finds. Name it "Check mark" and `::check`, `##check` or the picker shows
+  its outputs, listed first.
+- **You type**: one or more spellings, each 2–16 characters with at least one symbol, so they never
+  fire inside a word. **Add Spelling** adds another.
+- **Becomes**: one or more outputs, up to 64 characters each: a symbol, an emoji, an emoticon or a
+  short text. The first is typed; **Add Output** adds more for search, and the arrow button makes
+  another one the typed output. **Emoji & Symbols…** opens the Character Viewer.
+- **Only at the start of a word** (on by default) keeps `note[x]` and code as typed.
+
+A spelling of yours that a built-in alias also uses replaces it while yours is on. Turn off
+**Show your aliases in search** to keep them out of search.
 
 [docs/convert-symbols.md](docs/convert-symbols.md) lists every alias, the common conversions
 left out and why, and how to type each symbol on a Mac without MacJi.
@@ -163,7 +218,7 @@ left out and why, and how to type each symbol on a Mac without MacJi.
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots/picker-dark.png">
-    <img src="assets/screenshots/picker-light.png" width="360" alt="The MacJi emoji picker under its menu-bar icon, with recently used emoji and the rocket selected">
+    <img src="assets/screenshots/picker-light.png" width="360" alt="The MacJi picker under its menu-bar icon, with Emoji, Symbols and Emoticons tabs, recently used emoji and the rocket selected">
   </picture>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots/picker-search-dark.png">
@@ -177,6 +232,7 @@ left out and why, and how to type each symbol on a Mac without MacJi.
 | Type | Search by name or keyword |
 | ← ↑ → ↓ | Move the selection |
 | Tab / Shift-Tab | Next / previous category |
+| ⌘1 ⌘2 ⌘3 | Emoji, Symbols or Emoticons tab |
 | Return | Copy the emoji and close |
 | Option-Return | Copy the emoji and keep the picker open |
 | Esc | Clear the search, then close |
@@ -188,7 +244,7 @@ Right-click the menu-bar icon for Settings, Check for Updates and Quit.
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots/settings-dark.png">
-    <img src="assets/screenshots/settings-light.png" width="420" alt="MacJi Settings: Accessibility status, picker shortcut, inline panel trigger and menu-bar icon">
+    <img src="assets/screenshots/settings-light.png" width="420" alt="MacJi Settings: Accessibility status, picker shortcut and tabs, emoji and symbol panel switches and triggers">
   </picture>
 </p>
 
@@ -196,10 +252,15 @@ MacJi opens Settings the first time it runs. Open it again from the menu-bar ico
 or open MacJi again from Applications or Spotlight, which also works when the icon is hidden.
 
 - **Accessibility:** status, Grant Access, and a warning while Secure Input is on.
-- **Emoji Picker:** record a different shortcut, or reset it to ⌃⌥⌘Space.
-- **Inline Panel:** turn it on or off, and change the trigger (up to four characters, with a symbol
-  such as `:` or `;` so it never fires inside ordinary words). Turn frequent-emoji ranking on or
-  off, turn Aliases on or off, and pick single aliases under **Customize…**.
+- **Emoji Picker:** record a different shortcut, or reset it to ⌃⌥⌘Space. Show or hide the
+  Symbols and Emoticons tabs.
+- **Inline Panels:** turn the emoji and symbol panels on or off and change their triggers (up to
+  four characters, with a symbol such as `:` or `#` so they never fire inside ordinary words; no
+  trigger may contain another). Turn frequency ranking on or off.
+- **Emoticons:** turn suggestions on or off, set how many characters autocomplete waits for (or
+  Off), and set an optional trigger.
+- **Aliases:** turn conversion on or off, show or hide your aliases in search, and open
+  **Customize…** to switch single aliases and add your own.
 - **Menu Bar:** show or hide the icon.
 - **General:** open at login, automatic update checks, Check Now.
 
@@ -240,8 +301,9 @@ security problem, follow [SECURITY.md](SECURITY.md) instead of opening a public 
 
 ## Privacy
 
-MacJi has no analytics, no crash reporting and no account. It stores your settings, your recent
-emoji and how often you used each one on your Mac, and nothing else. The details are in [PRIVACY.md](PRIVACY.md).
+MacJi has no analytics, no crash reporting and no account. It stores your settings, your own
+aliases, your recent emoji, symbols and emoticons and how often you used each one on your Mac, and
+nothing else. The details are in [PRIVACY.md](PRIVACY.md).
 
 ## Built on Octopus
 

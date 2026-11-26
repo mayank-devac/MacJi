@@ -21,11 +21,11 @@ concurrency. UI and Accessibility code runs on the main actor. Its only dependen
          ┌────────────────────┘               └───────────────────┐
 ┌────────▼─────────────┐   ┌────────────────────┐   ┌─────────────▼──────────┐
 │ Features/InlinePanel │   │ Settings/  Updates/│   │ Features/EmojiPicker   │
-│ the ::term panel     │   │ window · migrator  │   │ the popover            │
+│ ::  ##  emoticons    │   │ window · migrator  │   │ the popover            │
 └────────┬─────────────┘   └─────────┬──────────┘   └─────────────┬──────────┘
          │      never import each other (features know only Shared)│
 ┌────────▼─────────────────────────────────────────────────────────▼──────────┐
-│ Shared/  Glyphs · GlyphUI · MenuKit · Permissions · AX · Logging            │
+│ Shared/  Glyphs · GlyphUI · TextAliases · MenuKit · Permissions · AX · Log  │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ Constants/  Keys · Strings · Layout · Motion · Theme · Links · Limits       │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -33,10 +33,11 @@ concurrency. UI and Accessibility code runs on the main actor. Its only dependen
 
 - **`App/`** owns launch and reopen policy (`AppLifecycle`), the menu-bar icon
   (`StatusItemController`) and `AppDelegate`, which builds every controller and connects them.
-- **`Features/`** hold the two user features. Each exposes `start()`, `stop()`, `setCatalog(_:)` and
-  a few closures or methods; neither knows the other exists.
-- **`Shared/`** holds what both features use: one emoji catalog, one ranked search, one recents
-  store, one emoji cell, the panel chrome, the permission machinery and the AX helpers.
+- **`Features/`** hold the two user features. Each exposes `start()`, `stop()`, `setLibrary(_:)`,
+  `setAliasCatalog(_:)` and a few closures or methods; neither knows the other exists.
+- **`Shared/`** holds what both features use: one generic glyph catalog (emoji, symbols, emoticons,
+  your alias outputs), one ranked search, one recents store, the glyph cell and row, the category
+  bar, the text-alias model, the panel chrome, the permission machinery and the AX helpers.
 - **`Constants/`** holds every literal: preference keys, strings, sizes, durations, colours, URLs and
   limits. Change a number there, not in a feature.
 
@@ -46,7 +47,7 @@ concurrency. UI and Accessibility code runs on the main actor. Its only dependen
    `AppSettings.registerDefaults`. Defaults are registered, never written, so a stored user value
    always wins and a downgrade never loses data.
 2. `applicationDidFinishLaunching` starts the features and the status item, wires the `AppSettings`
-   publishers, loads `emoji.json` off the main thread and opens Settings when `AppLifecycle`
+   publishers, loads the three glyph files (`GlyphLibrary`) off the main thread and opens Settings when `AppLifecycle`
    decides to (first launch, icon hidden, or Accessibility missing, but never at login).
 3. Opening MacJi again (Finder, Spotlight) always shows Settings. That's the way back in when the
    icon is hidden.
@@ -57,17 +58,21 @@ concurrency. UI and Accessibility code runs on the main actor. Its only dependen
 key-down in any app
   → InlineInputMonitor (session event tap; tiny callback, no AX or window work)
   → InlinePanelController.handleKeyDown
-       TriggerTracker   keeps the last few characters, finds "trigger + term"
-       InlinePanelKeys  maps arrows / Return / Shift-Return / Esc while a term is open
+       TextAliasConverter  completes an alias ("->" → "→") on its last key
+       TriggerTracker      keeps the last few characters, finds the last trigger + term (::, ##, …)
+       EmoticonAutocomplete  else: is the typed run the start of an emoticon? (one set lookup)
+       InlinePanelKeys     maps arrows / Return / Shift-Return / Esc / Tab while a panel is open
   → next main-queue turn
-       InlinePanelModel   GlyphSearch results, selection, copy feedback
+       InlinePanelModel   kind's catalog + your alias outputs, filter, selection, copy feedback
        CaretLocator       caret rect once per open (falls back to the pointer)
        InlinePanelPlacement + InlinePanelWindow   non-activating panel under the caret
-  → Return: TextInserter deletes "::term" and types the emoji with synthetic key events
+  → Return: TextInserter deletes what was typed and types the glyph in ≤20-unit chunks
 ```
 
-- The tap exists only while the panel is enabled **and** Accessibility is granted. Turning the panel
-  off removes it, so nothing watches the keyboard.
+- The tap exists only while something needs it (a panel, emoticon autocomplete or aliases) **and**
+  Accessibility is granted. Turning all of them off removes it, so nothing watches the keyboard.
+- One tap serves all three panels. No trigger may contain another, so the last trigger typed names
+  the panel unambiguously; a trigger beats an autocomplete run.
 - Keys pass through unless a term is open and the key is a panel key. Return with no results
   passes through, so a line break is never swallowed.
 - MacJi's own synthetic keys are tagged and ignored by the tap.
@@ -76,7 +81,8 @@ key-down in any app
 
 `StatusItemController` (click) and the KeyboardShortcuts hot key both call into
 `EmojiPickerController`. With the icon visible the popover hangs under it; with the icon hidden it
-points at the caret (or the pointer) through `PopoverAnchorWindow`. Return copies the emoji, closes
+points at the caret (or the pointer) through `PopoverAnchorWindow`. Emoji, Symbols and Emoticons
+tabs (⌘1–⌘3) each search their own catalog with your alias outputs first. Return copies, closes
 the popover and hands focus back to the previous app so ⌘V pastes at once. Option-Return copies and
 stays open. The hot key uses Carbon's hot-key API and needs no permission.
 
@@ -114,11 +120,27 @@ last check date. The feed is `dist/appcast.xml` in this repository; archives are
 GitHub Releases of this repository. Releases are signed with the self-signed `MacJi Release`
 certificate and EdDSA-signed for Sparkle. See [RELEASING.md](RELEASING.md).
 
-## Emoji data
+## Glyph data
 
-`scripts/update-emoji-data.py` strips gemoji's `emoji.json` to the fields MacJi reads.
-`GlyphCatalog.loadBundled(_:)` decodes it once, off the main thread, and precomputes lowercase keywords,
-so `GlyphSearch` allocates nothing per keystroke. Results are capped (`Limits`).
+Three files in `Shared/Glyphs/Resources`, all in gemoji's shape so one decoder reads them:
+
+| File | Script | Source |
+|---|---|---|
+| `emoji.json` | `scripts/update-emoji-data.py` | gemoji (MIT) |
+| `symbols.json` | `scripts/update-symbol-data.py` | Python's `unicodedata` over curated blocks (Unicode License v3) |
+| `emoticons.json` | `scripts/update-emoticon-data.py` | wooorm/emoticon and netromdk/kaomojidict (MIT) |
+
+`GlyphLibrary.loadBundled()` decodes them in parallel, off the main thread, into
+`GlyphCatalog<Category>`s that precompute lowercase keywords, so `GlyphSearch` allocates nothing per
+keystroke. Results are capped (`Limits`).
+
+## Text aliases
+
+`TextAliasCatalog` (built in) and your own aliases (`customTextAliases`, read by
+`CustomTextAliasCodec`) meet in `ActiveTextAliases`, where yours win a shared spelling. The composition
+root hands the result to the panel's `TextAliasConverter`, and your enabled aliases, turned into an
+`AliasCatalog` by `AliasGlyphs`, to both features' search. The editor's rules live in
+`CustomTextAliasValidator`.
 
 ## Ported from Octopus
 
