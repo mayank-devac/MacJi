@@ -22,13 +22,11 @@
   var COLUMNS = 8;
   var RESULT_LIMIT = 64;
   var QUERY_MAX = 32;
-  /// What autoplay types, in order; "pick" is the glyph it takes from the panel that opens.
-  var SCRIPT = [
-    { type: "Tell the team we ship today ::roc", pick: "🚀" },
-    { type: " 0.2 ##rarr", pick: "→" },
-    { type: " 0.3" },
-  ];
-  var SCRIPT_RESULT = "Tell the team we ship today 🚀 0.2 → 0.3";
+  var OPENING = "Tell the team we ship today ";
+  /// Typed when GitHub can't name the latest release, or is too slow to hold the demo up for.
+  var FALLBACK_VERSION = "0.3.0";
+  var VERSION = /^\d+\.\d+\.\d+$/;
+  var RELEASE_WAIT_MS = 1500;
   var TRIGGER = new RegExp("(^|[^A-Za-z0-9:#])(::|##)([A-Za-z0-9_+\\-]{0," + QUERY_MAX + "})$");
 
   var demo = document.getElementById("demo");
@@ -409,13 +407,13 @@
     }, 520);
   }
 
-  function playStep(number) {
-    var step = SCRIPT[number];
+  function playStep(steps, number) {
+    var step = steps[number];
     if (!step) {
       later(finish, 500);
       return;
     }
-    var next = function () { playStep(number + 1); };
+    var next = function () { playStep(steps, number + 1); };
     typeText(step.type, function () {
       if (!step.pick) {
         next();
@@ -425,17 +423,49 @@
     });
   }
 
-  function play() {
+  //// What autoplay types, in order; "pick" is the glyph it takes from the panel that opens.
+  function play(versions) {
+    var steps = [
+      { type: OPENING + "::roc", pick: "🚀" },
+      { type: " " + versions.from + " ##rarr", pick: "→" },
+      { type: " " + versions.to },
+    ];
     autoplay.running = true;
     demo.classList.add("playing");
     input.value = "";
-    later(function () { playStep(0); }, 300);
+    later(function () { playStep(steps, 0); }, 300);
   }
 
-  function showResult() {
-    input.value = SCRIPT_RESULT;
+  function showResult(versions) {
+    input.value = OPENING + "🚀 " + versions.from + " → " + versions.to;
     finish();
   }
+
+  ////////////////////
+  //// Release numbers
+  /// The line reads "previous → latest", following the latest GitHub release (release.js).
+  // The previous number is one step back, as bump-version.sh counts: 0.3.1 gives "0.3.0 → 0.3.1",
+  // 0.3.0 gives "0.2 → 0.3" and 1.0.0 gives "0.x → 1.0".
+
+  function versionStep(version) {
+    var parts = version.split(".").map(Number);
+    var major = parts[0];
+    var minor = parts[1];
+    var patch = parts[2];
+    if (patch > 0) return { from: major + "." + minor + "." + (patch - 1), to: version };
+    var from = minor > 0 ? major + "." + (minor - 1) : major - 1 + ".x";
+    return { from: from, to: major + "." + minor };
+  }
+
+  function latestVersions() {
+    var timeout = new Promise(function (resolve) { setTimeout(resolve, RELEASE_WAIT_MS); });
+    return Promise.race([window.MacJiRelease.latest(), timeout]).then(function (release) {
+      var known = release && VERSION.test(release.version);
+      return versionStep(known ? release.version : FALLBACK_VERSION);
+    });
+  }
+
+  //////////////////
 
   function untouched() {
     return document.activeElement !== input && !input.value;
@@ -445,15 +475,17 @@
     .then(function () {
       demo.classList.add("ready");
       if (reduceMotion || !("IntersectionObserver" in window)) {
-        showResult();
+        latestVersions().then(function (versions) {
+          if (untouched()) showResult(versions);
+        });
         return;
       }
       var seen = new IntersectionObserver(function (entries) {
         if (!entries[0].isIntersecting) return;
         seen.disconnect();
         // Symbols load first, so the "##" panel never opens late under the script.
-        load(PANELS["##"]).then(function () {
-          if (untouched()) play();
+        Promise.all([latestVersions(), load(PANELS["##"])]).then(function (ready) {
+          if (untouched()) play(ready[0]);
         }, finish);
       }, { threshold: 0.6 });
       seen.observe(demo);
