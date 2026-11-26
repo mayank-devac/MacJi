@@ -12,6 +12,9 @@ import CoreGraphics
 enum PickerMetrics {
     // Popover
     static let size = CGSize(width: 360, height: 440)
+    // Tab bar: added to the height only while Symbols or Emoticons is on
+    static let tabBarHeight: CGFloat = 30
+    static let tabBarBottomPadding: CGFloat = 8
     static let outerPadding: CGFloat = 10
 
     // Header button beside the search field

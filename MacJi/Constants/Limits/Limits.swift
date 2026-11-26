@@ -18,10 +18,13 @@ enum Limits {
     static let inlineResults = 64
     /// Picker search results (browsing shows every emoji).
     static let pickerResults = 180
-    static let recents = 24
+    /// Recently used glyphs kept, shared by emoji, symbols and emoticons.
+    static let recents = 72
+    /// Recently used glyphs one picker tab shows.
+    static let recentsShown = 24
     /// Longest typed run emoticon autocomplete follows.
     static let emoticonRunMaxLength = 16
-    /// Emoticon autocomplete opens after this many matching characters by default; `− +` in Settings.
+    /// Lengths the Settings `− +` stepper offers for emoticon autocomplete (below the lowest is Off).
     static let emoticonAutocompleteLengths = 2...6
     /// UTF-16 units one synthetic key event can carry; CGEvent drops anything longer.
     static let syntheticKeyUTF16Units = 20

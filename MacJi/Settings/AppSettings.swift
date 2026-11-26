@@ -43,6 +43,17 @@ final class AppSettings: ObservableObject {
             defaults.set(disabledTextAliases.sorted(), forKey: PreferenceKeys.disabledTextAliases)
         }
     }
+    @Published var pickerShowsSymbols: Bool {
+        didSet { store(pickerShowsSymbols, oldValue, PreferenceKeys.pickerShowsSymbols) }
+    }
+    @Published var pickerShowsEmoticons: Bool {
+        didSet { store(pickerShowsEmoticons, oldValue, PreferenceKeys.pickerShowsEmoticons) }
+    }
+    /// App state rather than a setting; an unknown stored tab reads as Emoji.
+    var pickerLastTab: PickerTab {
+        get { defaults.string(forKey: PreferenceKeys.pickerLastTab).flatMap(PickerTab.init(rawValue:)) ?? .emoji }
+        set { defaults.set(newValue.rawValue, forKey: PreferenceKeys.pickerLastTab) }
+    }
     @Published var showMenuBarIcon: Bool {
         didSet { store(showMenuBarIcon, oldValue, PreferenceKeys.showMenuBarIcon) }
     }
@@ -71,6 +82,8 @@ final class AppSettings: ObservableObject {
         rankFrequentlyUsedEmoji = Self.bool(defaults, PreferenceKeys.rankFrequentlyUsedEmoji, PreferenceDefaults.rankFrequentlyUsedEmoji)
         convertTextAliases = Self.bool(defaults, PreferenceKeys.convertTextAliases, PreferenceDefaults.convertTextAliases)
         disabledTextAliases = Set(defaults.stringArray(forKey: PreferenceKeys.disabledTextAliases) ?? [])
+        pickerShowsSymbols = Self.bool(defaults, PreferenceKeys.pickerShowsSymbols, PreferenceDefaults.pickerShowsSymbols)
+        pickerShowsEmoticons = Self.bool(defaults, PreferenceKeys.pickerShowsEmoticons, PreferenceDefaults.pickerShowsEmoticons)
         showMenuBarIcon = Self.bool(defaults, PreferenceKeys.showMenuBarIcon, PreferenceDefaults.showMenuBarIcon)
     }
 

@@ -98,9 +98,10 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
     EmojiPicker/ — menu-bar picker popover
       EmojiPickerController.swift — popover lifecycle, keyboard actions, focus hand-back
       EmojiPickerHeaderButton.swift — icon button beside the search field (Settings)
-      EmojiPickerKeys.swift — key presses → picker actions
-      EmojiPickerModel.swift — search text, category, selection, recents grouping
-      EmojiPickerView.swift — search field, grid and footer
+      EmojiPickerKeys.swift — key presses → picker actions, ⌘1–⌘3 for tabs
+      EmojiPickerModel.swift — tab, search text, per-tab category, selection, recents grouping
+      EmojiPickerView.swift — search field, tabs, category bar, grid and footer
+      PickerTab.swift — the picker tabs (Emoji, Symbols, Emoticons): title, placeholder, columns
       PopoverAnchorWindow.swift — invisible anchor so the popover opens without the menu-bar icon
     InlinePanel/ — the `::term` panel
       EmoticonAutocomplete.swift — the typed run that starts an emoticon (“^_”), its rules and Esc dismissal
@@ -140,7 +141,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
     Sections/ — one view per Settings section
       AboutSection.swift — version, links, Built on Octopus
       AliasesSection.swift — Aliases switch, Customize…, and a note when nothing watches the keyboard
-      EmojiPickerSection.swift — picker shortcut recorder and reset
+      EmojiPickerSection.swift — picker shortcut recorder and reset, Symbols and Emoticons tab switches
       EmoticonsSection.swift — Emoticons switch, autocomplete − N + stepper (with Off), optional trigger
       GeneralSection.swift — open at login, automatic updates, Check Now
       InlinePanelsSection.swift — emoji and symbol panel switches and triggers, frequency ranking

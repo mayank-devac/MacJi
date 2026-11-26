@@ -48,7 +48,7 @@ struct ReadmeScreenshots {
     private func renderPicker(_ theme: ScreenshotTheme, catalog: EmojiCatalog, recents: GlyphRecents, query: String,
                               to url: URL) async throws {
         let model = EmojiPickerModel(recents: recents)
-        model.catalog = catalog
+        model.library = GlyphLibrary(emoji: catalog, symbols: .empty, emoticons: .empty)
         model.prepareForOpen()
         let window = SnapshotWindow(theme: theme) { PickerScene(model: model, theme: theme) }
         defer { window.close() }

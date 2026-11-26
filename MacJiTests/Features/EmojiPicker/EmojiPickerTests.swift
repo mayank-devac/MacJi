@@ -33,13 +33,38 @@ struct EmojiPickerTests {
         #expect(EmojiPickerKeyAction(keyCode: 48, modifiers: .shift) == .previousCategory)
         #expect(EmojiPickerKeyAction(keyCode: 53, modifiers: []) == .cancel)
         #expect(EmojiPickerKeyAction(keyCode: 0, modifiers: []) == nil)
+        #expect(EmojiPickerKeyAction(keyCode: 19, modifiers: .command) == .selectTab(1))
+        #expect(EmojiPickerKeyAction(keyCode: 19, modifiers: []) == nil)
+    }
+
+    @MainActor
+    @Test func eachTabShowsOnlyItsOwnRecentsAndHiddenTabsFallBack() throws {
+        let defaults = try #require(UserDefaults(suiteName: "macji.tests.picker.\(UUID().uuidString)"))
+        let recents = GlyphRecents(defaults: defaults)
+        recents.record("❤️")
+        recents.record("→")
+        let symbols = SymbolCatalog(glyphs: [
+            Glyph(text: "→", description: "rightwards arrow", category: SymbolCategory.arrows.rawValue, aliases: ["rarr"], tags: []),
+        ])
+        let model = EmojiPickerModel(recents: recents)
+        model.library = GlyphLibrary(emoji: catalog, symbols: symbols, emoticons: .empty)
+        model.setVisibleTabs([.emoji, .symbols])
+        model.prepareForOpen()
+        #expect(model.groups.first?.glyphs.map(\.text) == ["❤️"])
+        model.selectTab(at: 1)
+        #expect(model.tab == .symbols)
+        #expect(model.groups.first?.glyphs.map(\.text) == ["→"])
+        model.selectTab(at: 2)
+        #expect(model.tab == .symbols)
+        model.setVisibleTabs([.emoji])
+        #expect(model.tab == .emoji)
     }
 
     @MainActor
     @Test func searchShowsOneRankedGroupWithTheBestMatchSelected() throws {
         let defaults = try #require(UserDefaults(suiteName: "macji.tests.picker.\(UUID().uuidString)"))
         let model = EmojiPickerModel(recents: GlyphRecents(defaults: defaults))
-        model.catalog = catalog
+        model.library = GlyphLibrary(emoji: catalog, symbols: .empty, emoticons: .empty)
         model.query = "heart"
         #expect(model.groups.map(\.title) == [PickerStrings.searchResults])
         #expect(model.groups.first?.glyphs.map(\.text) == ["❤️", "😍"])

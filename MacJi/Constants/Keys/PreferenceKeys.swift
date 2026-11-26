@@ -36,6 +36,12 @@ enum PreferenceKeys {
     static let convertTextAliases = "convertTextAliases"
     /// [String]: IDs of the text aliases the user turned off; aliases added later start on.
     static let disabledTextAliases = "disabledTextAliases"
+    /// Bool: the picker shows a Symbols tab.
+    static let pickerShowsSymbols = "pickerShowsSymbols"
+    /// Bool: the picker shows an Emoticons tab.
+    static let pickerShowsEmoticons = "pickerShowsEmoticons"
+    /// String: the picker tab used last (`PickerTab` raw value), reopened next time.
+    static let pickerLastTab = "pickerLastTab"
     /// Bool: the emoji icon is shown in the menu bar.
     static let showMenuBarIcon = "showMenuBarIcon"
     /// [String]: recently used emoji characters, newest first.
@@ -71,6 +77,8 @@ enum PreferenceDefaults {
     static let symbolPanelEnabled = true
     static let emoticonsEnabled = true
     static let emoticonAutocompleteLength = 2
+    static let pickerShowsSymbols = true
+    static let pickerShowsEmoticons = true
 
     static var registered: [String: Any] {
         [
@@ -81,6 +89,8 @@ enum PreferenceDefaults {
             PreferenceKeys.emoticonsEnabled: emoticonsEnabled,
             PreferenceKeys.emoticonAutocompleteLength: emoticonAutocompleteLength,
             PreferenceKeys.emoticonPanelTrigger: emoticonTrigger,
+            PreferenceKeys.pickerShowsSymbols: pickerShowsSymbols,
+            PreferenceKeys.pickerShowsEmoticons: pickerShowsEmoticons,
             PreferenceKeys.rankFrequentlyUsedEmoji: rankFrequentlyUsedEmoji,
             PreferenceKeys.convertTextAliases: convertTextAliases,
             PreferenceKeys.showMenuBarIcon: showMenuBarIcon,
@@ -88,5 +98,5 @@ enum PreferenceDefaults {
     }
 }
 
-//// Recents, use counts and disabled aliases default to empty and need no registration.
+//// Recents, use counts, disabled aliases and the last picker tab (Emoji) need no registration.
 //////////////////

@@ -12,6 +12,8 @@ import KeyboardShortcuts
 import SwiftUI
 
 struct EmojiPickerSection: View {
+    @Binding var showsSymbols: Bool
+    @Binding var showsEmoticons: Bool
     @State private var isDefault = Self.shortcutIsDefault
     /// Bumped by Reset so the recorder redraws with the restored shortcut.
     @State private var recorderID = 0
@@ -30,6 +32,8 @@ struct EmojiPickerSection: View {
                     .disabled(isDefault)
                 }
             }
+            Toggle(SettingsStrings.pickerSymbolsTab, isOn: $showsSymbols)
+            Toggle(SettingsStrings.pickerEmoticonsTab, isOn: $showsEmoticons)
         } header: {
             Text(SettingsStrings.pickerHeader)
         } footer: {

@@ -18,9 +18,17 @@ enum EmojiPickerKeyAction: Equatable {
     case copy(keepOpen: Bool)
     /// Clears the search first, then closes on a second press.
     case cancel
+    /// ⌘1, ⌘2, ⌘3: the nth visible tab (0-based).
+    case selectTab(Int)
+
+    private static let tabKeys = [kVK_ANSI_1, kVK_ANSI_2, kVK_ANSI_3]
 
     init?(keyCode: UInt16, modifiers: NSEvent.ModifierFlags) {
         let modifiers = modifiers.intersection([.command, .option, .control, .shift])
+        if modifiers == .command, let index = Self.tabKeys.firstIndex(of: Int(keyCode)) {
+            self = .selectTab(index)
+            return
+        }
         if Int(keyCode) == kVK_Tab {
             guard modifiers.isSubset(of: .shift) else { return nil }
             self = modifiers.contains(.shift) ? .previousCategory : .nextCategory

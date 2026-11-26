@@ -50,8 +50,15 @@ final class EmojiPickerController: NSObject, NSPopoverDelegate {
         popover.performClose(nil)
     }
 
-    func setCatalog(_ catalog: EmojiCatalog) {
-        model.catalog = catalog
+    func setLibrary(_ library: GlyphLibrary) {
+        model.library = library
+    }
+
+    /// Tabs turned on in Settings, and the tab to open on; `onTabChanged` reports a new choice.
+    func configureTabs(_ tabs: [PickerTab], selected: PickerTab, onTabChanged: @escaping (PickerTab) -> Void) {
+        model.onTabChanged = onTabChanged
+        model.setVisibleTabs(tabs)
+        if tabs.contains(selected) { model.tab = selected }
     }
 
     ////////////////////
@@ -125,6 +132,8 @@ final class EmojiPickerController: NSObject, NSPopoverDelegate {
         case .copy(let keepOpen):
             guard model.copySelection() else { NSSound.beep(); return }
             if !keepOpen { closeRestoringFocus() }
+        case .selectTab(let index):
+            model.selectTab(at: index)
         case .cancel:
             if model.query.isEmpty {
                 closeRestoringFocus()

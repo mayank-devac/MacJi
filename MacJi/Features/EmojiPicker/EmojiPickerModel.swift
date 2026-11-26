@@ -3,8 +3,8 @@
 //  MacJi
 //
 //  Created: 2026-11-26
-//  State for the emoji picker: search text, category filter, keyboard selection, hover and
-//  copy feedback, and the groups the grid draws (recents, categories or ranked matches).
+//  State for the picker: the tab (emoji, symbols, emoticons), search text, the tab's category
+//  filter, keyboard selection, hover and copy feedback, and the groups the grid draws.
 //  Ported from Octopus: octopus/UI/EmojiPicker/EmojiPickerModel.swift
 //
 
@@ -20,19 +20,32 @@ struct PickerSlot: Hashable {
 @MainActor
 final class EmojiPickerModel: ObservableObject {
     @Published var query = "" { didSet { refreshGroups(selectFirst: true) } }
-    /// `nil` shows all categories.
-    @Published var category: EmojiCategory? { didSet { refreshGroups(selectFirst: true) } }
+    @Published var tab = PickerTab.emoji {
+        didSet {
+            guard tab != oldValue else { return }
+            refreshGroups(selectFirst: true)
+            onTabChanged(tab)
+        }
+    }
+    /// `nil` shows all categories. Each tab keeps its own filter.
+    @Published var emojiCategory: EmojiCategory? { didSet { refreshGroups(selectFirst: true) } }
+    @Published var symbolCategory: SymbolCategory? { didSet { refreshGroups(selectFirst: true) } }
+    @Published var emoticonCategory: EmoticonCategory? { didSet { refreshGroups(selectFirst: true) } }
     @Published var hovered: Glyph?
     @Published var selection: PickerSlot?
     @Published private(set) var groups: [GlyphSection] = []
     @Published private(set) var lastCopied: Glyph?
-    /// Bumped on every copy so copying the same emoji twice still re-shows the "Copied" badge.
+    /// Bumped on every copy so copying the same glyph twice still re-shows the "Copied" badge.
     @Published private(set) var copyCount = 0
     /// Bumped on each open so the view refocuses the search field and drops stale feedback.
     @Published private(set) var openCount = 0
+    /// Tabs turned on in Settings; the tab bar hides when only Emoji is left.
+    @Published private(set) var visibleTabs: [PickerTab] = [.emoji]
 
+    /// Reported so the composition root can remember the last tab.
+    var onTabChanged: (PickerTab) -> Void = { _ in }
     private let recents: GlyphRecents
-    var catalog = EmojiCatalog.empty { didSet { refreshGroups(selectFirst: false) } }
+    var library = GlyphLibrary.empty { didSet { refreshGroups(selectFirst: false) } }
 
     init(recents: GlyphRecents) {
         self.recents = recents
@@ -48,10 +61,18 @@ final class EmojiPickerModel: ObservableObject {
     /// The pointer wins over the keyboard so the footer names what is under it.
     var focusedGlyph: Glyph? { hovered ?? selectedGlyph }
 
+    /// A hidden tab falls back to Emoji.
+    func setVisibleTabs(_ tabs: [PickerTab]) {
+        visibleTabs = tabs
+        if !tabs.contains(tab) { tab = .emoji }
+    }
+
     /// Starts each open fresh: empty search, all categories, nothing selected, recents re-read.
     func prepareForOpen() {
         query = ""
-        category = nil
+        emojiCategory = nil
+        symbolCategory = nil
+        emoticonCategory = nil
         refreshGroups(selectFirst: true)
         hovered = nil
         lastCopied = nil
@@ -60,33 +81,43 @@ final class EmojiPickerModel: ObservableObject {
 
     ////////////////////
     //// Keyboard actions
-    /// Arrows move through the drawn rows, Tab cycles the category filters and Return copies
-    // the selection, falling back to the first emoji shown.
+    /// Arrows move through the drawn rows, Tab cycles the tab's category filters, ⌘1–3 pick a
+    // tab and Return copies the selection, falling back to the first glyph shown.
 
     func moveSelection(_ key: MenuKey) {
-        selection = MenuGridNavigator.move(selection, key, in: Self.grid(for: groups))
+        selection = MenuGridNavigator.move(selection, key, in: Self.grid(for: groups, columns: tab.columnCount))
     }
 
     func cycleCategory(forward: Bool) {
-        category = EmojiCategory.cycle(category, forward: forward)
+        switch tab {
+        case .emoji: emojiCategory = EmojiCategory.cycle(emojiCategory, forward: forward)
+        case .symbols: symbolCategory = SymbolCategory.cycle(symbolCategory, forward: forward)
+        case .emoticons: emoticonCategory = EmoticonCategory.cycle(emoticonCategory, forward: forward)
+        }
+    }
+
+    /// The nth visible tab (0-based); out of range is ignored.
+    func selectTab(at index: Int) {
+        guard visibleTabs.indices.contains(index) else { return }
+        tab = visibleTabs[index]
     }
 
     /// Returns false when there is nothing to copy or the clipboard refused it.
     func copySelection() -> Bool {
-        guard let emoji = selectedGlyph ?? groups.first?.glyphs.first else { return false }
-        return pick(emoji)
+        guard let glyph = selectedGlyph ?? groups.first?.glyphs.first else { return false }
+        return pick(glyph)
     }
 
     //// Selection follows search: typing selects the first match for Return.
     //////////////////
 
-    /// Copies the emoji to the clipboard and records it as recently used.
+    /// Copies the glyph to the clipboard and records it as recently used.
     @discardableResult
-    func pick(_ emoji: Glyph) -> Bool {
-        guard GlyphClipboard.copy(emoji) else { return false }
-        lastCopied = emoji
+    func pick(_ glyph: Glyph) -> Bool {
+        guard GlyphClipboard.copy(glyph) else { return false }
+        lastCopied = glyph
         copyCount += 1
-        recents.record(emoji.text)
+        recents.record(glyph.text)
         refreshGroups(selectFirst: false)
         return true
     }
@@ -101,24 +132,32 @@ final class EmojiPickerModel: ObservableObject {
     ////////////////////
     //// Groups
     /// Browsing shows "Recently Used" (all categories only, like the system picker) and then the
-    /// categories in Unicode order. Searching shows one ranked "Best Matches" group, shared with
-    // the inline panel's ranking, so the likeliest emoji is always first and selected.
+    /// tab's categories. Searching shows one ranked "Best Matches" group, shared with the inline
+    // panel's ranking, so the likeliest glyph is always first and selected. Recents are shared
+    // across tabs; each tab shows only its own.
 
     private func refreshGroups(selectFirst: Bool) {
-        if isSearching {
-            let matches = GlyphSearch.ranked(query, in: catalog, category: category, limit: Limits.pickerResults)
-            groups = matches.isEmpty ? [] : [GlyphSection(title: PickerStrings.searchResults, glyphs: matches)]
-        } else {
-            let recentEmojis = category == nil ? catalog.glyphs(for: recents.characters) : []
-            let recentGroup = recentEmojis.isEmpty ? [] : [GlyphSection(title: PickerStrings.recentlyUsed, glyphs: recentEmojis)]
-            groups = recentGroup + catalog.sections(in: category)
+        switch tab {
+        case .emoji: groups = groups(in: library.emoji, category: emojiCategory)
+        case .symbols: groups = groups(in: library.symbols, category: symbolCategory)
+        case .emoticons: groups = groups(in: library.emoticons, category: emoticonCategory)
         }
-        let slots = Self.grid(for: groups).joined()
+        let slots = Self.grid(for: groups, columns: tab.columnCount).joined()
         if selectFirst {
             selection = isSearching ? slots.first : nil
         } else if let selection, !slots.contains(selection) {
             self.selection = nil
         }
+    }
+
+    private func groups<Category>(in catalog: GlyphCatalog<Category>, category: Category?) -> [GlyphSection] {
+        if isSearching {
+            let matches = GlyphSearch.ranked(query, in: catalog, category: category, limit: Limits.pickerResults)
+            return matches.isEmpty ? [] : [GlyphSection(title: PickerStrings.searchResults, glyphs: matches)]
+        }
+        let recentGlyphs = category == nil ? Array(catalog.glyphs(for: recents.characters).prefix(Limits.recentsShown)) : []
+        let recentGroup = recentGlyphs.isEmpty ? [] : [GlyphSection(title: PickerStrings.recentlyUsed, glyphs: recentGlyphs)]
+        return recentGroup + catalog.sections(in: category)
     }
 
     //// Browsing starts with nothing selected so the first arrow key picks the first row.

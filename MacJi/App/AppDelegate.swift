@@ -111,6 +111,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.inlinePanel.setTextAliases(on ? TextAliasCatalog.all.filter { !disabled.contains($0.id) } : [])
             }
             .store(in: &subscriptions)
+        settings.$pickerShowsSymbols.combineLatest(settings.$pickerShowsEmoticons)
+            .sink { [weak self] symbols, emoticons in
+                guard let self else { return }
+                let tabs = PickerTab.allCases.filter { $0 == .emoji || ($0 == .symbols && symbols) || ($0 == .emoticons && emoticons) }
+                picker.configureTabs(tabs, selected: settings.pickerLastTab) { [weak self] in self?.settings.pickerLastTab = $0 }
+            }
+            .store(in: &subscriptions)
         settings.$showMenuBarIcon.removeDuplicates()
             .sink { [weak self] shown in self?.statusItem.setVisible(shown) }
             .store(in: &subscriptions)
@@ -135,7 +142,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Task { [weak self] in
             let library = await GlyphLibrary.loadBundled()
             self?.inlinePanel.setLibrary(library)
-            self?.picker.setCatalog(library.emoji)
+            self?.picker.setLibrary(library)
         }
     }
 

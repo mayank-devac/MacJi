@@ -49,7 +49,7 @@ struct SettingsView: View {
             PermissionSection(accessibilityGranted: permissions.accessibilityGranted,
                               secureInputHolder: permissions.secureInputHolder,
                               onGrantAccess: onGrantAccess)
-            EmojiPickerSection()
+            EmojiPickerSection(showsSymbols: $settings.pickerShowsSymbols, showsEmoticons: $settings.pickerShowsEmoticons)
             InlinePanelsSection(emojiEnabled: $settings.inlinePanelEnabled, symbolsEnabled: $settings.symbolPanelEnabled,
                                 trigger: settings.trigger(for:), setTrigger: settings.setTrigger(_:for:),
                                 ranksFrequentlyUsed: $settings.rankFrequentlyUsedEmoji,

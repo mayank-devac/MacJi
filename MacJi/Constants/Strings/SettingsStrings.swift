@@ -27,6 +27,8 @@ enum SettingsStrings {
     //// Emoji Picker
 
     static let pickerHeader = String(localized: "Emoji Picker")
+    static let pickerSymbolsTab = String(localized: "Symbols tab")
+    static let pickerEmoticonsTab = String(localized: "Emoticons tab")
     static let shortcutLabel = String(localized: "Open picker:")
     static let resetShortcut = String(localized: "Reset to Default")
     static let pickerFooter = String(localized: "Opens the picker from any app. Return copies the emoji, Option-Return copies and keeps the picker open.")
