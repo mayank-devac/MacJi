@@ -20,8 +20,32 @@ enum TextInserter {
         for _ in 0..<characterCount {
             post(keyCode: CGKeyCode(kVK_Delete), text: nil, source: source)
         }
-        post(keyCode: 0, text: text, source: source)
+        for chunk in chunks(of: text) {
+            post(keyCode: 0, text: chunk, source: source)
+        }
     }
+
+    ////////////////////
+    //// Splitting long text
+    /// A key event carries at most `Limits.syntheticKeyUTF16Units` UTF-16 units; apps drop the
+    /// rest, which cut long kaomoji short. Chunks end on character boundaries, so a flag or a ZWJ
+    // family is never split; a single character longer than the limit goes alone.
+
+    static func chunks(of text: String, maxUnits: Int = Limits.syntheticKeyUTF16Units) -> [String] {
+        var chunks: [String] = []
+        var current = ""
+        for character in text {
+            if !current.isEmpty, current.utf16.count + character.utf16.count > maxUnits {
+                chunks.append(current)
+                current = ""
+            }
+            current.append(character)
+        }
+        if !current.isEmpty { chunks.append(current) }
+        return chunks
+    }
+
+    //////////////////
 
     ////////////////////
     //// One synthetic key press

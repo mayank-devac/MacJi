@@ -12,31 +12,50 @@ import Testing
 @testable import MacJi
 
 struct InlinePanelTests {
-    private func tracker(typing text: String, trigger: String = "::") -> TriggerTracker {
-        var tracker = TriggerTracker(trigger: trigger)
+    private func tracker(typing text: String,
+                         triggers: [InlinePanelKind: String] = [.emoji: "::", .symbols: "##"]) -> TriggerTracker {
+        var tracker = TriggerTracker(triggers: triggers)
         text.forEach { tracker.apply(.text(String($0))) }
         return tracker
     }
 
     @Test func queryFollowsTriggerAndEndsAtSpace() {
-        #expect(tracker(typing: "hi ::roc").query == "roc")
+        #expect(tracker(typing: "hi ::roc").query == .init(kind: .emoji, trigger: "::", term: "roc"))
         #expect(tracker(typing: "hi ::roc").replacementLength == 5)
         #expect(tracker(typing: "::").query == nil)
         #expect(tracker(typing: "::roc ").query == nil)
-        #expect(tracker(typing: ";;dog", trigger: ";;").query == "dog")
+        #expect(tracker(typing: ";;dog", triggers: [.emoji: ";;"]).query?.term == "dog")
     }
 
     @Test func triggerInsideWordIsIgnored() {
         #expect(tracker(typing: "std::string").query == nil)
+        #expect(tracker(typing: "a##b").query == nil)
+    }
+
+    @Test func lastTriggerTypedPicksThePanel() {
+        #expect(tracker(typing: "::a ##arr").query == .init(kind: .symbols, trigger: "##", term: "arr"))
+        #expect(tracker(typing: "##b ::roc").query?.kind == .emoji)
+        #expect(tracker(typing: "## Heading").query == nil)
+        #expect(tracker(typing: ";;shrug", triggers: [.emoji: "::", .emoticons: ""]).query == nil)
     }
 
     @Test func deleteAndResetEditTheBuffer() {
         var typed = tracker(typing: "::rocx")
         typed.apply(.deleteBackward)
-        #expect(typed.query == "roc")
+        #expect(typed.query?.term == "roc")
         typed.apply(.reset)
         typed.apply(.text("a"))
         #expect(typed.query == nil)
+    }
+
+    @Test func longTextIsSplitIntoWholeCharacterChunks() {
+        let shrug = "¯\\_(ツ)_/¯ (╯°□°)╯︵ ┻━┻"
+        let chunks = TextInserter.chunks(of: shrug, maxUnits: 20)
+        #expect(chunks.joined() == shrug)
+        #expect(chunks.allSatisfy { $0.utf16.count <= 20 })
+        let family = "👨‍👩‍👧‍👦"
+        #expect(TextInserter.chunks(of: "a" + family, maxUnits: 4) == ["a", family])
+        #expect(TextInserter.chunks(of: "", maxUnits: 20).isEmpty)
     }
 
     @Test func keysMapToPanelActionsAndBufferInput() {
@@ -96,6 +115,17 @@ struct InlinePanelTests {
         #expect(InlineTrigger.problem(with: "em") == .onlyQueryCharacters)
         #expect(InlineTrigger.valid("em") == "::")
         #expect(InlineTrigger.valid(nil) == "::")
+    }
+
+    @Test func triggersMayNotContainEachOtherAndOnlyEmoticonsMayBeBlank() {
+        let others: [InlinePanelKind: String] = [.emoji: "::", .symbols: "##", .emoticons: ""]
+        #expect(InlineTrigger.problem(with: ":", for: .symbols, others: others) == .overlaps(.emoji, trigger: "::"))
+        #expect(InlineTrigger.problem(with: "##x", for: .emoticons, others: others) == .overlaps(.symbols, trigger: "##"))
+        #expect(InlineTrigger.problem(with: ";;", for: .emoticons, others: others) == nil)
+        #expect(InlineTrigger.problem(with: "", for: .emoticons, others: others) == nil)
+        #expect(InlineTrigger.problem(with: "", for: .symbols, others: others) == .empty)
+        #expect(InlineTrigger.valid("::", for: .symbols, others: others) == "##")
+        #expect(InlineTrigger.valid(nil, for: .symbols, others: [.emoji: "##"]) == "")
     }
 
     @Test func panelFlipsAboveCaretNearScreenBottom() {

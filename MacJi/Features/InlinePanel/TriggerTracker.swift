@@ -4,7 +4,7 @@
 //
 //  Created: 2026-11-26
 //  Remembers the last few characters typed in the focused app and reports the search term
-//  after the trigger, e.g. "rock" for "::rock". A pure value type so the rules are unit-tested.
+//  after the last trigger, e.g. "rock" for "::rock". A pure value type so the rules are unit-tested.
 //  Ported from Octopus: octopus/UI/MacJi/MacJiTriggerTracker.swift
 //
 
@@ -19,11 +19,19 @@ enum TypedKey: Equatable {
 }
 
 struct TriggerTracker {
-    var trigger: String { didSet { buffer = "" } }
+    /// The open search: which panel, the trigger that opened it and the term typed after it.
+    struct Query: Equatable {
+        let kind: InlinePanelKind
+        let trigger: String
+        let term: String
+    }
+
+    /// One trigger per panel; a blank or missing one never opens its panel.
+    var triggers: [InlinePanelKind: String] { didSet { buffer = "" } }
     private(set) var buffer = ""
 
-    init(trigger: String) {
-        self.trigger = trigger
+    init(triggers: [InlinePanelKind: String]) {
+        self.triggers = triggers
     }
 
     static func isQueryCharacter(_ character: Character) -> Bool {
@@ -34,7 +42,8 @@ struct TriggerTracker {
         switch key {
         case .text(let text):
             buffer += text
-            let limit = trigger.count + Limits.queryMaxLength + 1
+            let longest = triggers.values.map(\.count).max() ?? 0
+            let limit = longest + Limits.queryMaxLength + 1
             if buffer.count > limit { buffer = String(buffer.suffix(limit)) }
         case .deleteBackward:
             if !buffer.isEmpty { buffer.removeLast() }
@@ -49,21 +58,26 @@ struct TriggerTracker {
 
     ////////////////////
     //// Current search term
-    /// The text after the last trigger, while it is non-empty and made only of query characters.
-    /// Space or punctuation ends the term, closing the panel.
-    // The trigger must not follow a letter or digit, so "std::string" never opens it.
+    /// The text after the trigger typed last, while it is non-empty and made only of query
+    /// characters. Space or punctuation ends the term, closing the panel.
+    // The trigger must not follow a letter or digit, so "std::string" and "a##b" never open it.
+    // Triggers never contain one another (InlineTrigger), so the last one found is unambiguous.
 
-    var query: String? {
-        guard let range = buffer.range(of: trigger, options: .backwards) else { return nil }
-        if let before = buffer[..<range.lowerBound].last, before.isLetter || before.isNumber { return nil }
-        let term = buffer[range.upperBound...]
+    var query: Query? {
+        let found = triggers.compactMap { kind, trigger -> (kind: InlinePanelKind, trigger: String, range: Range<String.Index>)? in
+            guard !trigger.isEmpty, let range = buffer.range(of: trigger, options: .backwards) else { return nil }
+            return (kind, trigger, range)
+        }
+        guard let last = found.max(by: { $0.range.lowerBound < $1.range.lowerBound }) else { return nil }
+        if let before = buffer[..<last.range.lowerBound].last, before.isLetter || before.isNumber { return nil }
+        let term = buffer[last.range.upperBound...]
         guard !term.isEmpty, term.count <= Limits.queryMaxLength, term.allSatisfy(Self.isQueryCharacter) else { return nil }
-        return String(term)
+        return Query(kind: last.kind, trigger: last.trigger, term: String(term))
     }
 
-    /// Characters to delete when replacing "trigger + term" with an emoji.
+    /// Characters to delete when replacing "trigger + term" with a glyph.
     var replacementLength: Int {
-        query.map { trigger.count + $0.count } ?? 0
+        query.map { $0.trigger.count + $0.term.count } ?? 0
     }
 
     //// The panel is shown exactly while `query` is non-nil.

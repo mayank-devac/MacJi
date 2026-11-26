@@ -52,6 +52,9 @@ enum PreferenceKeys {
 enum PreferenceDefaults {
     static let inlinePanelEnabled = true
     static let trigger = "::"
+    static let symbolTrigger = "##"
+    /// Blank: emoticons open by autocomplete until the user sets a trigger.
+    static let emoticonTrigger = ""
     static let showMenuBarIcon = true
     static let rankFrequentlyUsedEmoji = true
     static let convertTextAliases = true

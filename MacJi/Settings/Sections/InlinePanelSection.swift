@@ -92,6 +92,15 @@ struct InlinePanelSection: View {
         case .tooLong: SettingsStrings.triggerErrorTooLong(Limits.triggerMaxLength)
         case .whitespace: SettingsStrings.triggerErrorWhitespace
         case .onlyQueryCharacters: SettingsStrings.triggerErrorOnlyLetters
+        case .overlaps(let kind, let trigger): SettingsStrings.triggerErrorOverlaps(name(of: kind), trigger: trigger)
+        }
+    }
+
+    private func name(of kind: InlinePanelKind) -> String {
+        switch kind {
+        case .emoji: SettingsStrings.emojiPanelName
+        case .symbols: SettingsStrings.symbolPanelName
+        case .emoticons: SettingsStrings.emoticonPanelName
         }
     }
 }

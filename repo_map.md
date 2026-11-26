@@ -107,17 +107,18 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       InlineInputMonitor.swift — session event tap; reports key-downs, consumes panel keys
       InlinePanelController.swift — trigger session, key handling, insert/copy, panel visibility
       InlinePanelKeys.swift — key presses → panel actions and typed-buffer input
+      InlinePanelKind.swift — the three inline panels (emoji, symbols, emoticons) and their default triggers
       InlinePanelModel.swift — typed term, ranked results, selection, hover, copy feedback
       InlinePanelPlacement.swift — where the panel opens (under the caret, flips above)
       InlinePanelView.swift — header, grid and footer of the panel
       InlinePanelWindow.swift — non-activating floating panel that never takes focus
-      InlineTrigger.swift — trigger validation and its error messages
+      InlineTrigger.swift — trigger validation (incl. no trigger containing another) and its reasons
       SecureInputNotifier.swift — notification when a background app blocks MacJi
       TextAlias.swift — one text alias: spellings, replacement, group, word-start rule
       TextAliasCatalog.swift — the built-in aliases (arrows, math, symbols, emoticons); IDs are stored
       TextAliasConverter.swift — the key just typed → what to delete and insert, chained aliases included
-      TextInserter.swift — replaces the typed `::term` with the emoji via synthetic keys
-      TriggerTracker.swift — typed-text buffer and the term after the trigger
+      TextInserter.swift — replaces the typed `::term` with the glyph via synthetic keys, chunked for long text
+      TriggerTracker.swift — typed-text buffer and the panel + term after the last trigger typed
   Resources/ — bundle resources
     Assets.xcassets/ — asset catalog
       AccentColor.colorset/ — accent colour

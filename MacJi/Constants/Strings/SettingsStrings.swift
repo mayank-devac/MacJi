@@ -52,6 +52,14 @@ enum SettingsStrings {
         String(localized: "Use \(limit) characters or fewer.")
     }
 
+    static func triggerErrorOverlaps(_ panel: String, trigger: String) -> String {
+        String(localized: "The \(panel) already uses \(trigger); pick characters that don't contain it.")
+    }
+
+    static let emojiPanelName = String(localized: "emoji panel")
+    static let symbolPanelName = String(localized: "symbol panel")
+    static let emoticonPanelName = String(localized: "emoticon panel")
+
     static func triggerKeptHint(_ trigger: String) -> String {
         String(localized: "Still using \(trigger)")
     }

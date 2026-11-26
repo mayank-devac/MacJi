@@ -19,7 +19,7 @@ final class InlinePanelController {
     private let secureInputNotifier = SecureInputNotifier()
     private let fader = MenuPanelFader()
     private lazy var panel = InlinePanelWindow(rootView: InlinePanelView(model: model) { [weak self] in self?.insert($0) })
-    private var tracker = TriggerTracker(trigger: PreferenceDefaults.trigger)
+    private var tracker = TriggerTracker(triggers: [.emoji: PreferenceDefaults.trigger])
     private var isEnabled = false
     private var ranksFrequentlyUsed = PreferenceDefaults.rankFrequentlyUsedEmoji
     private var aliases = TextAliasConverter(aliases: [])
@@ -63,8 +63,8 @@ final class InlinePanelController {
     // Frequency ranking applies from the next open; text aliases ride on the same tap.
 
     func configure(enabled: Bool, trigger: String, ranksFrequentlyUsed: Bool) {
-        if tracker.trigger != trigger {
-            tracker.trigger = trigger
+        if tracker.triggers != [.emoji: trigger] {
+            tracker.triggers = [.emoji: trigger]
             endSession()
         }
         isEnabled = enabled
@@ -198,14 +198,14 @@ final class InlinePanelController {
     /// The caret is looked up once per open; the panel stays put while typing.
     // A pending copy-close keeps the "Copied" badge visible until its timer fires.
 
-    private func refresh(_ query: String?) {
+    private func refresh(_ query: TriggerTracker.Query?) {
         guard let query else {
             if copyClose == nil { hidePanel() }
             return
         }
         cancelCopyClose()
         if !isPresented { present() }
-        model.update(query: query, trigger: tracker.trigger)
+        model.update(query: query.term, trigger: query.trigger)
     }
 
     private func present() {
