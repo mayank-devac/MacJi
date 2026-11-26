@@ -14,6 +14,7 @@ struct SettingsView: View {
     let loginItem: LoginItem
     let updates: UpdateController
     let onGrantAccess: () -> Void
+    let onQuit: () -> Void
 
     var body: some View {
         Form {
@@ -26,6 +27,7 @@ struct SettingsView: View {
             MenuBarSection(isShown: $settings.showMenuBarIcon)
             GeneralSection(loginItem: loginItem, updates: updates)
             AboutSection()
+            QuitSection(onQuit: onQuit)
         }
         .formStyle(.grouped)
         .frame(minWidth: SettingsMetrics.width, maxWidth: SettingsMetrics.width)

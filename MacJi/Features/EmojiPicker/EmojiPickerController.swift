@@ -13,6 +13,8 @@ import SwiftUI
 
 @MainActor
 final class EmojiPickerController: NSObject, NSPopoverDelegate {
+    var onOpenSettings: () -> Void = {}
+
     private let popover = NSPopover()
     private let model: EmojiPickerModel
     private let anchorWindow = PopoverAnchorWindow()
@@ -31,7 +33,8 @@ final class EmojiPickerController: NSObject, NSPopoverDelegate {
     func start() {
         popover.behavior = .transient
         popover.delegate = self
-        let host = NSHostingController(rootView: EmojiPickerView(model: model))
+        let view = EmojiPickerView(model: model, onOpenSettings: { [weak self] in self?.openSettings() })
+        let host = NSHostingController(rootView: view)
         host.sizingOptions = .preferredContentSize
         popover.contentViewController = host
         // Only keys sent to the popover's window are handled; the Settings window is untouched.
@@ -82,6 +85,13 @@ final class EmojiPickerController: NSObject, NSPopoverDelegate {
         NSApp.activate()
         popover.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
         popover.contentViewController?.view.window?.makeKey()
+    }
+
+    /// Focus stays with MacJi, so the previous app is not reactivated over Settings.
+    private func openSettings() {
+        previousApp = nil
+        close()
+        onOpenSettings()
     }
 
     func popoverDidClose(_ notification: Notification) {

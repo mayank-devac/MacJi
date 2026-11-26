@@ -91,6 +91,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
     EmojiPicker/ — menu-bar picker popover
       EmojiPickerCategoryBar.swift — category filter buttons
       EmojiPickerController.swift — popover lifecycle, keyboard actions, focus hand-back
+      EmojiPickerHeaderButton.swift — icon button beside the search field (Settings)
       EmojiPickerKeys.swift — key presses → picker actions
       EmojiPickerModel.swift — search text, category, selection, recents grouping
       EmojiPickerView.swift — search field, grid and footer
@@ -128,6 +129,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       InlinePanelSection.swift — enable toggle and trigger field with validation
       MenuBarSection.swift — show/hide the menu-bar icon
       PermissionSection.swift — Accessibility and Secure Input status rows
+      QuitSection.swift — Quit MacJi button at the bottom of Settings
     SettingsMigrator.swift — schema version and ordered, idempotent migrations
     SettingsView.swift — the single grouped Form
     SettingsWindowController.swift — the Settings window: size limits, position autosave, activation
@@ -219,8 +221,13 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
     thank-you.js — starts the download, fires the confetti
     theme.js — light/dark theme, scrolled nav and current section
   thank-you.html — after Download: starts the .dmg, confetti, first-launch steps
-assets/ — images used by the README
+assets/ — app images
   icon/ — app icon PNGs for the README header
+  picker-buttons/ — picker images with the Settings button; not used by the README or website
+    picker-dark.png — picker, dark
+    picker-light.png — picker, light
+    picker-search-dark.png — picker search, dark
+    picker-search-light.png — picker search, light
   screenshots/ — README images and GIFs, light and dark (written by scripts/make-screenshots.sh)
 build.sh — build, quit the running MacJi, relaunch, print the running path
 dist/ — Sparkle update feed, served from main

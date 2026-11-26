@@ -3,9 +3,9 @@
 //  MacJi
 //
 //  Created: 2026-11-26
-//  The picker popover: search field, category filters, a sectioned emoji grid and a footer
-//  naming the selected or hovered emoji. Keyboard handling lives in the controller; this view
-//  only reflects `model.selection`.
+//  The picker popover: search field with a Settings button, category filters, a sectioned
+//  emoji grid and a footer naming the selected or hovered emoji. Keyboard handling lives in
+//  the controller; this view only reflects `model.selection`.
 //  Ported from Octopus: octopus/UI/EmojiPicker/EmojiPickerView.swift
 //
 
@@ -13,6 +13,7 @@ import SwiftUI
 
 struct EmojiPickerView: View {
     @ObservedObject var model: EmojiPickerModel
+    let onOpenSettings: () -> Void
     @FocusState private var searchFocused: Bool
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: PickerMetrics.gridSpacing),
@@ -20,7 +21,7 @@ struct EmojiPickerView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            searchField
+            header
                 .padding(PickerMetrics.outerPadding)
             EmojiPickerCategoryBar(selection: $model.category)
                 .padding(.horizontal, PickerMetrics.categoryBarHorizontalPadding)
@@ -33,6 +34,14 @@ struct EmojiPickerView: View {
         .frame(width: PickerMetrics.size.width, height: PickerMetrics.size.height)
         .onAppear { searchFocused = true }
         .onChange(of: model.openCount) { searchFocused = true }
+    }
+
+    private var header: some View {
+        HStack(spacing: PickerMetrics.headerSpacing) {
+            searchField
+            EmojiPickerHeaderButton(symbol: SymbolNames.settings, title: MenuBarStrings.settings,
+                                    action: onOpenSettings)
+        }
     }
 
     ////////////////////

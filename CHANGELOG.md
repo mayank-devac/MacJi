@@ -6,6 +6,10 @@ Write notes under **Unreleased**; `scripts/bump-version.sh` moves them under a d
 
 ## [Unreleased]
 
+### Added
+- ⚙️ Settings button in the emoji picker, beside the search field.
+- 👋 Quit MacJi button at the bottom of Settings.
+
 ## [0.1.1] - 2026-11-26
 
 The first release of MacJi 🎉 Emoji anywhere on your Mac, straight from the keyboard.

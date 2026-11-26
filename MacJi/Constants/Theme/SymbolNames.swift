@@ -20,4 +20,4 @@ enum SymbolNames {
     static let dragHandle = "line.3.horizontal"
     static let close = "xmark.circle.fill"
     static let lock = "lock.fill"
-}
+    static let settings = "gearshape"}

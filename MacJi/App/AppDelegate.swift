@@ -29,7 +29,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = StatusItemController()
     private lazy var settingsWindow = SettingsWindowController { [unowned self] in
         SettingsView(settings: settings, permissions: permissions, loginItem: loginItem, updates: updates,
-                     onGrantAccess: { AccessibilityPermissionGuide.shared.open() })
+                     onGrantAccess: { AccessibilityPermissionGuide.shared.open() },
+                     onQuit: { NSApp.terminate(nil) })
     }
     private var subscriptions: Set<AnyCancellable> = []
     private var launchedAsLoginItem = false
@@ -80,6 +81,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func startFeatures() {
         inlinePanel.start()
+        picker.onOpenSettings = { [weak self] in self?.showSettings() }
         picker.start()
         statusItem.onOpenPicker = { [weak self] anchor in self?.picker.toggle(relativeTo: anchor) }
         statusItem.onOpenSettings = { [weak self] in self?.showSettings() }

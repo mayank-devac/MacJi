@@ -3,7 +3,8 @@
 //  MacJi
 //
 //  Created: 2026-11-26
-//  User-visible text of the menu-bar icon and its right-click menu.
+//  User-visible text of the menu-bar icon, its right-click menu, plus the shared
+//  Settings and Quit button titles.
 //
 
 import Foundation

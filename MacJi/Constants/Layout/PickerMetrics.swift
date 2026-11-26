@@ -14,6 +14,10 @@ enum PickerMetrics {
     static let size = CGSize(width: 360, height: 440)
     static let outerPadding: CGFloat = 10
 
+    // Header button beside the search field
+    static let headerSpacing: CGFloat = 6
+    static let headerButtonWidth: CGFloat = 28
+
     // Search field
     static let searchHeight: CGFloat = 30
     static let searchCornerRadius: CGFloat = 8

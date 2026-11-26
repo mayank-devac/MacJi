@@ -71,7 +71,7 @@ struct ReadmeScreenshots {
             Backdrop(theme: theme) {
                 MockWindow(title: SettingsStrings.windowTitle, size: CGSize(width: SettingsMetrics.width, height: 560)) {
                     SettingsView(settings: settings, permissions: permissions, loginItem: loginItem, updates: updates,
-                                 onGrantAccess: {})
+                                 onGrantAccess: {}, onQuit: {})
                 }
             }
         }
@@ -225,7 +225,7 @@ private struct PickerScene: View {
                     .offset(x: iconCenter - Self.arrowSize.width / 2, y: 0.5)
                     .padding(.top, Self.arrowGap)
                     .zIndex(1)
-                EmojiPickerView(model: model)
+                EmojiPickerView(model: model, onOpenSettings: {})
                     .background(fill)
                     .clipShape(shape)
                     .overlay(shape.strokeBorder(Stage.hairline, lineWidth: 0.5))
