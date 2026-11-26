@@ -23,11 +23,11 @@ enum EmojiSearch {
     // One pass fills a bucket per rank in catalog order, so ties keep Unicode order without a sort.
 
     static func ranked(_ query: String, in catalog: EmojiCatalog, category: EmojiCategory? = nil, limit: Int) -> [Emoji] {
-        let terms = terms(in: query)
-        guard !terms.isEmpty else { return [] }
+        let queryTerms = terms(in: query)
+        guard !queryTerms.isEmpty else { return [] }
         var buckets = Array(repeating: [Emoji](), count: Rank.allCases.count)
-        for entry in catalog.entries where (category == nil || entry.category == category) && matches(entry, terms) {
-            let weakest = terms.map { rank(entry, $0).rawValue }.max() ?? Rank.substring.rawValue
+        for entry in catalog.entries where (category == nil || entry.category == category) && matches(entry, queryTerms) {
+            let weakest = queryTerms.map { rank(entry, $0).rawValue }.max() ?? Rank.substring.rawValue
             buckets[weakest].append(entry.emoji)
         }
         return Array(buckets.joined().prefix(limit))

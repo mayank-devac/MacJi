@@ -58,9 +58,12 @@ confirm() {
     read -r -p "$1 [y/N] " answer
     [[ "$answer" == "y" || "$answer" == "Y" ]]
 }
-# Prints each distinct "error:" line of an xcodebuild log, paths relative to the repo.
+# Prints each distinct "error:" line of an xcodebuild log, paths relative to the repo, or the
+# log's last lines when a failure has no such line (a crash, a signing or toolchain problem).
 print_errors() {
-    { grep -E "error: " "$1" || true; } | sed "s|$MACJI_ROOT/||" | sort -u | head -20 >&2
+    local errors
+    errors=$({ grep -E "error[: ]" "$1" || true; } | sed "s|$MACJI_ROOT/||" | sort -u | head -20)
+    if [[ -n "$errors" ]]; then printf '%s\n' "$errors" >&2; else tail -25 "$1" >&2; fi
 }
 # Prints a script's header comment (everything after the shebang up to the first code line).
 print_usage() {
