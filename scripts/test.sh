@@ -14,7 +14,7 @@
 ### scripts/test.sh InlinePanelTests/triggerInsideWordIsIgnored   one test ("()" is added)
 ### scripts/test.sh --unsigned [filter]               build without code signing (CI)
 # Example: scripts/test.sh GlyphDataTests
-# Full log: .build/test.log. Tests need macOS 15 or later.
+# Full log: .build/test.log, results in .build/test.xcresult. Tests need macOS 15 or later.
 ##################
 
 set -euo pipefail
@@ -45,25 +45,48 @@ fi
 ##################
 
 log="$MACJI_ROOT/.build/test.log"
+results="$MACJI_ROOT/.build/test.xcresult"
 mkdir -p "$MACJI_ROOT/.build"
+rm -rf "$results"
 step "Testing ${filter:-every suite}"
 status=0
 xcodebuild -project "$MACJI_PROJECT" -scheme "$MACJI_SCHEME" -destination "$MACJI_DESTINATION" \
-    -derivedDataPath "$MACJI_DERIVED_DATA" ${only[@]+"${only[@]}"} ${signing[@]+"${signing[@]}"} test >"$log" 2>&1 || status=$?
+    -derivedDataPath "$MACJI_DERIVED_DATA" -resultBundlePath "$results" ${only[@]+"${only[@]}"} \
+    ${signing[@]+"${signing[@]}"} test >"$log" 2>&1 || status=$?
 
 ####################
 #### Report
-### One "Test case '<Suite>/<test>()' passed|failed|skipped" line per test is the source of truth.
-# Build errors and failed expectations are printed once each, paths relative to the repo.
+### The result bundle is the source of truth. The log's "Test case" lines can't be counted:
+### xcodebuild sometimes writes its own summary into the middle of one, which hid a test.
+# First line: passed failed skipped suites. Then one "<Suite>/<test>()" per failed test. A build
+# that never ran tests has no bundle and reads as all zeros. Build errors and failed expectations
+# are printed once each, paths relative to the repo.
 
-passed=$(grep -cE "^Test case '.*' passed" "$log" || true)
-failed=$(grep -cE "^Test case '.*' failed" "$log" || true)
-skipped=$(grep -cE "^Test case '.*' skipped" "$log" || true)
-suites=$( { grep -E "^Test case '.*' (passed|failed)" "$log" || true; } | { grep -oE "^Test case '[^/']+/" || true; } \
-    | sort -u | wc -l | tr -d ' ')
+report=$( { [[ -d "$results" ]] && xcrun xcresulttool get test-results tests --path "$results" 2>/dev/null; } \
+    | python3 -I -c '
+import json, sys
+try:
+    nodes = json.load(sys.stdin)["testNodes"]
+except (ValueError, KeyError):
+    nodes = []
+cases = []
+def walk(node, suite):
+    if node.get("nodeType") == "Test Suite":
+        suite = node.get("name")
+    if node.get("nodeType") == "Test Case":
+        cases.append((suite, node.get("name"), node.get("result")))
+    for child in node.get("children", []):
+        walk(child, suite)
+for node in nodes:
+    walk(node, None)
+count = lambda result: sum(case[2] == result for case in cases)
+print(count("Passed"), count("Failed"), count("Skipped"), len({c[0] for c in cases if c[2] in ("Passed", "Failed")}))
+print("\n".join(f"{suite}/{name}" for suite, name, result in cases if result == "Failed"))
+' || true)
+read -r passed failed skipped suites <<<"$(head -1 <<<"$report")"
 
 if (( failed > 0 )); then
-    grep -E "^Test case '.*' failed" "$log" | sed -E "s/^Test case '([^']*)'.*/  ✗ \1/" >&2
+    tail -n +2 <<<"$report" | sed '/^$/d; s/^/  ✗ /' >&2
     print_errors "$log"
     fail "$failed of $((passed + failed)) tests failed (full log: .build/test.log)" "Fix the failures above, then run scripts/test.sh again."
 fi
