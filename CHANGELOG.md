@@ -6,6 +6,8 @@ Write notes under **Unreleased**; `scripts/bump-version.sh` moves them under a d
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-27
+
 Symbols, emoticons and your own aliases 🔣
 
 ### Added
