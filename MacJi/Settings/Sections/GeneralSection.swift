@@ -14,7 +14,7 @@ struct GeneralSection: View {
 
     var body: some View {
         Section {
-            Toggle(SettingsStrings.openAtLogin, isOn: Binding(get: { loginItem.isEnabled }, set: loginItem.setEnabled))
+            Toggle(SettingsStrings.openAtLogin, isOn: Binding(get: { loginItem.isEnabled }, set: { loginItem.setEnabled($0) }))
             if loginItem.needsApproval {
                 HStack {
                     SettingsHint(text: SettingsStrings.loginNeedsApproval, symbol: SymbolNames.attention, tint: Palette.attention)
@@ -26,7 +26,7 @@ struct GeneralSection: View {
                 SettingsHint(text: error, symbol: SymbolNames.error, tint: Palette.error)
             }
             Toggle(SettingsStrings.automaticUpdates,
-                   isOn: Binding(get: { updates.automaticallyChecks }, set: updates.setAutomaticallyChecks))
+                   isOn: Binding(get: { updates.automaticallyChecks }, set: { updates.setAutomaticallyChecks($0) }))
             LabeledContent {
                 Button(SettingsStrings.checkNow, action: updates.checkForUpdates)
                     .disabled(!updates.canCheckForUpdates)
