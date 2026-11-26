@@ -5,5 +5,28 @@
     <link>https://github.com/mayank-devac/MacJi/releases</link>
     <description>Signed MacJi updates.</description>
     <language>en</language>
+    <item>
+      <title>MacJi 0.1.1</title>
+      <pubDate>Thu, 26 Nov 2026 01:46:42 GMT</pubDate>
+      <sparkle:version>2</sparkle:version>
+      <sparkle:shortVersionString>0.1.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+      <description sparkle:format="plain-text">The first release of MacJi 🎉 Emoji anywhere on your Mac, straight from the keyboard.
+
+### Added
+- ⌨️ Inline panel: type `::` and a term in any app (`::rocket`) and pick an emoji under the caret.
+  Return inserts it 🚀, Shift-Return copies it, Esc closes the panel.
+- 😀 Emoji picker in the menu bar with search, categories, recents and keyboard navigation.
+  Return copies, Option-Return copies and keeps the picker open.
+- ⚡️ Global shortcut for the picker (default ⌃⌥⌘Space); it opens at the caret when the icon is hidden.
+- ⚙️ Settings: Accessibility status, shortcut, trigger, menu-bar icon, open at login, automatic updates.
+- 🔄 Automatic updates, signed with EdDSA so only genuine MacJi updates install.
+
+### First launch
+- 🔐 MacJi isn't notarized: open it once from System Settings → Privacy &amp; Security → Open Anyway,
+  then turn on Accessibility for MacJi when it asks.
+- 💻 Needs macOS 14.6 or later.</description>
+      <enclosure url="https://github.com/mayank-devac/MacJi/releases/download/v0.1.1/MacJi-0.1.1.zip" length="1951679" type="application/octet-stream" sparkle:edSignature="YbEj+4XpxPEN9FbfeLH3NAi4nJm1yurG4AAdhA8PIn2ZVYCJGo2dhlDdH/amDdWOraazpQe8K+D0/X8Vc8EEDA==" />
+    </item>
   </channel>
 </rss>

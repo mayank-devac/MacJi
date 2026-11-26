@@ -15,8 +15,8 @@
 /// grant or preferences with an installed release.
 
 MACJI_BUNDLE_ID = io.github.mayank-devac.macji
-MARKETING_VERSION = 0.1.0
-CURRENT_PROJECT_VERSION = 1
+MARKETING_VERSION = 0.1.1
+CURRENT_PROJECT_VERSION = 2
 MACJI_BUNDLE_SUFFIX[config=Debug] = .debug
 PRODUCT_BUNDLE_IDENTIFIER = $(MACJI_BUNDLE_ID)$(MACJI_BUNDLE_SUFFIX)
 
