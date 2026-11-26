@@ -6,6 +6,8 @@ Write notes under **Unreleased**; `scripts/bump-version.sh` moves them under a d
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-26
+
 ### Added
 - ⚙️ Settings button in the emoji picker, beside the search field.
 - 👋 Quit MacJi button at the bottom of Settings.

@@ -6,6 +6,17 @@
     <description>Signed MacJi updates.</description>
     <language>en</language>
     <item>
+      <title>MacJi 0.2.0</title>
+      <pubDate>Thu, 26 Nov 2026 12:27:04 GMT</pubDate>
+      <sparkle:version>3</sparkle:version>
+      <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+      <description sparkle:format="plain-text">### Added
+- ⚙️ Settings button in the emoji picker, beside the search field.
+- 👋 Quit MacJi button at the bottom of Settings.</description>
+      <enclosure url="https://github.com/mayank-devac/MacJi/releases/download/v0.2.0/MacJi-0.2.0.zip" length="1961116" type="application/octet-stream" sparkle:edSignature="7/Jpuc6MjdtPTlne9Ajxagdm0/mpxqEx7GKtxO5gnlMDzxfu4spV3MNbwHPj2vU6AHHzfdlewg891qi3ooR3Dw==" />
+    </item>
+    <item>
       <title>MacJi 0.1.1</title>
       <pubDate>Thu, 26 Nov 2026 01:46:42 GMT</pubDate>
       <sparkle:version>2</sparkle:version>
