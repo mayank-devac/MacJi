@@ -68,6 +68,66 @@ struct InlinePanelTests {
         #expect(TypedKey(keyCode: 41, modifiers: .shift, characters: ":") == .text(":"))
     }
 
+    @Test func tabFiltersOnlyInPanelsWithFilters() {
+        #expect(InlinePanelKeyAction(keyCode: 48, modifiers: [], hasFilters: true) == .nextFilter)
+        #expect(InlinePanelKeyAction(keyCode: 48, modifiers: .shift, hasFilters: true) == .previousFilter)
+        #expect(InlinePanelKeyAction(keyCode: 48, modifiers: [], hasFilters: false) == nil)
+        #expect(InlinePanelKeyAction(keyCode: 48, modifiers: .command, hasFilters: true) == nil)
+        #expect(SymbolCategory.cycle(.technical, forward: true) == nil)
+        #expect(SymbolCategory.cycle(nil, forward: false) == .technical)
+    }
+
+    ////////////////////
+    //// Emoticon autocomplete
+    /// The run after the last space opens suggestions once it is long enough, holds a symbol and
+    // starts an emoticon. Esc silences it until the next word.
+
+    private func autocomplete(_ length: Int = 2, triggers: [String] = ["::", "##"]) -> EmoticonAutocomplete {
+        EmoticonAutocomplete(emoticons: ["^_^", "^_~", "owo", ":-)", "--_--", "8)", "XD"], minimumLength: length,
+                             triggers: triggers)
+    }
+
+    @Test func suggestsWhenTheTypedRunStartsAnEmoticon() {
+        var suggest = autocomplete()
+        #expect(suggest.run(in: "nice ^_") == "^_")
+        #expect(suggest.run(in: "nice ^") == nil)
+        #expect(suggest.run(in: "nice ^_ ") == nil)
+        #expect(suggest.run(in: "^_^x") == nil)
+        #expect(suggest.run(in: "8)") == nil)
+        var longer = autocomplete(3)
+        #expect(longer.run(in: "^_") == nil)
+        var off = autocomplete(0)
+        #expect(off.run(in: "^_") == nil)
+    }
+
+    @Test func wordsCodeAndTriggersNeverSuggest() {
+        var suggest = autocomplete(triggers: [":-"])
+        #expect(suggest.run(in: "ow") == nil)
+        #expect(suggest.run(in: "xd") == nil)
+        #expect(suggest.run(in: "--") == nil)
+        #expect(suggest.run(in: ":-") == nil)
+    }
+
+    @Test func escSilencesTheRunUntilTheNextWord() {
+        var suggest = autocomplete()
+        suggest.dismiss("^_")
+        #expect(suggest.run(in: "^_") == nil)
+        #expect(suggest.run(in: "^_^") == nil)
+        #expect(suggest.run(in: "^_^ ") == nil)
+        #expect(suggest.run(in: "^_^ ^_") == "^_")
+    }
+
+    @Test func completionsContinueThePrefixUsedFirst() {
+        let emoticons = EmoticonCatalog(glyphs: ["^_^", "^_~", "(^_^)"].map {
+            Glyph(text: $0, description: "face", category: EmoticonCategory.happy.rawValue, aliases: [], tags: [])
+        })
+        #expect(GlyphSearch.starting(with: "^_", in: emoticons, limit: 9).map(\.text) == ["^_^", "^_~"])
+        #expect(GlyphSearch.starting(with: "^_", in: emoticons, useCounts: ["^_~": 3], limit: 9).map(\.text) == ["^_~", "^_^"])
+        #expect(GlyphSearch.starting(with: "^_^", in: emoticons, limit: 9).isEmpty)
+    }
+
+    //////////////////
+
     @Test func typedAliasBecomesItsReplacement() {
         let all = TextAliasConverter(aliases: TextAliasCatalog.all)
         #expect(all.conversion(typing: .text(">"), after: "a -") == .init(replacement: "→", deleteCount: 1))

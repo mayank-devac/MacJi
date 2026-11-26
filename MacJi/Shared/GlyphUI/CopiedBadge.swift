@@ -15,7 +15,7 @@ struct CopiedBadge: View {
     var body: some View {
         HStack(spacing: EmojiUIMetrics.badgeSpacing) {
             Image(systemName: SymbolNames.copied).foregroundStyle(Palette.copiedCheck)
-            Text(EmojiStrings.copied(glyph?.text ?? ""))
+            Text(GlyphStrings.copied(glyph?.text ?? ""))
         }
         .font(.system(size: EmojiUIMetrics.badgeFontSize, weight: .medium))
         .padding(.horizontal, EmojiUIMetrics.badgeHorizontalPadding)

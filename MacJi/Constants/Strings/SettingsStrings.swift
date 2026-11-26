@@ -34,19 +34,22 @@ enum SettingsStrings {
     //////////////////
 
     ////////////////////
-    //// Inline Panel
+    //// Inline Panels and triggers
 
-    static let inlineHeader = String(localized: "Inline Panel")
-    static let inlineToggle = String(localized: "Open emoji panel while typing")
+    static let inlineHeader = String(localized: "Inline Panels")
+    static let inlineToggle = String(localized: "Emoji panel")
+    static let symbolToggle = String(localized: "Symbol panel")
     static let triggerLabel = String(localized: "Trigger")
-    static let rankFrequentlyUsed = String(localized: "Rank frequently used emoji higher")
-    static let aliasesToggle = String(localized: "Aliases")
-    static let aliasesExample = String(localized: "-> becomes →, (c) becomes ©, :) becomes 🙂")
-    static let customizeAliases = String(localized: "Customize…")
+    static let rankFrequentlyUsed = String(localized: "Rank frequently used first")
+    static let allTypingOffFooter = String(localized: "Panels, emoticons and aliases are all off: MacJi doesn't watch the keyboard at all.")
+
+    static func symbolExample(trigger: String) -> String {
+        String(localized: "Type \(trigger)arrow for → ← ↔, \(trigger)euro for €. Tab changes the category.")
+    }
+
     static let triggerErrorEmpty = String(localized: "Type at least one character.")
     static let triggerErrorWhitespace = String(localized: "Spaces aren't allowed.")
     static let triggerErrorOnlyLetters = String(localized: "Include a symbol such as : or ; so the trigger never fires inside words.")
-    static let inlineOffFooter = String(localized: "Turned off: MacJi stops watching the keyboard entirely.")
 
     static func triggerErrorTooLong(_ limit: Int) -> String {
         String(localized: "Use \(limit) characters or fewer.")
@@ -71,9 +74,36 @@ enum SettingsStrings {
     //////////////////
 
     ////////////////////
+    //// Emoticons
+
+    static let emoticonsHeader = String(localized: "Emoticons")
+    static let emoticonsToggle = String(localized: "Emoticons")
+    static let emoticonsExample = String(localized: "Suggests ^_^ and (^_^;) as you type ^_, and o_O as you type o_.")
+    static let autocompleteLabel = String(localized: "Autocomplete")
+    static let autocompleteOff = String(localized: "Off")
+    static let emoticonTriggerPlaceholder = String(localized: "None")
+    static let emoticonTriggerHint = String(localized: "Optional. Set one, such as ;;, to search emoticons by name: ;;shrug.")
+
+    static func autocompleteAfter(_ count: Int) -> String {
+        String(localized: "After \(count) characters")
+    }
+
+    //////////////////
+
+    ////////////////////
+    //// Aliases section
+
+    static let aliasesHeader = String(localized: "Aliases")
+    static let aliasesToggle = String(localized: "Convert aliases while typing")
+    static let aliasesExample = String(localized: "-> becomes →, (c) becomes ©, :) becomes 🙂")
+    static let customizeAliases = String(localized: "Customize…")
+
+    //////////////////
+
+    ////////////////////
     //// Aliases page
 
-    static let aliasesBack = String(localized: "Inline Panel")
+    static let aliasesBack = String(localized: "Settings")
     static let aliasesTitle = String(localized: "Aliases")
     static let aliasesArrows = String(localized: "Arrows")
     static let aliasesMath = String(localized: "Math")
@@ -120,6 +150,7 @@ enum SettingsStrings {
     //// About
 
     static let aboutHeader = String(localized: "About")
+    static let appName = "MacJi"
     static let tagline = String(localized: "Emoji anywhere you type.")
     static let github = String(localized: "GitHub")
     static let builtOnOctopus = String(localized: "Built on Octopus")

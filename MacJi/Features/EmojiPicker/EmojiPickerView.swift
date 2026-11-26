@@ -23,7 +23,7 @@ struct EmojiPickerView: View {
         VStack(spacing: 0) {
             header
                 .padding(PickerMetrics.outerPadding)
-            EmojiPickerCategoryBar(selection: $model.category)
+            CategoryBar(selection: $model.category, style: PickerMetrics.categoryBar)
                 .padding(.horizontal, PickerMetrics.categoryBarHorizontalPadding)
                 .padding(.bottom, PickerMetrics.categoryBarBottomPadding)
             Divider()

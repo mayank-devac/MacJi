@@ -3,9 +3,9 @@
 //  MacJi
 //
 //  Created: 2026-11-26
-//  Type the trigger (default "::") and a term in any app, e.g. "::roc", to open an emoji
-//  panel under the caret. Return replaces "::roc" with the selection · Shift-Return copies
-//  it · Esc closes · Space or punctuation closes as you keep typing.
+//  Type a trigger and a term in any app ("::roc", "##arr"), or the start of an emoticon ("^_"),
+//  to open a panel under the caret. Return replaces what was typed with the selection ·
+//  Shift-Return copies it · Esc closes · Tab filters · Space or punctuation closes as you type.
 //  Ported from Octopus: octopus/UI/MacJi/MacJiController.swift
 //
 
@@ -19,11 +19,15 @@ final class InlinePanelController {
     private let secureInputNotifier = SecureInputNotifier()
     private let fader = MenuPanelFader()
     private lazy var panel = InlinePanelWindow(rootView: InlinePanelView(model: model) { [weak self] in self?.insert($0) })
-    private var tracker = TriggerTracker(triggers: [.emoji: PreferenceDefaults.trigger])
-    private var isEnabled = false
-    private var ranksFrequentlyUsed = PreferenceDefaults.rankFrequentlyUsedEmoji
+    private var configuration = InlinePanelConfiguration()
+    private var tracker = TriggerTracker(triggers: [:])
+    private var autocomplete = EmoticonAutocomplete(emoticons: [], minimumLength: 0, triggers: [])
     private var aliases = TextAliasConverter(aliases: [])
+    private var convertsAliases = false
+    /// What the last key opened, as seen inside the tap; the panel shows it a main-queue turn later.
+    private var openSearch: InlinePanelModel.Search?
     private var isPresented = false
+    private var anchor: (caret: CGRect?, pointer: CGPoint) = (nil, .zero)
     private var workspaceObserver: NSObjectProtocol?
     private var pointerMonitor: Any?
     private var copyClose: Task<Void, Never>?
@@ -52,39 +56,49 @@ final class InlinePanelController {
         stopListening()
     }
 
-    func setCatalog(_ catalog: EmojiCatalog) {
-        model.catalog = catalog
+    func setLibrary(_ library: GlyphLibrary) {
+        model.library = library
+        rebuildAutocomplete()
     }
 
     ////////////////////
     //// Settings and permission
     /// The composition root forwards the panel settings from AppSettings, and calls
-    /// `retryListening` when Accessibility changes. The tap exists only while both allow it.
-    // Frequency ranking applies from the next open; text aliases ride on the same tap.
+    /// `retryListening` when Accessibility changes. The tap exists only while a panel, emoticon
+    /// autocomplete or text aliases need it; with all of them off nothing watches the keyboard.
+    // Frequency ranking applies from the next open.
 
-    func configure(enabled: Bool, trigger: String, ranksFrequentlyUsed: Bool) {
-        if tracker.triggers != [.emoji: trigger] {
-            tracker.triggers = [.emoji: trigger]
+    func configure(_ configuration: InlinePanelConfiguration) {
+        if tracker.triggers != configuration.triggers {
+            tracker.triggers = configuration.triggers
             endSession()
         }
-        isEnabled = enabled
-        self.ranksFrequentlyUsed = ranksFrequentlyUsed
+        self.configuration = configuration
+        rebuildAutocomplete()
         retryListening()
     }
 
     /// The aliases to convert while typing; empty turns conversion off.
     func setTextAliases(_ enabled: [TextAlias]) {
         aliases = TextAliasConverter(aliases: enabled)
+        convertsAliases = !enabled.isEmpty
+        retryListening()
     }
 
     func retryListening() {
-        if isEnabled { startListening() } else { stopListening() }
+        if configuration.watchesTyping || convertsAliases { startListening() } else { stopListening() }
+    }
+
+    private func rebuildAutocomplete() {
+        autocomplete = EmoticonAutocomplete(emoticons: model.library.emoticons.entries.map(\.glyph.text),
+                                            minimumLength: configuration.emoticonAutocompleteLength,
+                                            triggers: Array(configuration.triggers.values))
     }
 
     private func applicationDidActivate(pid: pid_t?) {
         endSession()
         retryListening()
-        if isEnabled { secureInputNotifier.check(frontmostPID: pid) }
+        if configuration.watchesTyping || convertsAliases { secureInputNotifier.check(frontmostPID: pid) }
     }
 
     private func startListening() {
@@ -103,33 +117,30 @@ final class InlinePanelController {
         endSession()
     }
 
-    //// Turning the panel off removes the tap entirely; nothing watches the keyboard then.
+    //// Turning everything off removes the tap entirely; nothing watches the keyboard then.
     //////////////////
 
     ////////////////////
     //// Key handling (runs inside the event tap)
-    /// While a term is open, panel keys are consumed and handled on the next main-queue turn.
+    /// While a panel is open, its keys are consumed and handled on the next main-queue turn.
     /// A key that completes a text alias is consumed and its replacement typed instead; every
     /// other key passes through and updates the buffer.
     // The buffer is updated synchronously so fast typing never races the panel. Nothing is
-    // queued while no trigger is being typed and no panel is showing. Typing in MacJi's own
-    // windows (the trigger field, the picker search) never opens the panel; the panel itself is
-    // non-activating, so MacJi is only active while one of those windows has focus.
+    // queued while nothing is being typed for a panel and no panel is showing. Typing in MacJi's
+    // own windows (the trigger field, the picker search) never opens a panel; the panel itself
+    // is non-activating, so MacJi is only active while one of those windows has focus.
 
     private func handleKeyDown(_ keyCode: UInt16, _ modifiers: NSEvent.ModifierFlags, _ characters: String) -> Bool {
         guard !NSApp.isActive else {
             tracker.reset()
+            openSearch = nil
             return false
         }
-        if tracker.query != nil, let action = InlinePanelKeyAction(keyCode: keyCode, modifiers: modifiers),
-           action == .close || !model.results.isEmpty {
-            if case .move(let key) = action {
-                DispatchQueue.main.async { [weak self] in self?.model.moveSelection(key) }
-            } else {
-                let length = tracker.replacementLength
-                tracker.reset()
-                DispatchQueue.main.async { [weak self] in self?.perform(action, replacing: length) }
-            }
+        if let search = openSearch,
+           let action = InlinePanelKeyAction(keyCode: keyCode, modifiers: modifiers,
+                                             hasFilters: search.kind.hasFilters && isPresented),
+           action == .close || action == .nextFilter || action == .previousFilter || !model.results.isEmpty {
+            handle(action, for: search)
             return true
         }
         let key = TypedKey(keyCode: keyCode, modifiers: modifiers, characters: characters)
@@ -143,11 +154,38 @@ final class InlinePanelController {
         } else {
             tracker.apply(key)
         }
-        let query = tracker.query
-        if query != nil || isPresented {
-            DispatchQueue.main.async { [weak self] in self?.refresh(query) }
+        openSearch = currentSearch()
+        let search = openSearch
+        if search != nil || isPresented {
+            DispatchQueue.main.async { [weak self] in self?.refresh(search) }
         }
         return conversion != nil
+    }
+
+    /// A trigger and its term win over an autocomplete run.
+    private func currentSearch() -> InlinePanelModel.Search? {
+        if let query = tracker.query {
+            return .init(kind: query.kind, typed: query.trigger + query.term, term: query.term, isAutocomplete: false)
+        }
+        return autocomplete.run(in: tracker.buffer).map { .init(kind: .emoticons, typed: $0, term: $0, isAutocomplete: true) }
+    }
+
+    /// Esc on a suggestion keeps the typed word and silences it until the next word.
+    private func handle(_ action: InlinePanelKeyAction, for search: InlinePanelModel.Search) {
+        switch action {
+        case .move(let key):
+            DispatchQueue.main.async { [weak self] in self?.model.moveSelection(key) }
+            return
+        case .nextFilter, .previousFilter:
+            DispatchQueue.main.async { [weak self] in self?.model.cycleFilter(forward: action == .nextFilter) }
+            return
+        case .close where search.isAutocomplete:
+            autocomplete.dismiss(search.typed)
+        case .insert, .copy, .close:
+            tracker.reset()
+        }
+        openSearch = nil
+        DispatchQueue.main.async { [weak self] in self?.perform(action, replacing: search.typed.count) }
     }
 
     //// Return with no results passes through, so MacJi never swallows a line break for nothing.
@@ -156,68 +194,79 @@ final class InlinePanelController {
     private func perform(_ action: InlinePanelKeyAction, replacing length: Int) {
         switch action {
         case .insert:
-            guard let emoji = model.chosenGlyph else { hidePanel(); return }
-            replace(length, with: emoji)
+            guard let glyph = model.chosenGlyph else { hidePanel(); return }
+            replace(length, with: glyph)
         case .copy:
-            guard let emoji = model.chosenGlyph, model.copy(emoji) else {
+            guard let glyph = model.chosenGlyph, model.copy(glyph) else {
                 NSSound.beep()
                 hidePanel()
                 return
             }
-            recents.record(emoji.text)
+            recents.record(glyph.text)
             copyClose = Task { [weak self] in
                 guard (try? await Task.sleep(for: .seconds(PanelMotion.copyCloseDelay))) != nil else { return }
                 self?.hidePanel()
             }
-        case .close, .move:
+        case .close, .move, .nextFilter, .previousFilter:
             hidePanel()
         }
     }
 
     /// Pointer click on a result.
-    private func insert(_ emoji: Glyph) {
-        let length = tracker.replacementLength
-        guard length > 0 else { hidePanel(); return }
+    private func insert(_ glyph: Glyph) {
+        guard let search = openSearch else { hidePanel(); return }
         tracker.reset()
-        replace(length, with: emoji)
+        openSearch = nil
+        replace(search.typed.count, with: glyph)
     }
 
-    private func replace(_ length: Int, with emoji: Glyph) {
+    private func replace(_ length: Int, with glyph: Glyph) {
         hidePanel()
-        recents.record(emoji.text)
-        TextInserter.replace(characterCount: length, with: emoji.text)
+        recents.record(glyph.text)
+        TextInserter.replace(characterCount: length, with: glyph.text)
     }
 
     private func endSession() {
         tracker.reset()
+        openSearch = nil
         hidePanel()
     }
 
     ////////////////////
     //// Panel visibility
-    /// The caret is looked up once per open; the panel stays put while typing.
+    /// The caret is looked up once per open; the panel stays put while typing. Typing another
+    /// panel's trigger re-sizes the card in place, since filters make it taller.
     // A pending copy-close keeps the "Copied" badge visible until its timer fires.
 
-    private func refresh(_ query: TriggerTracker.Query?) {
-        guard let query else {
+    private func refresh(_ search: InlinePanelModel.Search?) {
+        guard let search else {
             if copyClose == nil { hidePanel() }
             return
         }
         cancelCopyClose()
-        if !isPresented { present() }
-        model.update(query: query.term, trigger: query.trigger)
+        let previousKind = model.search?.kind
+        if !isPresented { present(search.kind) }
+        model.update(search)
+        if let previousKind, previousKind != search.kind { place(search.kind) }
     }
 
-    private func present() {
+    private func present(_ kind: InlinePanelKind) {
         fader.cancel(panel)
-        let placement = InlinePanelPlacement.place(card: PanelMetrics.cardSize, caret: CaretLocator.caretRect(),
-                                                   pointer: NSEvent.mouseLocation,
-                                                   visibleFrames: NSScreen.screens.map(\.visibleFrame))
+        anchor = (CaretLocator.caretRect(), NSEvent.mouseLocation)
+        let placement = place(kind)
         model.beginPresentation(growsFrom: placement.opensAbove ? .bottomLeading : .topLeading,
-                                useCounts: ranksFrequentlyUsed ? recents.useCounts : [:])
-        panel.setFrame(placement.frame, display: false)
+                                useCounts: configuration.ranksFrequentlyUsed ? recents.useCounts : [:])
         panel.orderFrontRegardless()
         isPresented = true
+    }
+
+    @discardableResult
+    private func place(_ kind: InlinePanelKind) -> InlinePanelPlacement {
+        let placement = InlinePanelPlacement.place(card: PanelMetrics.cardSize(withFilters: kind.hasFilters), caret: anchor.caret,
+                                                   pointer: anchor.pointer,
+                                                   visibleFrames: NSScreen.screens.map(\.visibleFrame))
+        panel.setFrame(placement.frame, display: isPresented)
+        return placement
     }
 
     private func hidePanel() {

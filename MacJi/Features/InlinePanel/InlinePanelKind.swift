@@ -27,4 +27,7 @@ enum InlinePanelKind: CaseIterable, Sendable {
 
     /// Emoticons open by autocomplete, so their trigger may be blank (none).
     var triggerIsOptional: Bool { self == .emoticons }
+
+    /// Symbols and emoticons show a category bar that Tab cycles; the emoji panel keeps Tab for the app.
+    var hasFilters: Bool { self != .emoji }
 }

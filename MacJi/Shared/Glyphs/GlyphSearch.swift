@@ -43,6 +43,25 @@ enum GlyphSearch {
     //// Capped so a one-letter term stays fast to draw.
     //////////////////
 
+    ////////////////////
+    //// Completions
+    /// Glyphs whose text continues `prefix` ("^_" → ^_^ ^_~), for emoticon autocomplete.
+    /// A glyph equal to the prefix is left out: it is already typed. Used ones come first.
+
+    static func starting<Category>(with prefix: String, in catalog: GlyphCatalog<Category>, category: Category? = nil,
+                                   useCounts: [String: Int] = [:], limit: Int) -> [Glyph] {
+        let matches = catalog.entries.filter { entry in
+            (category == nil || entry.category == category) && entry.glyph.text != prefix && entry.glyph.text.hasPrefix(prefix)
+        }
+        let ordered = matches.enumerated().sorted { a, b in
+            let countA = useCounts[a.element.glyph.text] ?? 0, countB = useCounts[b.element.glyph.text] ?? 0
+            return countA != countB ? countA > countB : a.offset < b.offset
+        }
+        return Array(ordered.prefix(limit).map(\.element.glyph))
+    }
+
+    //////////////////
+
     /// Equal counts keep the better match first, then catalog order.
     private static func mostUsedFirst(_ used: [(glyph: Glyph, count: Int, rank: Int)]) -> [Glyph] {
         used.enumerated().sorted { a, b in

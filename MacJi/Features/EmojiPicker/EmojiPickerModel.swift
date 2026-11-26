@@ -68,9 +68,7 @@ final class EmojiPickerModel: ObservableObject {
     }
 
     func cycleCategory(forward: Bool) {
-        let filters: [EmojiCategory?] = [nil] + EmojiCategory.allCases
-        let index = filters.firstIndex(of: category) ?? 0
-        category = filters[(index + (forward ? 1 : filters.count - 1)) % filters.count]
+        category = EmojiCategory.cycle(category, forward: forward)
     }
 
     /// Returns false when there is nothing to copy or the clipboard refused it.

@@ -94,10 +94,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func wireSettings() {
-        settings.$inlinePanelEnabled.combineLatest(settings.$trigger, settings.$rankFrequentlyUsedEmoji)
-            .sink { [weak self] enabled, trigger, ranks in
-                self?.inlinePanel.configure(enabled: enabled, trigger: trigger, ranksFrequentlyUsed: ranks)
+        // @Published emits before the value is stored, so build from the emitted values only.
+        Publishers.CombineLatest4(settings.$inlinePanelEnabled, settings.$symbolPanelEnabled,
+                                  settings.$emoticonsEnabled, settings.$triggers)
+            .combineLatest(settings.$emoticonAutocompleteLength, settings.$rankFrequentlyUsedEmoji)
+            .map { panels, autocompleteLength, ranks in
+                InlinePanelConfiguration(emojiEnabled: panels.0, symbolsEnabled: panels.1, emoticonsEnabled: panels.2,
+                                         triggers: panels.3, emoticonAutocompleteLength: autocompleteLength,
+                                         ranksFrequentlyUsed: ranks)
             }
+            .removeDuplicates()
+            .sink { [weak self] configuration in self?.inlinePanel.configure(configuration) }
             .store(in: &subscriptions)
         settings.$convertTextAliases.combineLatest(settings.$disabledTextAliases)
             .sink { [weak self] on, disabled in
@@ -127,7 +134,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func loadCatalog() {
         Task { [weak self] in
             let library = await GlyphLibrary.loadBundled()
-            self?.inlinePanel.setCatalog(library.emoji)
+            self?.inlinePanel.setLibrary(library)
             self?.picker.setCatalog(library.emoji)
         }
     }

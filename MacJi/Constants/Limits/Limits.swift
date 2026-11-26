@@ -19,6 +19,10 @@ enum Limits {
     /// Picker search results (browsing shows every emoji).
     static let pickerResults = 180
     static let recents = 24
+    /// Longest typed run emoticon autocomplete follows.
+    static let emoticonRunMaxLength = 16
+    /// Emoticon autocomplete opens after this many matching characters by default; `− +` in Settings.
+    static let emoticonAutocompleteLengths = 2...6
     /// UTF-16 units one synthetic key event can carry; CGEvent drops anything longer.
     static let syntheticKeyUTF16Units = 20
     /// Tallest AX rect still treated as one line of text; taller means a field or paragraph.

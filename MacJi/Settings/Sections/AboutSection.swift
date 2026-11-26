@@ -20,7 +20,7 @@ struct AboutSection: View {
                     .frame(width: SettingsMetrics.aboutIconSize, height: SettingsMetrics.aboutIconSize)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: SettingsMetrics.rowSpacing) {
-                    Text(PanelStrings.title).font(.headline)
+                    Text(SettingsStrings.appName).font(.headline)
                     Text(SettingsStrings.version(version, build: build))
                         .font(.caption)
                         .foregroundStyle(.secondary)

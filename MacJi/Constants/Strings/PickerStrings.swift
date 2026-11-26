@@ -12,7 +12,6 @@ import Foundation
 enum PickerStrings {
     static let searchPlaceholder = String(localized: "Search emoji")
     static let clearSearch = String(localized: "Clear search")
-    static let allCategories = String(localized: "All")
     static let recentlyUsed = String(localized: "Recently Used")
     static let searchResults = String(localized: "Best Matches")
     static let noResults = String(localized: "No emoji found")
@@ -21,17 +20,19 @@ enum PickerStrings {
     static let filter = String(localized: "Filter")
     static let keyHelp = String(localized: "Return copies and closes · Option-Return copies and stays open · Tab / Shift-Tab change category · Esc clears the search, then closes")
 
-    static func categoryHelp(_ title: String) -> String {
-        String(localized: "\(title) (Tab / Shift-Tab)")
-    }
-
     static func alias(_ alias: String) -> String {
         ":\(alias):"
     }
 }
 
-/// Text of the shared emoji views used by both the panel and the picker.
-enum EmojiStrings {
+/// Text of the shared glyph views used by both the panel and the picker.
+enum GlyphStrings {
+    static let allCategories = String(localized: "All")
+
+    static func categoryHelp(_ title: String) -> String {
+        String(localized: "\(title) (Tab / Shift-Tab)")
+    }
+
     static func copied(_ emoji: String) -> String {
         String(localized: "Copied \(emoji)")
     }

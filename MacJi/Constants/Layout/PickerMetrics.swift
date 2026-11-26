@@ -26,9 +26,7 @@ enum PickerMetrics {
     static let searchIconSpacing: CGFloat = 6
 
     // Category bar
-    static let categoryHeight: CGFloat = 26
-    static let categoryCornerRadius: CGFloat = 6
-    static let categorySpacing: CGFloat = 2
+    static let categoryBar = CategoryBarStyle(height: 26, cornerRadius: 6, spacing: 2)
     static let categoryBarHorizontalPadding: CGFloat = 8
     static let categoryBarBottomPadding: CGFloat = 6
 

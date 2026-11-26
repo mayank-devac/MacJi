@@ -20,7 +20,17 @@ enum PreferenceKeys {
     static let inlinePanelEnabled = "inlinePanelEnabled"
     /// String: the characters that open the inline panel, validated by `InlineTrigger`.
     static let inlinePanelTrigger = "inlinePanelTrigger"
-    /// Bool: the inline panel lists the user's most-used matching emoji first.
+    /// Bool: the symbol panel listens for its trigger.
+    static let symbolPanelEnabled = "symbolPanelEnabled"
+    /// String: the characters that open the symbol panel, validated by `InlineTrigger`.
+    static let symbolPanelTrigger = "symbolPanelTrigger"
+    /// Bool: emoticon autocomplete and the emoticon trigger work.
+    static let emoticonsEnabled = "emoticonsEnabled"
+    /// Int: typed characters before emoticon suggestions open; 0 is off.
+    static let emoticonAutocompleteLength = "emoticonAutocompleteLength"
+    /// String: the characters that open the emoticon panel by name; blank is none.
+    static let emoticonPanelTrigger = "emoticonPanelTrigger"
+    /// Bool: the inline panels list the user's most-used matching glyphs first.
     static let rankFrequentlyUsedEmoji = "rankFrequentlyUsedEmoji"
     /// Bool: typed text aliases ("->", ":)") are replaced with their symbol or emoji.
     static let convertTextAliases = "convertTextAliases"
@@ -58,11 +68,19 @@ enum PreferenceDefaults {
     static let showMenuBarIcon = true
     static let rankFrequentlyUsedEmoji = true
     static let convertTextAliases = true
+    static let symbolPanelEnabled = true
+    static let emoticonsEnabled = true
+    static let emoticonAutocompleteLength = 2
 
     static var registered: [String: Any] {
         [
             PreferenceKeys.inlinePanelEnabled: inlinePanelEnabled,
             PreferenceKeys.inlinePanelTrigger: trigger,
+            PreferenceKeys.symbolPanelEnabled: symbolPanelEnabled,
+            PreferenceKeys.symbolPanelTrigger: symbolTrigger,
+            PreferenceKeys.emoticonsEnabled: emoticonsEnabled,
+            PreferenceKeys.emoticonAutocompleteLength: emoticonAutocompleteLength,
+            PreferenceKeys.emoticonPanelTrigger: emoticonTrigger,
             PreferenceKeys.rankFrequentlyUsedEmoji: rankFrequentlyUsedEmoji,
             PreferenceKeys.convertTextAliases: convertTextAliases,
             PreferenceKeys.showMenuBarIcon: showMenuBarIcon,

@@ -31,7 +31,7 @@ struct SettingsTests {
         AppSettings.registerDefaults(in: defaults)
         let settings = AppSettings(defaults: defaults)
 
-        #expect(settings.trigger == ";;")
+        #expect(settings.trigger(for: .emoji) == ";;")
         #expect(!settings.showMenuBarIcon)
         #expect(defaults.object(forKey: "legacyTrigger") == nil)
         #expect(defaults.integer(forKey: PreferenceKeys.settingsSchemaVersion) == 1)
@@ -68,9 +68,33 @@ struct SettingsTests {
         AppSettings.registerDefaults(in: defaults)
         let settings = AppSettings(defaults: defaults)
 
-        #expect(settings.trigger == PreferenceDefaults.trigger)
+        #expect(settings.trigger(for: .emoji) == PreferenceDefaults.trigger)
         #expect(settings.inlinePanelEnabled == PreferenceDefaults.inlinePanelEnabled)
         #expect(!settings.showMenuBarIcon)
         #expect(defaults.string(forKey: PreferenceKeys.inlinePanelTrigger) == "ab")
+    }
+
+    @Test func clashingTriggerAndOutOfRangeAutocompleteFallBackAtReadTime() throws {
+        let defaults = try freshDefaults()
+        defaults.set("::", forKey: PreferenceKeys.symbolPanelTrigger)
+        defaults.set(";;", forKey: PreferenceKeys.emoticonPanelTrigger)
+        defaults.set(9, forKey: PreferenceKeys.emoticonAutocompleteLength)
+        AppSettings.registerDefaults(in: defaults)
+        let settings = AppSettings(defaults: defaults)
+
+        #expect(settings.trigger(for: .symbols) == PreferenceDefaults.symbolTrigger)
+        #expect(settings.trigger(for: .emoticons) == ";;")
+        #expect(settings.emoticonAutocompleteLength == PreferenceDefaults.emoticonAutocompleteLength)
+        #expect(AppSettings.autocompleteLength(0) == 0)
+        #expect(defaults.string(forKey: PreferenceKeys.symbolPanelTrigger) == "::")
+    }
+
+    @Test func panelsThatAreOffDropTheirTriggersFromTheTap() {
+        let configuration = InlinePanelConfiguration(emojiEnabled: true, symbolsEnabled: false, emoticonsEnabled: false,
+                                                     triggers: [.emoji: "::", .symbols: "##", .emoticons: ";;"],
+                                                     emoticonAutocompleteLength: 2, ranksFrequentlyUsed: true)
+        #expect(configuration.triggers == [.emoji: "::"])
+        #expect(configuration.emoticonAutocompleteLength == 0)
+        #expect(!InlinePanelConfiguration().watchesTyping)
     }
 }

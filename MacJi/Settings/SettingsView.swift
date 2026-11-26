@@ -50,11 +50,17 @@ struct SettingsView: View {
                               secureInputHolder: permissions.secureInputHolder,
                               onGrantAccess: onGrantAccess)
             EmojiPickerSection()
-            InlinePanelSection(isEnabled: $settings.inlinePanelEnabled, trigger: settings.trigger,
-                               setTrigger: settings.setTrigger,
-                               ranksFrequentlyUsed: $settings.rankFrequentlyUsedEmoji,
-                               convertsTextAliases: $settings.convertTextAliases,
-                               onCustomizeAliases: { showsAliases = true })
+            InlinePanelsSection(emojiEnabled: $settings.inlinePanelEnabled, symbolsEnabled: $settings.symbolPanelEnabled,
+                                trigger: settings.trigger(for:), setTrigger: settings.setTrigger(_:for:),
+                                ranksFrequentlyUsed: $settings.rankFrequentlyUsedEmoji,
+                                emoticonsEnabled: settings.emoticonsEnabled)
+            EmoticonsSection(isEnabled: $settings.emoticonsEnabled,
+                             autocompleteLength: $settings.emoticonAutocompleteLength,
+                             trigger: settings.trigger(for: .emoticons),
+                             setTrigger: { settings.setTrigger($0, for: .emoticons) })
+            AliasesSection(convertsTextAliases: $settings.convertTextAliases,
+                           everythingTypedIsOff: settings.watchesNoTyping,
+                           onCustomize: { showsAliases = true })
             MenuBarSection(isShown: $settings.showMenuBarIcon)
             GeneralSection(loginItem: loginItem, updates: updates)
             AboutSection()

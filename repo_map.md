@@ -96,7 +96,6 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       SymbolNames.swift — SF Symbol names, including the menu-bar icon
   Features/ — the two user features; they never import each other
     EmojiPicker/ — menu-bar picker popover
-      EmojiPickerCategoryBar.swift — category filter buttons
       EmojiPickerController.swift — popover lifecycle, keyboard actions, focus hand-back
       EmojiPickerHeaderButton.swift — icon button beside the search field (Settings)
       EmojiPickerKeys.swift — key presses → picker actions
@@ -104,13 +103,15 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       EmojiPickerView.swift — search field, grid and footer
       PopoverAnchorWindow.swift — invisible anchor so the popover opens without the menu-bar icon
     InlinePanel/ — the `::term` panel
+      EmoticonAutocomplete.swift — the typed run that starts an emoticon (“^_”), its rules and Esc dismissal
       InlineInputMonitor.swift — session event tap; reports key-downs, consumes panel keys
-      InlinePanelController.swift — trigger session, key handling, insert/copy, panel visibility
+      InlinePanelConfiguration.swift — enabled triggers, ranking and autocomplete length forwarded by the composition root
+      InlinePanelController.swift — trigger and autocomplete sessions, key handling, insert/copy, panel visibility
       InlinePanelKeys.swift — key presses → panel actions and typed-buffer input
       InlinePanelKind.swift — the three inline panels (emoji, symbols, emoticons) and their default triggers
-      InlinePanelModel.swift — typed term, ranked results, selection, hover, copy feedback
+      InlinePanelModel.swift — open panel and search, ranked results, filter, selection, hover, copy feedback
       InlinePanelPlacement.swift — where the panel opens (under the caret, flips above)
-      InlinePanelView.swift — header, grid and footer of the panel
+      InlinePanelView.swift — header, filters, grid or emoticon rows, and footer of the panel
       InlinePanelWindow.swift — non-activating floating panel that never takes focus
       InlineTrigger.swift — trigger validation (incl. no trigger containing another) and its reasons
       SecureInputNotifier.swift — notification when a background app blocks MacJi
@@ -132,14 +133,17 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
     Components/ — reusable Settings rows
       SettingsHint.swift — small explanatory or error line under a control
       SettingsStatusRow.swift — status row with symbol, explanation and optional fix-it button
+      TriggerField.swift — trigger text field with live validation and the reason for a rejection
     LoginItem.swift — SMAppService wrapper with real status and errors
     Pages/ — Settings pages that slide in over the main Form
       TextAliasesPage.swift — Aliases page: one switch per alias, Turn All On
     Sections/ — one view per Settings section
       AboutSection.swift — version, links, Built on Octopus
+      AliasesSection.swift — Aliases switch, Customize…, and a note when nothing watches the keyboard
       EmojiPickerSection.swift — picker shortcut recorder and reset
+      EmoticonsSection.swift — Emoticons switch, autocomplete − N + stepper (with Off), optional trigger
       GeneralSection.swift — open at login, automatic updates, Check Now
-      InlinePanelSection.swift — enable toggle, trigger field with validation, ranking toggle, Aliases switch + Customize…
+      InlinePanelsSection.swift — emoji and symbol panel switches and triggers, frequency ranking
       MenuBarSection.swift — show/hide the menu-bar icon
       PermissionSection.swift — Accessibility and Secure Input status rows
       QuitSection.swift — Quit MacJi button at the bottom of Settings
@@ -153,6 +157,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
     GlyphUI/ — reusable glyph views
       CopiedBadge.swift — "Copied" capsule and its timed modifier
       GlyphCell.swift — one glyph button with selection, hover and press feedback
+      GlyphRow.swift — one wide glyph (an emoticon) as a full-width row with its name
       KeyHint.swift — footer keycap with caption
     Glyphs/ — glyph data shared by both features: emoji, symbols, emoticons
       EmoticonCategory.swift — emoticon filters (Happy, Love, Sad, … Flip, Animals)
@@ -172,6 +177,7 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
     Logging/ — diagnostics
       Log.swift — os.Logger categories (never print)
     MenuKit/ — panel chrome and keyboard helpers
+      CategoryBar.swift — category filter buttons for any glyph catalog, and Tab cycling
       MenuAppearModifier.swift — fade/scale-in on each presentation
       MenuCardBackground.swift — frosted card with hairline and soft shadow
       MenuGridNavigator.swift — arrow-key movement through rows

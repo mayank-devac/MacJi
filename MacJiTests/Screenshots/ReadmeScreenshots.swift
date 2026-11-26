@@ -88,7 +88,7 @@ struct ReadmeScreenshots {
 
     private func recordInlinePanel(_ theme: ScreenshotTheme, catalog: EmojiCatalog, output: URL) async throws {
         let panel = InlinePanelModel()
-        panel.catalog = catalog
+        panel.library = GlyphLibrary(emoji: catalog, symbols: .empty, emoticons: .empty)
         let editor = EditorState()
         let frames = try FrameRecorder(directory: output.appending(path: "inline-panel-\(theme.rawValue)-frames"))
         let window = SnapshotWindow(theme: theme) { EditorScene(state: editor, panel: panel, theme: theme) }
@@ -113,13 +113,13 @@ struct ReadmeScreenshots {
 
         editor.typed = "::r"
         panel.beginPresentation(growsFrom: .topLeading, useCounts: [:])
-        panel.update(query: "r", trigger: "::")
+        panel.update(.init(kind: .emoji, typed: "::r", term: "r", isAutocomplete: false))
         editor.panelShown = true
         for _ in 0..<6 { _ = try await shot(.milliseconds(40), after: .milliseconds(35)) }
         _ = try await shot(.milliseconds(120))
         for query in ["ro", "roc"] {
             editor.typed = "::" + query
-            panel.update(query: query, trigger: "::")
+            panel.update(.init(kind: .emoji, typed: "::" + query, term: query, isAutocomplete: false))
             _ = try await shot(.milliseconds(query == "roc" ? 650 : 150))
         }
         panel.moveSelection(.right)

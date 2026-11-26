@@ -20,6 +20,14 @@ enum PanelMetrics {
     static let footerSpacing: CGFloat = 8
     static let keyHintSpacing: CGFloat = 6
 
+    // Filters: the symbol and emoticon panels add a category bar under the header
+    static let filterBarHeight: CGFloat = 26
+    static let categoryBar = CategoryBarStyle(height: 20, cornerRadius: 5, spacing: 1)
+
+    static func cardSize(withFilters: Bool) -> CGSize {
+        withFilters ? CGSize(width: cardSize.width, height: cardSize.height + filterBarHeight) : cardSize
+    }
+
     // Grid: fixed columns so arrow keys move through the same rows the grid draws
     static let columnCount = 8
     static let gridSpacing: CGFloat = 2

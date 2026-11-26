@@ -15,8 +15,21 @@ final class AppSettings: ObservableObject {
     @Published var inlinePanelEnabled: Bool {
         didSet { store(inlinePanelEnabled, oldValue, PreferenceKeys.inlinePanelEnabled) }
     }
-    /// Always valid: change it through `setTrigger(_:)`.
-    @Published private(set) var trigger: String
+    @Published var symbolPanelEnabled: Bool {
+        didSet { store(symbolPanelEnabled, oldValue, PreferenceKeys.symbolPanelEnabled) }
+    }
+    @Published var emoticonsEnabled: Bool {
+        didSet { store(emoticonsEnabled, oldValue, PreferenceKeys.emoticonsEnabled) }
+    }
+    /// Always valid: change them through `setTrigger(_:for:)`. The emoticon trigger may be blank.
+    @Published private(set) var triggers: [InlinePanelKind: String]
+    /// 0 is off, else within `Limits.emoticonAutocompleteLengths`.
+    @Published var emoticonAutocompleteLength: Int {
+        didSet {
+            guard emoticonAutocompleteLength != oldValue else { return }
+            defaults.set(emoticonAutocompleteLength, forKey: PreferenceKeys.emoticonAutocompleteLength)
+        }
+    }
     @Published var rankFrequentlyUsedEmoji: Bool {
         didSet { store(rankFrequentlyUsedEmoji, oldValue, PreferenceKeys.rankFrequentlyUsedEmoji) }
     }
@@ -40,16 +53,25 @@ final class AppSettings: ObservableObject {
     //// Reading stored values
     /// A missing value reads its registered default. A stored value of the wrong type or an
     /// invalid trigger falls back to the default for that key only, and is never deleted, so a
-    // value written by a newer MacJi survives running an older one.
+    /// value written by a newer MacJi survives running an older one.
+    // Triggers are checked in panel order, each against the ones read before it.
 
     init(defaults: UserDefaults) {
         self.defaults = defaults
-        inlinePanelEnabled = defaults.object(forKey: PreferenceKeys.inlinePanelEnabled) as? Bool ?? PreferenceDefaults.inlinePanelEnabled
-        trigger = InlineTrigger.valid(defaults.object(forKey: PreferenceKeys.inlinePanelTrigger) as? String)
-        rankFrequentlyUsedEmoji = defaults.object(forKey: PreferenceKeys.rankFrequentlyUsedEmoji) as? Bool ?? PreferenceDefaults.rankFrequentlyUsedEmoji
-        convertTextAliases = defaults.object(forKey: PreferenceKeys.convertTextAliases) as? Bool ?? PreferenceDefaults.convertTextAliases
+        inlinePanelEnabled = Self.bool(defaults, PreferenceKeys.inlinePanelEnabled, PreferenceDefaults.inlinePanelEnabled)
+        symbolPanelEnabled = Self.bool(defaults, PreferenceKeys.symbolPanelEnabled, PreferenceDefaults.symbolPanelEnabled)
+        emoticonsEnabled = Self.bool(defaults, PreferenceKeys.emoticonsEnabled, PreferenceDefaults.emoticonsEnabled)
+        var triggers: [InlinePanelKind: String] = [:]
+        for kind in InlinePanelKind.allCases {
+            triggers[kind] = InlineTrigger.valid(defaults.object(forKey: Self.triggerKey(kind)) as? String,
+                                                 for: kind, others: triggers)
+        }
+        self.triggers = triggers
+        emoticonAutocompleteLength = Self.autocompleteLength(defaults.object(forKey: PreferenceKeys.emoticonAutocompleteLength))
+        rankFrequentlyUsedEmoji = Self.bool(defaults, PreferenceKeys.rankFrequentlyUsedEmoji, PreferenceDefaults.rankFrequentlyUsedEmoji)
+        convertTextAliases = Self.bool(defaults, PreferenceKeys.convertTextAliases, PreferenceDefaults.convertTextAliases)
         disabledTextAliases = Set(defaults.stringArray(forKey: PreferenceKeys.disabledTextAliases) ?? [])
-        showMenuBarIcon = defaults.object(forKey: PreferenceKeys.showMenuBarIcon) as? Bool ?? PreferenceDefaults.showMenuBarIcon
+        showMenuBarIcon = Self.bool(defaults, PreferenceKeys.showMenuBarIcon, PreferenceDefaults.showMenuBarIcon)
     }
 
     /// Registers (never writes) the defaults. Call once at launch, after `SettingsMigrator`.
@@ -57,17 +79,50 @@ final class AppSettings: ObservableObject {
         defaults.register(defaults: PreferenceDefaults.registered)
     }
 
+    /// 0 (off) or a length in range; anything else reads as the default.
+    nonisolated static func autocompleteLength(_ stored: Any?) -> Int {
+        guard let length = stored as? Int, length == 0 || Limits.emoticonAutocompleteLengths.contains(length) else {
+            return PreferenceDefaults.emoticonAutocompleteLength
+        }
+        return length
+    }
+
+    private static func bool(_ defaults: UserDefaults, _ key: String, _ fallback: Bool) -> Bool {
+        defaults.object(forKey: key) as? Bool ?? fallback
+    }
+
     //// Only a user action or a migration ever writes a setting.
     //////////////////
 
-    /// Stores `raw` and returns nil when it is a valid trigger; otherwise keeps the current
-    /// trigger and returns why `raw` was rejected.
-    func setTrigger(_ raw: String) -> InlineTrigger.Problem? {
-        if let problem = InlineTrigger.problem(with: raw) { return problem }
-        guard raw != trigger else { return nil }
-        trigger = raw
-        defaults.set(raw, forKey: PreferenceKeys.inlinePanelTrigger)
+    func trigger(for kind: InlinePanelKind) -> String {
+        triggers[kind] ?? ""
+    }
+
+    /// True when no panel, emoticon suggestion or alias needs the keyboard, so the tap is removed.
+    var watchesNoTyping: Bool {
+        let panels = InlinePanelConfiguration(emojiEnabled: inlinePanelEnabled, symbolsEnabled: symbolPanelEnabled,
+                                              emoticonsEnabled: emoticonsEnabled, triggers: triggers,
+                                              emoticonAutocompleteLength: emoticonAutocompleteLength,
+                                              ranksFrequentlyUsed: rankFrequentlyUsedEmoji)
+        return !panels.watchesTyping && !convertTextAliases
+    }
+
+    /// Stores `raw` and returns nil when it is a valid trigger for `kind`; otherwise keeps the
+    /// current trigger and returns why `raw` was rejected.
+    func setTrigger(_ raw: String, for kind: InlinePanelKind) -> InlineTrigger.Problem? {
+        if let problem = InlineTrigger.problem(with: raw, for: kind, others: triggers) { return problem }
+        guard raw != triggers[kind] else { return nil }
+        triggers[kind] = raw
+        defaults.set(raw, forKey: Self.triggerKey(kind))
         return nil
+    }
+
+    private static func triggerKey(_ kind: InlinePanelKind) -> String {
+        switch kind {
+        case .emoji: PreferenceKeys.inlinePanelTrigger
+        case .symbols: PreferenceKeys.symbolPanelTrigger
+        case .emoticons: PreferenceKeys.emoticonPanelTrigger
+        }
     }
 
     /// App state rather than a setting: has the first launch already shown Settings?

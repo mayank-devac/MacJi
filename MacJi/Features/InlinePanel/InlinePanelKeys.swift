@@ -20,9 +20,16 @@ enum InlinePanelKeyAction: Equatable {
     case copy
     /// Esc: close and leave the text as typed.
     case close
+    /// Tab / Shift-Tab: next or previous category, in the panels that have filters.
+    case nextFilter, previousFilter
 
-    init?(keyCode: UInt16, modifiers: NSEvent.ModifierFlags) {
+    init?(keyCode: UInt16, modifiers: NSEvent.ModifierFlags, hasFilters: Bool = false) {
         let modifiers = modifiers.intersection([.command, .option, .control, .shift])
+        if Int(keyCode) == kVK_Tab {
+            guard hasFilters, modifiers.isSubset(of: .shift) else { return nil }
+            self = modifiers.contains(.shift) ? .previousFilter : .nextFilter
+            return
+        }
         guard let key = MenuKey(keyCode: keyCode) else { return nil }
         switch key {
         case .up, .down, .left, .right:
