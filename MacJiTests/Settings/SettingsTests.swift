@@ -49,6 +49,17 @@ struct SettingsTests {
         #expect(SettingsMigrator.migrate(defaults, domain: domain, migrations: []) == 0)
     }
 
+    @Test func corruptNegativeSchemaVersionRunsEveryMigration() throws {
+        let defaults = try freshDefaults()
+        defaults.set(-1, forKey: PreferenceKeys.settingsSchemaVersion)
+        defaults.set(";;", forKey: "legacyTrigger")
+        let migrations = [SettingsMigration.renameKey("legacyTrigger", to: PreferenceKeys.inlinePanelTrigger)]
+
+        #expect(SettingsMigrator.migrate(defaults, domain: domain, migrations: []) == 0)
+        #expect(SettingsMigrator.migrate(defaults, domain: domain, migrations: migrations) == 1)
+        #expect(defaults.string(forKey: PreferenceKeys.inlinePanelTrigger) == ";;")
+    }
+
     @Test func invalidStoredValueFallsBackForItsOwnKeyOnly() throws {
         let defaults = try freshDefaults()
         defaults.set("ab", forKey: PreferenceKeys.inlinePanelTrigger)

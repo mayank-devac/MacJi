@@ -102,9 +102,15 @@ final class InlinePanelController {
     /// While a term is open, panel keys are consumed and handled on the next main-queue turn;
     /// every other key passes through and updates the buffer.
     // The buffer is updated synchronously so fast typing never races the panel. Nothing is
-    // queued while no trigger is being typed and no panel is showing.
+    // queued while no trigger is being typed and no panel is showing. Typing in MacJi's own
+    // windows (the trigger field, the picker search) never opens the panel; the panel itself is
+    // non-activating, so MacJi is only active while one of those windows has focus.
 
     private func handleKeyDown(_ keyCode: UInt16, _ modifiers: NSEvent.ModifierFlags, _ characters: String) -> Bool {
+        guard !NSApp.isActive else {
+            tracker.reset()
+            return false
+        }
         if tracker.query != nil, let action = InlinePanelKeyAction(keyCode: keyCode, modifiers: modifiers),
            action == .close || !model.results.isEmpty {
             if case .move(let key) = action {

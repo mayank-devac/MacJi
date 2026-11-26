@@ -62,12 +62,12 @@ enum SettingsMigrator {
     //// Run pending migrations
     /// Applies every migration after the stored version, in order, then records the new version.
     /// Nothing is written when there is nothing to do, and a version written by a newer MacJi
-    // (higher than this build knows) is left untouched.
+    // (higher than this build knows) is left untouched. A corrupt negative version reads as 0.
 
     @discardableResult
     static func migrate(_ defaults: UserDefaults, domain: String = Bundle.main.bundleIdentifier ?? "",
                         migrations: [SettingsMigration] = migrations) -> Int {
-        let stored = defaults.integer(forKey: PreferenceKeys.settingsSchemaVersion)
+        let stored = max(0, defaults.integer(forKey: PreferenceKeys.settingsSchemaVersion))
         guard stored < migrations.count else { return 0 }
         let context = SettingsMigrationContext(defaults: defaults, domain: domain)
         for migration in migrations[stored...] {
