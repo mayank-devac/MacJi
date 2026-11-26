@@ -61,7 +61,8 @@ must be public. Update archives go on GitHub Releases of `mayank-devac/MacJi`.
    ```
    It checks the certificate and key, archives unsigned, signs every nested component and then the
    app with `MacJi Release` (hardened runtime), verifies the signatures (no Team ID, designated
-   requirement pinned to the certificate), builds the zip and DMG, signs the zip with EdDSA, writes
+   requirement pinned to the certificate), builds the zip and an unsigned DMG (a signed but
+   unnotarized DMG is blocked when opened, adding a second "Open Anyway"), signs the zip with EdDSA, writes
    the appcast with the release notes and runs `scripts/verify-update.swift`.
 4. Install the DMG from `.build/release/<version>/` on a Mac (ideally another one): first launch,
    Accessibility, `::` in TextEdit, the picker, Check for Updates.

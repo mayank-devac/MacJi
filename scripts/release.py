@@ -186,6 +186,9 @@ def verify_signature(app):
 
 ####################
 #### Package, EdDSA-sign and describe the update
+### The DMG stays unsigned on purpose. macOS assesses a signed disk image when it is opened, and an
+### unnotarized one is blocked, so a signed DMG costs the user a second "Open Anyway" before the
+### app's own. The app inside is signed and is what Gatekeeper, Sparkle and Accessibility check.
 
 
 def package(app, output, version):
@@ -198,7 +201,6 @@ def package(app, output, version):
     dmg_path = output / f"{config.APP_NAME}-{version}.dmg"
     run("hdiutil", "create", "-volname", config.APP_NAME, "-srcfolder", staging, "-format", "UDZO", "-ov", dmg_path)
     shutil.rmtree(staging)
-    run("codesign", "--force", "--sign", config.SIGNING_IDENTITY, "--timestamp=none", dmg_path)
     return zip_path, dmg_path
 
 
