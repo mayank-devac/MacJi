@@ -41,7 +41,8 @@ MacJi is an open-source macOS menu-bar app for emoji. Its features:
 8. **Send Feedback** – Settings › About › Send Feedback… (`FeedbackSheet`): Bug / Feature Idea /
    Other and a message, sent by the user's mail app to `AppLinks.feedbackEmail` or as a prefilled
    GitHub issue form (`FeedbackReport`). MacJi itself sends nothing. Technical details
-   (`FeedbackDetails`) are opt-in and anonymous.
+   (`FeedbackDetails`) are opt-in and anonymous. The website's `WEB/feedback.html` does the same in
+   the browser (`WEB/js/feedback.js`).
 
 ## Feedback rules
 
@@ -49,7 +50,8 @@ MacJi is an open-source macOS menu-bar app for emoji. Its features:
   only; never add a device identifier, model, locale, app names, settings, logs or typed text. A
   new row must be shown in the sheet's preview and listed in `PRIVACY.md`.
 - **Issue-form field ids are permanent.** `FeedbackReport.IssueForm` names must match the `id:`s in
-  `.github/ISSUE_TEMPLATE/`; `FeedbackReportTests` reads the forms to check.
+  `.github/ISSUE_TEMPLATE/` and the names in `WEB/js/feedback.js`; `FeedbackReportTests` reads both
+  to check.
 
 - macOS **14.6+** for the app, **15+** for the test target. Swift 6 language mode with complete
   strict concurrency. SwiftUI + AppKit. Accessory app (`LSUIElement`), no Dock icon.
@@ -72,7 +74,6 @@ Act like a senior developer who owns this repo for years.
   in the scratchpad, not the repo. Focused commits whose message says *why*.
 - **Safe by default.** Handle failure paths explicitly (AX calls fail often), no force-unwraps,
   keep UI and AX on the main actor, never weaken permission or signing handling.
-- **Test what you change** (see Testing rule).
 - **A new feature updates the docs in the same change:** the feature list under Project and any
   rule it adds in this file, the README (Features, Usage, Settings, and Privacy if it stores
   something), `PRIVACY.md` when it stores data, and `repo_map.md`.
@@ -282,7 +283,6 @@ works in any UI and never reaches into a specific controller.
   notarized. Its name and certificate must never change.
 - Updates are EdDSA-signed by Sparkle. Never change the EdDSA key and the signing certificate in the same release.
 - **Never commit signing material, `.p12` files or the Sparkle private key.** Never print the private key.
-- Nothing is pushed, tagged or released without Mayank's OK.
 
 ## Repo map rule
 

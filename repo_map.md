@@ -259,14 +259,19 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
   css/ — stylesheets
     base.css — design tokens (light + dark), page glow, nav, buttons, keycaps, footer, motion, confetti canvas
     demo.css — the hero's note window, inline emoji panel and "try it" chips
+    feedback.css — Send Feedback page: dot face placement, mood faces, kind chips, send button
     home.css — landing page layout
     pointer.css — iPadOS-style pointer: dot, platter and text beam
     thank-you.css — thank-you and 404 layout
+  feedback.html — Send Feedback: name, mood, kind and message as a mail draft or GitHub issue
   index.html — landing page with the live ::term demo
   js/ — scripts, no dependencies
     confetti-sprites.js — confetti shapes with their glow, painted once and cached
     confetti.js — click-anywhere confetti on every page, side poppers, the 🎉 party shower and pointer collisions
     demo.js — working copy of the inline panel (trigger rule + GlyphSearch ranking)
+    feedback.js — builds the feedback mail draft or prefilled issue; stores and sends nothing
+    listener-face.js — the feedback page's dot face: each mood's expression and which dots it inks
+    listener.js — draws and animates that face: mood, gaze, typing ripples, crash glitch, shake, wink
     pointer.js — iPadOS-style pointer and button parallax, ported from the Octopus site
     release.js — latest release's .dmg from the GitHub API, Releases-page fallback
     thank-you.js — starts the download, fires the confetti

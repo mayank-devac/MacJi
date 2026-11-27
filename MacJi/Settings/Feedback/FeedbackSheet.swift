@@ -7,6 +7,7 @@
 //  sent.
 //
 
+import AppKit
 import SwiftUI
 
 struct FeedbackSheet: View {
@@ -16,12 +17,26 @@ struct FeedbackSheet: View {
     let details: FeedbackDetails
     let emailAddress: String
     let newIssue: URL
-    /// Called once a mail draft or issue form opened, so the draft can be cleared.
+    /// Called when the user closes the sheet with Done after sending, so the draft can be cleared.
     let onSent: () -> Void
 
+    ////////////////////
+    //// After Send Email or Open on GitHub
+    /// An app taking the link proves nothing about the draft: a browser set as the mail app can
+    /// open an empty page. So the sheet never clears or closes itself; it says where the link
+    /// went and offers the message to copy.
+
+    enum Outcome: Equatable {
+        case none
+        case opened(in: String)
+        case failed
+    }
+
+    //////////////////
+
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
-    @State private var openFailed = false
+    @State private var outcome = Outcome.none
+    @State private var copied = false
 
     private var report: FeedbackReport {
         FeedbackReport(kind: kind, message: message, details: includesDetails ? details : nil)
@@ -43,6 +58,7 @@ struct FeedbackSheet: View {
         .frame(width: SettingsMetrics.feedbackWidth, height: SettingsMetrics.feedbackHeight)
         .onChange(of: message) { _, new in
             if new.count > Limits.feedbackMaxLength { message = String(new.prefix(Limits.feedbackMaxLength)) }
+            copied = false
         }
     }
 
@@ -101,10 +117,21 @@ struct FeedbackSheet: View {
                 }
             }
             VStack(alignment: .leading, spacing: SettingsMetrics.rowSpacing) {
-                SettingsHint(text: FeedbackStrings.anonymousNote)
-                SettingsHint(text: FeedbackStrings.emailNote(emailAddress))
-                SettingsHint(text: FeedbackStrings.gitHubNote)
-                if openFailed {
+                ForEach([FeedbackStrings.anonymousNote, FeedbackStrings.emailNote(emailAddress),
+                         FeedbackStrings.gitHubNote], id: \.self) { note in
+                    HStack(alignment: .firstTextBaseline, spacing: SettingsMetrics.feedbackBulletSpacing) {
+                        Text(FeedbackStrings.bullet)
+                        Text(note).fixedSize(horizontal: false, vertical: true)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
+                switch outcome {
+                case .none:
+                    EmptyView()
+                case .opened(let app):
+                    SettingsHint(text: FeedbackStrings.opened(in: app), symbol: SymbolNames.granted)
+                case .failed:
                     SettingsHint(text: FeedbackStrings.openFailed(emailAddress),
                                  symbol: SymbolNames.attention, tint: Palette.attention)
                 }
@@ -119,8 +146,18 @@ struct FeedbackSheet: View {
 
     private var buttons: some View {
         HStack {
-            Button(FeedbackStrings.cancel) { dismiss() }
+            if outcome == .none {
+                Button(FeedbackStrings.cancel) { dismiss() }
+                    .keyboardShortcut(.cancelAction)
+            } else {
+                Button(FeedbackStrings.done) {
+                    onSent()
+                    dismiss()
+                }
                 .keyboardShortcut(.cancelAction)
+                Button(copied ? FeedbackStrings.copied : FeedbackStrings.copyMessage) { copyMessage() }
+                    .disabled(!report.hasMessage)
+            }
             Spacer()
             Group {
                 Button(FeedbackStrings.openGitHub) { open(report.issueURL(newIssue: newIssue)) }
@@ -132,17 +169,28 @@ struct FeedbackSheet: View {
         .padding(SettingsMetrics.pageHeaderPadding)
     }
 
-    //// Keep the sheet and the text when nothing opened the link, and say where to write instead.
+    ////////////////////
+    //// Open the draft
+    /// Name the app that took the link, so a browser set as the mail app is no surprise, and keep
+    /// the text either way.
+    // NSWorkspace answers synchronously on the main actor. SwiftUI's openURL calls its completion
+    // on a LaunchServices queue, which trips Swift 6's main-actor check and crashes the app.
+
     private func open(_ url: URL?) {
-        guard let url else {
-            openFailed = true
+        guard let url, NSWorkspace.shared.open(url) else {
+            outcome = .failed
             return
         }
-        openURL(url) { accepted in
-            openFailed = !accepted
-            guard accepted else { return }
-            onSent()
-            dismiss()
-        }
+        let app = NSWorkspace.shared.urlForApplication(toOpen: url)
+            .map { FileManager.default.displayName(atPath: $0.path) }
+        outcome = .opened(in: app ?? FeedbackStrings.unknownApp)
     }
+
+    //// The message with any technical details, exactly as the draft carries it.
+    private func copyMessage() {
+        NSPasteboard.general.clearContents()
+        copied = NSPasteboard.general.setString(report.body, forType: .string)
+    }
+
+    //////////////////
 }

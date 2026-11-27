@@ -38,4 +38,5 @@ enum SettingsMetrics {
     static let feedbackHeight: CGFloat = 640
     static let feedbackEditorHeight: CGFloat = 100
     static let feedbackPlaceholderInset: CGFloat = 5
+    static let feedbackBulletSpacing: CGFloat = 6
 }

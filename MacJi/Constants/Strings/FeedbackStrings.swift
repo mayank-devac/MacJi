@@ -15,6 +15,10 @@ enum FeedbackStrings {
     static let button = String(localized: "Send Feedback…")
     static let title = String(localized: "Send Feedback")
     static let cancel = String(localized: "Cancel")
+    static let done = String(localized: "Done")
+    static let copyMessage = String(localized: "Copy Message")
+    static let copied = String(localized: "Copied")
+    static let unknownApp = String(localized: "another app")
     static let kindLabel = String(localized: "Kind")
     static let messageHeader = String(localized: "What would you like to share?")
     static let includeDetails = String(localized: "Include technical details")
@@ -42,7 +46,11 @@ enum FeedbackStrings {
     }
 
     static func openFailed(_ address: String) -> String {
-        String(localized: "No app opened the link. Write to \(address) instead.")
+        String(localized: "No app opened the link. Copy the message and write to \(address) instead.")
+    }
+
+    static func opened(in app: String) -> String {
+        String(localized: "Opened in \(app). If your message isn't there, copy it and paste it in. Your text stays here until you press Done.")
     }
 
     //////////////////
@@ -52,6 +60,7 @@ enum FeedbackStrings {
 
     static let previewHeader = String(localized: "What will be sent")
     static let previewMessage = String(localized: "The kind and your message.")
+    static let bullet = "•"
     static let anonymousNote = String(localized: "MacJi adds no name, device identifier, logs, keystrokes, settings or clipboard content. Nothing leaves your Mac until you send it yourself.")
     static func emailNote(_ address: String) -> String {
         String(localized: "Email opens a draft to \(address) in your mail app. No account needed; only the developer sees your message and your email address.")

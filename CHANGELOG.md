@@ -13,6 +13,10 @@ Feedback from inside the app 💬
   by email (no account needed) or as a filled-in GitHub issue. Tick **Include technical details**
   to add only the MacJi and macOS versions and the Accessibility and Secure Input state; the form
   shows exactly what will be sent.
+- 🌐 A feedback page on the website does the same without the app, and replaces the website's
+  "Report an issue" link.
+- 🙂 On that page a face made of dots wears the mood you pick, watches you type and winks when your
+  draft opens.
 
 ### Changed
 - 📝 Bug reports and feature requests on GitHub are now short forms that ask for what's needed.

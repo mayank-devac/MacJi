@@ -21,6 +21,8 @@ PROJECT = ROOT / "MacJi.xcodeproj"
 BUNDLE_ID = "io.github.mayank-devac.macji"
 SIGNING_IDENTITY = "MacJi Release"
 SPARKLE_KEY_ACCOUNT = "macji"
+### Release titles and commit messages carry an emoji (CLAUDE.md); tags and the appcast stay plain.
+RELEASE_EMOJI = "🚀"
 
 #### Keep in sync with scripts/config.sh and Config/Base.xcconfig.
 ##################

@@ -293,10 +293,10 @@ def main():
     print(f"✓ {config.APP_NAME} {version} ({build}) is ready in {rel}. Nothing was published.\n")
     print("Publish it yourself when you have tested the DMG:")
     if not args.dry_run:
-        print(f'  git add Config/Base.xcconfig CHANGELOG.md dist && git commit -m "Release {version}"')
+        print(f'  git add Config/Base.xcconfig CHANGELOG.md dist && git commit -m "{config.RELEASE_EMOJI} Release {version}"')
     print(f"  git tag v{version} && git push origin v{version}")
     print(f"  gh release create v{version} {rel}/{zip_path.name} {rel}/{dmg_path.name} {rel}/SHA256SUMS.txt "
-          f"--repo {config.SOURCE_REPO} --title \"{config.APP_NAME} {version}\" --notes-file {rel}/notes.md")
+          f"--repo {config.SOURCE_REPO} --title \"{config.RELEASE_EMOJI} {config.APP_NAME} {version}\" --notes-file {rel}/notes.md")
     print("  git push origin HEAD:main      (publishes dist/appcast.xml; the feed goes live last)")
 
 

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+  feedback.html · MacJi website · Created: 2026-11-27
+  Send Feedback: name, how MacJi feels, the kind and a message, sent as a draft in the visitor's
+  mail app or as a prefilled GitHub issue. The site itself sends nothing.
+-->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Send Feedback · MacJi</title>
+  <meta name="description" content="Tell the developer of MacJi about a bug, an idea, or how it's going.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="theme-color" content="#fbfbfd">
+  <link rel="icon" type="image/png" href="assets/icon/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/icon/icon-256.png">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/feedback.css">
+  <link rel="stylesheet" href="css/pointer.css">
+  <script src="js/theme.js"></script>
+  <script src="js/feedback.js" defer></script>
+  <script src="js/listener-face.js" defer></script>
+  <script src="js/listener.js" defer></script>
+  <script src="js/pointer.js" defer></script>
+</head>
+
+<body>
+  <header class="nav">
+    <a class="brand" href="./" aria-label="MacJi home">
+      <img src="assets/icon/icon-256.webp" alt="" width="30" height="30">MacJi
+    </a>
+    <div class="nav-actions">
+      <a class="theme" href="https://github.com/mayank-devac/MacJi" aria-label="MacJi on GitHub" data-fx="4">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.540 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.530-.49-2.69-.94-.09-.23-.48-.94-.82-1.130-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+        </svg>
+      </a>
+      <button class="theme" id="theme" type="button" aria-label="Switch theme" data-fx="4">
+        <svg class="moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+        </svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2" fill="currentColor" />
+          <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="feedback">
+    <div class="listener" aria-hidden="true"><canvas id="listener"></canvas></div>
+
+    <div class="column">
+      <p class="kicker rise d0">We value your input</p>
+      <h1 class="rise d1">Send Feedback</h1>
+      <p class="lede rise d1">I'd love to hear your thoughts, ideas, or bug reports.</p>
+
+      <form id="feedback-form" class="rise d2" novalidate
+        data-email="macji.app@proton.me"
+        data-issues="https://github.com/mayank-devac/MacJi/issues/new">
+        <label class="label" for="name">Name <span class="optional">(optional)</span></label>
+        <input class="field" id="name" name="name" type="text" autocomplete="name" maxlength="80" placeholder="Your name">
+
+        <fieldset>
+          <legend class="label">How's your experience?</legend>
+          <div class="moods">
+            <label class="mood"><input type="radio" name="mood" value="Sad"><span class="face" aria-hidden="true">😢</span><span>Sad</span></label>
+            <label class="mood"><input type="radio" name="mood" value="Meh"><span class="face" aria-hidden="true">😕</span><span>Meh</span></label>
+            <label class="mood"><input type="radio" name="mood" value="Okay"><span class="face" aria-hidden="true">😐</span><span>Okay</span></label>
+            <label class="mood"><input type="radio" name="mood" value="Good"><span class="face" aria-hidden="true">🙂</span><span>Good</span></label>
+            <label class="mood"><input type="radio" name="mood" value="Amazing"><span class="face" aria-hidden="true">😄</span><span>Amazing</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="label">Feedback</legend>
+          <div class="kinds">
+            <label class="kind"><input type="radio" name="kind" value="bug" checked><span>Bug</span></label>
+            <label class="kind"><input type="radio" name="kind" value="feature"><span>Feature</span></label>
+            <label class="kind"><input type="radio" name="kind" value="crash"><span>Crash</span></label>
+            <label class="kind"><input type="radio" name="kind" value="other"><span>Other</span></label>
+          </div>
+        </fieldset>
+
+        <label class="sr-only" for="message">Your message</label>
+        <textarea class="field" id="message" name="message" rows="6" maxlength="2000" required
+          placeholder="Tell me what happened, what you expected, and which app you were typing in."
+          aria-describedby="count problem"></textarea>
+        <div class="under">
+          <p class="problem" id="problem" role="alert"></p>
+          <p class="count" id="count">0 of 2,000 characters</p>
+        </div>
+
+        <button class="send" type="submit" data-fx="6">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 4l17 8-17 8 3-8-3-8z" />
+            <path d="M7 12h14" />
+          </svg>
+          Send Feedback
+        </button>
+        <button class="github" id="open-github" type="button">Prefer GitHub? Open a public issue instead</button>
+
+        <p class="status" id="status" role="status"></p>
+        <button class="copy" id="copy-message" type="button" hidden>Copy message</button>
+        <ul class="notes">
+          <li>Send Feedback opens a draft to <a href="mailto:macji.app@proton.me">macji.app@proton.me</a> in your mail app, in a new tab if your mail app is a browser. Your text stays here, and nothing is sent until you send it.</li>
+          <li>Only the developer sees an email. A GitHub issue is public and needs a free account.</li>
+          <li>This page stores nothing and has no tracking.</li>
+        </ul>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>© 2026 Mayank Baral. MacJi is released under the <a href="https://github.com/mayank-devac/MacJi/blob/main/LICENSE">MIT licence</a>.</p>
+      <nav aria-label="Project links">
+        <a href="https://github.com/mayank-devac/MacJi">Source code</a>
+        <a href="https://github.com/mayank-devac/MacJi/releases">Releases</a>
+        <a href="https://github.com/mayank-devac/MacJi/blob/main/PRIVACY.md">Privacy</a>
+        <a href="feedback.html" aria-current="page">Feedback</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,355 @@
+/*
+  feedback.css · MacJi website · Created: 2026-11-27
+  Send Feedback page: the listening face's place, the mood faces, the kind chips, the message box
+  and the send button.
+*/
+
+:root {
+  --send-bg: #000;
+  --send-text: #fff;
+  --field: var(--card);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --send-bg: #f5f5f7;
+    --send-text: #000;
+  }
+}
+:root[data-theme="dark"] {
+  --send-bg: #f5f5f7;
+  --send-text: #000;
+}
+/* //// A plain page: the face is its only decoration, so the shared page glow is off. */
+body::before {
+  content: none;
+}
+
+/* ////////////////////
+   //// Layout
+   /// One narrow form column, with the dot face (js/listener.js) above it. Wide windows put the
+   /// face beside the form and keep it in view while the form scrolls. */
+
+.feedback {
+  display: grid;
+  grid-template-columns: minmax(0, 512px);
+  justify-content: center;
+  padding: clamp(16px, 4vw, 40px) var(--gutter) 24px;
+}
+.listener {
+  height: 200px;
+  margin-bottom: 20px;
+}
+.listener canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+@media (min-width: 1000px) {
+  .feedback {
+    grid-template-columns: minmax(0, 512px) minmax(0, 580px);
+    column-gap: clamp(32px, 5vw, 96px);
+    padding-top: clamp(40px, 6vw, 88px);
+  }
+  .column {
+    grid-area: 1 / 1;
+  }
+  .listener {
+    grid-area: 1 / 2;
+    position: sticky;
+    top: 88px;
+    align-self: start;
+    height: min(calc(100vh - 140px), 580px);
+    margin: 0;
+  }
+}
+
+/* ////////////////// */
+
+/* ////////////////////
+   //// Heading
+   /// Left-aligned like the reference: kicker, title, lede, then the form. */
+
+.kicker {
+  margin: 0 0 10px;
+  color: var(--accent-text);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+.feedback h1 {
+  margin: 0;
+  font: 700 clamp(40px, 6vw, 52px) / 1.05 var(--font-display);
+  letter-spacing: -0.04em;
+}
+.lede {
+  margin: 10px 0 0;
+  color: var(--text2);
+  font-size: 15px;
+}
+#feedback-form {
+  margin-top: 36px;
+}
+fieldset {
+  margin: 28px 0 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.label {
+  display: block;
+  margin: 28px 0 10px;
+  padding: 0;
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+#feedback-form > .label:first-child,
+legend.label {
+  margin-top: 0;
+}
+.optional {
+  color: var(--text3);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ////////////////// */
+
+/* ////////////////////
+   //// Fields
+   /// Quiet boxes that take the accent ring when focused. */
+
+.field {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border: 1px solid var(--line2);
+  border-radius: var(--r-md);
+  background: var(--field);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+.field::placeholder {
+  color: var(--text3);
+}
+.field:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+textarea.field {
+  margin-top: 16px;
+  min-height: 150px;
+  resize: vertical;
+  line-height: 1.5;
+}
+.field[aria-invalid="true"] {
+  border-color: #e0383e;
+}
+.under {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+.under p {
+  margin: 0;
+}
+.under .count {
+  margin-left: auto;
+  color: var(--text3);
+}
+.problem {
+  color: #e0383e;
+}
+
+/* ////////////////// */
+
+/* ////////////////////
+   //// Moods and kinds
+   /// Real radio buttons, hidden but focusable, so arrow keys and screen readers work. A face
+   /// grows and gets its colour back when picked; the others stay a little faded. */
+
+.moods,
+.kinds {
+  display: grid;
+  gap: 8px;
+}
+.moods {
+  grid-template-columns: repeat(5, 1fr);
+}
+.kinds {
+  grid-template-columns: repeat(4, 1fr);
+}
+.mood input,
+.kind input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.mood {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  border-radius: var(--r-md);
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), background 0.2s var(--ease);
+}
+.face {
+  font-size: 32px;
+  line-height: 1;
+  filter: saturate(0.85);
+  transition: transform 0.35s var(--spring), filter 0.2s var(--ease);
+}
+.moods:has(input:checked) .face {
+  filter: grayscale(0.7) opacity(0.6);
+}
+.mood input:checked ~ .face {
+  filter: none;
+  transform: scale(1.22);
+}
+.mood input:checked ~ span:last-child {
+  color: var(--text);
+}
+.kind {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+.kind:has(input:checked) {
+  background: var(--send-bg);
+  color: var(--send-text);
+}
+.mood:has(input:focus-visible),
+.kind:has(input:focus-visible) {
+  outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  outline-offset: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .mood:hover .face {
+    transform: scale(1.12);
+    filter: none;
+  }
+  .mood input:checked ~ .face {
+    transform: scale(1.22);
+  }
+  .kind:not(:has(input:checked)):hover {
+    background: var(--chip);
+  }
+}
+
+/* ////////////////// */
+
+/* ////////////////////
+   //// Send
+   /// A black pill (white in dark mode) across the column, with the quieter GitHub route under it. */
+
+.send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  margin-top: 40px;
+  border-radius: 999px;
+  background: var(--send-bg);
+  color: var(--send-text);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  box-shadow: 0 14px 28px -16px rgba(0, 0, 0, 0.55);
+  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0) scale(var(--sc, 1));
+  transition: transform 0.35s var(--glide), box-shadow 0.25s var(--ease);
+}
+.send svg {
+  width: 16px;
+  height: 16px;
+}
+.send:active {
+  --sc: 0.98;
+}
+.github {
+  display: block;
+  margin: 14px auto 0;
+  padding: 4px 8px;
+  color: var(--accent-text);
+  font-size: 14px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .github:hover {
+    text-decoration: underline;
+  }
+}
+.status {
+  margin: 16px 0 0;
+  min-height: 1.4em;
+  color: var(--text2);
+  font-size: 14px;
+  text-align: center;
+}
+.copy {
+  display: block;
+  margin: 10px auto 0;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+.copy[hidden] {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .copy:hover {
+    background: var(--chip-h);
+  }
+}
+.notes {
+  margin: 20px 0 0;
+  padding: 18px 18px 18px 34px;
+  border-radius: var(--r-md);
+  background: var(--field);
+  color: var(--text3);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.notes li + li {
+  margin-top: 6px;
+}
+
+/* ////////////////// */
+
+@media (max-width: 480px) {
+  .face {
+    font-size: 28px;
+  }
+}

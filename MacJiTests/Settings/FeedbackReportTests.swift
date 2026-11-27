@@ -4,7 +4,7 @@
 //
 //  Created: 2026-11-27
 //  Feedback reports carry only what the user chose, survive URL encoding, and match the issue
-//  forms.
+//  forms and the website's feedback page.
 //
 
 import Foundation
@@ -54,10 +54,11 @@ struct FeedbackReportTests {
     /// GitHub silently ignores a query name with no matching field id, so a renamed id in a form
     /// would stop the prefill without any error. This reads the forms from the checkout.
 
+    private let checkout = URL(filePath: #filePath)
+        .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+
     @Test func prefilledFieldsExistInTheIssueForms() throws {
-        let forms = URL(filePath: #filePath)
-            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-            .appending(path: ".github/ISSUE_TEMPLATE")
+        let forms = checkout.appending(path: ".github/ISSUE_TEMPLATE")
         let bug = try String(contentsOf: forms.appending(path: FeedbackReport.IssueForm.bugTemplate), encoding: .utf8)
         let feature = try String(contentsOf: forms.appending(path: FeedbackReport.IssueForm.featureTemplate), encoding: .utf8)
 
@@ -65,6 +66,16 @@ struct FeedbackReportTests {
             #expect(bug.contains("id: \(id)\n"), "bug_report.yml has no field \(id)")
         }
         #expect(feature.contains("id: \(FeedbackReport.IssueForm.problem)\n"))
+    }
+
+    //// The website's feedback page prefills the same forms, so it must use the same names.
+    @Test func websitePrefillsTheSameFields() throws {
+        let script = try String(contentsOf: checkout.appending(path: "WEB/js/feedback.js"), encoding: .utf8)
+
+        for name in [FeedbackReport.IssueForm.bugTemplate, FeedbackReport.IssueForm.featureTemplate,
+                     FeedbackReport.IssueForm.whatHappened, FeedbackReport.IssueForm.problem] {
+            #expect(script.contains("\"\(name)\""), "WEB/js/feedback.js doesn't use \(name)")
+        }
     }
 
     //////////////////

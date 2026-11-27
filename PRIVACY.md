@@ -57,6 +57,11 @@ Accessibility is granted and Secure Input is on. The form lists these before you
 adds your name, a device identifier, logs, keystrokes, settings or clipboard content. Your draft is
 kept in memory while Settings is open and never written to disk.
 
+The [feedback page](https://mayank-devac.github.io/MacJi/feedback.html) on the website works the
+same way: it builds the email draft or the issue in your browser from what you type there (an
+optional name, how MacJi feels, the kind and your message) and hands it to your mail app or GitHub.
+The page has no tracking, stores nothing and sends nothing itself.
+
 ## The clipboard
 
 When you copy an emoji, symbol or emoticon (Shift-Return in a panel, Return in the picker), MacJi
