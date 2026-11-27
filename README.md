@@ -73,6 +73,8 @@ account and no analytics.
   it, rather than failing silently.
 - **Updates itself** with Sparkle. Every update is checked against MacJi's EdDSA signature before it
   installs.
+- **Feedback without an account.** Send a bug or an idea from Settings by email or as a GitHub
+  issue, with only the technical details you choose to include.
 
 ## Install
 
@@ -310,6 +312,7 @@ or open MacJi again from Applications or Spotlight, which also works when the ic
   **Customize…** to switch, hide or add aliases.
 - **Menu Bar:** show or hide the icon.
 - **Updates:** automatic update checks, Check Now.
+- **About:** version, links, and **Send Feedback…** (see [Feedback](#feedback)).
 
 Your settings, recents, shortcut and Accessibility access all carry over when MacJi updates.
 
@@ -341,10 +344,32 @@ the new build with one switch.
 Releases are built by `scripts/release.py`; see [docs/RELEASING.md](docs/RELEASING.md). How the code
 fits together is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+## Feedback
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screenshots_by_agent/feedback-dark.png">
+    <img src="assets/screenshots_by_agent/feedback-light.png" width="340" alt="The Send Feedback sheet: Bug, Feature Idea and Other, a message, Include technical details ticked with the MacJi and macOS versions, Accessibility and Secure Input listed, and Open on GitHub and Send Email buttons">
+  </picture>
+</p>
+
+**Settings › About › Send Feedback…** opens a short form: pick Bug, Feature Idea or Other and write
+your message. Tick **Include technical details** to add the MacJi and macOS versions and whether
+Accessibility is granted and Secure Input is on. The form shows exactly what will be sent, and
+MacJi never adds anything else: no name, device identifier, logs, keystrokes or settings.
+
+- **Send Email…** opens a draft in your mail app to [macji.app@proton.me](mailto:macji.app@proton.me).
+  No account needed, and only the developer sees it.
+- **Open on GitHub…** opens the matching issue form, filled in. It's public and needs a free GitHub
+  account.
+
+Nothing leaves your Mac until you press Send in your mail app or submit the issue.
+
 ## Contributing
 
-Bug reports, ideas and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md). For a
-security problem, follow [SECURITY.md](SECURITY.md) instead of opening a public issue.
+Bug reports, ideas and pull requests are welcome; [Feedback](#feedback) is the quickest way to
+report something. See [CONTRIBUTING.md](CONTRIBUTING.md). For a security problem, follow
+[SECURITY.md](SECURITY.md) instead of opening a public issue.
 
 ## Privacy
 

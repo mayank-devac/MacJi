@@ -6,6 +6,18 @@ Write notes under **Unreleased**; `scripts/bump-version.sh` moves them under a d
 
 ## [Unreleased]
 
+Feedback from inside the app 💬
+
+### Added
+- 💬 Send Feedback: Settings › About › Send Feedback… sends a bug, a feature idea or anything else
+  by email (no account needed) or as a filled-in GitHub issue. Tick **Include technical details**
+  to add only the MacJi and macOS versions and the Accessibility and Secure Input state; the form
+  shows exactly what will be sent.
+
+### Changed
+- 📝 Bug reports and feature requests on GitHub are now short forms that ask for what's needed.
+- 🔒 Security problems can also be reported privately by email, without a GitHub account.
+
 ## [0.3.0] - 2026-11-27
 
 Symbols, emoticons and your own aliases 🔣

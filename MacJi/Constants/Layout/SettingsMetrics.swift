@@ -32,4 +32,10 @@ enum SettingsMetrics {
     // Alias editor sheet
     static let editorWidth: CGFloat = 440
     static let editorHeight: CGFloat = 560
+
+    // Send Feedback sheet
+    static let feedbackWidth: CGFloat = 460
+    static let feedbackHeight: CGFloat = 640
+    static let feedbackEditorHeight: CGFloat = 100
+    static let feedbackPlaceholderInset: CGFloat = 5
 }

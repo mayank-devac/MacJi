@@ -38,6 +38,18 @@ MacJi is an open-source macOS menu-bar app for emoji. Its features:
    the Aliases page (`AliasEditorSheet`). Yours win over a built-in spelling. Their outputs show first
    in every panel's and the picker's search, by name or spelling (`AliasGlyphs`,
    `showAliasesInSearch`).
+8. **Send Feedback** – Settings › About › Send Feedback… (`FeedbackSheet`): Bug / Feature Idea /
+   Other and a message, sent by the user's mail app to `AppLinks.feedbackEmail` or as a prefilled
+   GitHub issue form (`FeedbackReport`). MacJi itself sends nothing. Technical details
+   (`FeedbackDetails`) are opt-in and anonymous.
+
+## Feedback rules
+
+- **Feedback stays anonymous and opt-in.** `FeedbackDetails` holds versions and permission state
+  only; never add a device identifier, model, locale, app names, settings, logs or typed text. A
+  new row must be shown in the sheet's preview and listed in `PRIVACY.md`.
+- **Issue-form field ids are permanent.** `FeedbackReport.IssueForm` names must match the `id:`s in
+  `.github/ISSUE_TEMPLATE/`; `FeedbackReportTests` reads the forms to check.
 
 - macOS **14.6+** for the app, **15+** for the test target. Swift 6 language mode with complete
   strict concurrency. SwiftUI + AppKit. Accessory app (`LSUIElement`), no Dock icon.

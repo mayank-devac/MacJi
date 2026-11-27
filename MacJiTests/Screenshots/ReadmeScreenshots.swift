@@ -43,6 +43,7 @@ struct ReadmeScreenshots {
             try await renderSettings(theme, defaults: defaults, to: file("settings"))
             try await renderAliasesPage(theme, to: file("aliases-page"))
             try await renderAliasEditor(theme, to: file("alias-editor"))
+            try await renderFeedbackSheet(theme, to: file("feedback"))
             for script in Self.typingScripts {
                 try await TypingRecorder.record(script, theme: theme, library: library, output: output)
             }
@@ -131,6 +132,7 @@ struct ReadmeScreenshots {
     private static let sampleAlias = TextAlias(id: CustomTextAliasCodec.idPrefix + "sample", texts: ["-->", "==>"],
                                                replacements: ["⟶", "⟹", "➜"], group: .arrows, boundary: .anywhere,
                                                name: "Long arrow")
+    private static let sampleFeedback = "Typing ::roc in Notes opens the panel, but Return types nothing."
 
     private func renderAliasesPage(_ theme: ScreenshotTheme, to url: URL) async throws {
         try await renderWindow(theme, height: 560, to: url) {
@@ -146,6 +148,17 @@ struct ReadmeScreenshots {
         try await renderWindow(theme, height: height, width: SettingsMetrics.editorWidth, to: url) {
             AliasEditorSheet(editing: Self.sampleAlias, initialGroup: .arrows, others: [], triggers: ["::", "##"],
                              onSave: { _ in }, onDelete: {})
+        }
+    }
+
+    private func renderFeedbackSheet(_ theme: ScreenshotTheme, to url: URL) async throws {
+        let height = SettingsMetrics.feedbackHeight + Stage.titleBarHeight + 1
+        let details = FeedbackDetails(appVersion: "0.4.0 (5)", macOSVersion: "15.1",
+                                      accessibilityGranted: true, secureInputOn: false)
+        try await renderWindow(theme, height: height, width: SettingsMetrics.feedbackWidth, to: url) {
+            FeedbackSheet(kind: .constant(.bug), message: .constant(Self.sampleFeedback), includesDetails: .constant(true),
+                          details: details, emailAddress: AppLinks.feedbackEmail, newIssue: AppLinks.newIssue,
+                          onSent: {})
         }
     }
 

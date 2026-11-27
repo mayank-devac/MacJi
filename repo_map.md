@@ -27,7 +27,7 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 | Update feed URL / public EdDSA key | `MacJi/Resources/Info.plist`, mirrored by `SOURCE_REPO` in `scripts/config.sh` and `FEED_URL` in `scripts/config.py` |
 | Version and build number | `Config/Base.xcconfig` (via `scripts/bump-version.sh`) |
 | Bundle ID (never after the first release) | `Config/Base.xcconfig` and `scripts/config.sh` |
-| GitHub / Octopus / licence links | `MacJi/Constants/Links/AppLinks.swift` |
+| GitHub / Octopus / licence links, feedback email | `MacJi/Constants/Links/AppLinks.swift` |
 | App icon | `scripts/make-icon.sh <1024.png>` → `MacJi/Resources/Assets.xcassets/AppIcon.appiconset` |
 | Menu-bar icon | `MacJi/Constants/Theme/SymbolNames.swift` (`menuBar`) |
 | Text aliases (`->` → `→`, `:)` → 🙂) | `MacJi/Shared/TextAliases/TextAliasCatalog.swift`, documented in `docs/convert-symbols.md` |
@@ -86,12 +86,13 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
     Limits/ — caps
       Limits.swift — trigger and query length, result counts, recents count, caret height
     Links/ — URLs
-      AppLinks.swift — GitHub, Octopus, licence, releases and System Settings URLs
+      AppLinks.swift — GitHub, new issue, feedback email, Octopus, licence, releases and System Settings URLs
     Motion/ — timing
       PanelMotion.swift — springs, fades, copy-close and name-reveal delays
       Timing.swift — non-animation intervals: revocation probe, guide polling, recovery, AX timeout
     Strings/ — user-visible text
       AliasStrings.swift — Aliases page and alias editor, including the editor’s problem messages
+      FeedbackStrings.swift — Send Feedback sheet, its privacy notes and the report labels
       MenuBarStrings.swift — status item and its menu
       PanelStrings.swift — inline panel
       PermissionStrings.swift — Accessibility guide and Secure Input messages
@@ -140,12 +141,16 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       SettingsHint.swift — small explanatory or error line under a control
       SettingsStatusRow.swift — status row with symbol, explanation and optional fix-it button
       TriggerField.swift — trigger text field with live validation and the reason for a rejection
+    Feedback/ — Send Feedback: the sheet and the report it builds
+      FeedbackDetails.swift — the anonymous technical details: MacJi and macOS versions, Accessibility, Secure Input
+      FeedbackReport.swift — kind + message (+ details) as a mailto draft or a prefilled GitHub issue form
+      FeedbackSheet.swift — kind, message, Include technical details, What will be sent, Email / GitHub
     LoginItem.swift — SMAppService wrapper with real status and errors
     Pages/ — Settings pages that slide in over the main Form
       AliasEditorSheet.swift — add or edit one of your aliases: name, group, + spellings, + outputs, live validation
       TextAliasesPage.swift — Aliases page: filter, groups with yours first, group switches, + to add, Turn All On, Show Hidden
     Sections/ — one view per Settings section
-      AboutSection.swift — version, links, Built on Octopus
+      AboutSection.swift — version, Send Feedback…, links, Built on Octopus
       AliasesSection.swift — Aliases switch, Customize…, show-in-search switch, and a note when nothing watches the keyboard
       EmojiPickerSection.swift — picker shortcut recorder and reset, Symbols and Emoticons tab switches
       EmoticonsSection.swift — Emoticons switch, "Suggest as you type" − N + stepper (with Off), optional trigger
@@ -222,10 +227,11 @@ MacJiTests/ — Swift Testing suites, mirroring MacJi/
     InlinePanel/ — inline panel tests
       InlinePanelTests.swift — trigger tracking, keys, validation, placement, caret, Secure Input
   Screenshots/ — opt-in README image generator (skipped in normal test runs)
-    ReadmeScreenshots.swift — renders picker tabs, search, Settings, Aliases page and editor, and the typing scripts, light and dark
+    ReadmeScreenshots.swift — renders picker tabs, search, Settings, Aliases page and editor, Send Feedback, and the typing scripts, light and dark
     ScreenshotStage.swift — themes, backdrop, mock window chrome and the offscreen 2x renderer
     TypingRecording.swift — typing scripts (emoji, symbols, emoticons, aliases) recorded into GIF frames with the real panel
   Settings/ — settings tests
+    FeedbackReportTests.swift — details only when included, URL encoding, field ids match the issue forms
     SettingsTests.swift — migrations, idempotence, per-key fallback
   Shared/ — shared code tests
     AX/ — AX helper tests

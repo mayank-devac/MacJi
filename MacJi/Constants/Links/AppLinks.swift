@@ -3,7 +3,8 @@
 //  MacJi
 //
 //  Created: 2026-11-26
-//  External URLs: the project, Octopus, the licence and the System Settings panes MacJi opens.
+//  External URLs: the project, its issues, the feedback inbox, Octopus, the licence and the System
+//  Settings panes MacJi opens.
 //  The update feed URL lives in Info.plist (SUFeedURL) because Sparkle reads it from there.
 //
 
@@ -19,9 +20,12 @@ enum AppLinks {
     static let releases = URL(string: "https://github.com/mayank-devac/MacJi/releases")!
     static let licence = URL(string: "https://github.com/mayank-devac/MacJi/blob/main/LICENSE")!
     static let privacy = URL(string: "https://github.com/mayank-devac/MacJi/blob/main/PRIVACY.md")!
+    static let newIssue = URL(string: "https://github.com/mayank-devac/MacJi/issues/new")!
     static let octopus = URL(string: "https://github.com/mayank-devac/octopus-mac")!
     static let accessibilitySettings = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
     static let systemSettingsBundleID = "com.apple.systempreferences"
+    /// The project's own inbox, for feedback and security reports without a GitHub account.
+    static let feedbackEmail = "macji.app@proton.me"
 }
 
 //////////////////

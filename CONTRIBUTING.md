@@ -10,7 +10,8 @@ other than update checks. Changes that keep it that way are the easiest to accep
 
 ## Before you start
 
-- **Bugs:** open an issue with the bug report form. Say which app you were typing in. Many
+- **Bugs:** Settings › About › Send Feedback… fills in the bug report form for you, or open an
+  issue with it directly. Say which app you were typing in. Many
   problems only happen in particular apps: Electron apps, terminals and web views often don't
   report a caret.
 - **Features:** open an issue first so we can agree on the idea before you spend time on code.

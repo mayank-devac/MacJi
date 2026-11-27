@@ -37,6 +37,8 @@ enum Limits {
     static let aliasResults = 8
     /// UTF-16 units one synthetic key event can carry; CGEvent drops anything longer.
     static let syntheticKeyUTF16Units = 20
+    /// Longest Send Feedback message; keeps the mailto and issue URLs short enough to open.
+    static let feedbackMaxLength = 2000
     /// Tallest AX rect still treated as one line of text; taller means a field or paragraph.
     static let maxCaretHeight: CGFloat = 64
 }
