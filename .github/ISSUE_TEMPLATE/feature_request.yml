@@ -1,0 +1,72 @@
+#
+#  feature_request.yml
+#  MacJi
+#
+#  Created: 2026-11-27
+#  Feature request issue form. MacJi's Send Feedback sheet prefills the problem field through the
+#  URL, so that id is permanent (FeedbackReport, FeedbackReportTests).
+#
+
+name: ✨ Feature request
+description: Suggest an idea for MacJi
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea. MacJi stays small on purpose: no analytics, no network access other than update checks, no extra permissions. Ideas that fit that are the easiest to accept.
+        Issues are public and show your GitHub username.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of MacJi?
+      options:
+        - Inline emoji panel (::)
+        - Symbol panel (##)
+        - Emoticons
+        - Text aliases (-> becomes →)
+        - Custom aliases
+        - Emoji picker (menu bar / shortcut)
+        - Settings
+        - Something new
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do, and what gets in the way today?
+      placeholder: I type the same three emoji every day and still search for them each time.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: How would you like MacJi to handle it?
+      placeholder: Let me pin emoji to the top of the picker.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've tried (optional)
+      placeholder: A custom alias for each one, but I forget the spellings.
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Mockup, example or link (optional)
+      description: Drag an image here, or link to an app that does it well.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you send
+      options:
+        - label: I searched the existing issues and this hasn't been suggested.
+          required: true

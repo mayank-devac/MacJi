@@ -1,0 +1,13 @@
+#
+#  config.yml
+#  MacJi
+#
+#  Created: 2026-11-27
+#  Issue chooser: keeps blank issues and points security reports to the private advisory form.
+#
+
+blank_issues_enabled: true
+contact_links:
+  - name: 🔒 Report a security problem
+    url: https://github.com/mayank-devac/MacJi/security/advisories/new
+    about: Report it privately, not as a public issue (see SECURITY.md).

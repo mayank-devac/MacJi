@@ -45,8 +45,9 @@ descriptions; `scripts/check.sh` fails when the tree and the disk disagree.
 ```text
 .github/ — GitHub configuration
   ISSUE_TEMPLATE/ — issue forms
-    bug_report.md — bug report template
-    feature_request.md — feature request template
+    bug_report.yml — bug report form; the app prefills its version fields
+    config.yml — issue chooser; security reports go to the private advisory form
+    feature_request.yml — feature request form
   workflows/ — CI
     ci.yml — build, check.sh and test.sh on macos-latest, unsigned
     pages.yml — deploy WEB/ to GitHub Pages on pushes to main that touch it

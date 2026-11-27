@@ -10,8 +10,9 @@ other than update checks. Changes that keep it that way are the easiest to accep
 
 ## Before you start
 
-- **Bugs:** open an issue with the bug template. Say which app you were typing in. Many problems
-  only happen in particular apps: Electron apps, terminals and web views often don't report a caret.
+- **Bugs:** open an issue with the bug report form. Say which app you were typing in. Many
+  problems only happen in particular apps: Electron apps, terminals and web views often don't
+  report a caret.
 - **Features:** open an issue first so we can agree on the idea before you spend time on code.
 - **Security problems:** don't open a public issue. Follow [SECURITY.md](SECURITY.md).
 

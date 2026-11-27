@@ -1,0 +1,141 @@
+#
+#  bug_report.yml
+#  MacJi
+#
+#  Created: 2026-11-27
+#  Bug report issue form. MacJi's Send Feedback sheet prefills the what-happened, version and
+#  macos fields through the URL, so those ids are permanent (FeedbackReport, FeedbackReportTests).
+#
+
+name: 🐞 Bug report
+description: Something in MacJi doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. Most fields are a click or a line.
+        Issues are public and show your GitHub username.
+        **Security problem?** Don't file it here. Follow [SECURITY.md](https://github.com/mayank-devac/MacJi/blob/main/SECURITY.md).
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of MacJi?
+      options:
+        - Inline emoji panel (::)
+        - Symbol panel (##)
+        - Emoticons
+        - Text aliases (-> becomes →)
+        - Custom aliases
+        - Emoji picker (menu bar / shortcut)
+        - Accessibility permission
+        - Settings
+        - Updates
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      placeholder: Typing ::roc in Notes opens the panel, but Return types nothing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: Return replaces ::roc with 🚀.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: input
+    id: app
+    attributes:
+      label: App you were typing in
+      description: For panel and alias bugs. Electron apps, terminals and web views often behave differently.
+      placeholder: Notes, Slack, Terminal, Safari…
+
+  - type: input
+    id: version
+    attributes:
+      label: MacJi version
+      description: Settings › About shows it.
+      placeholder: 0.3.0 (4)
+    validations:
+      required: true
+
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "15.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: accessibility
+    attributes:
+      label: Does Settings show Accessibility as "Granted"?
+      options:
+        - "Yes"
+        - "No"
+        - Not sure
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: secure-input
+    attributes:
+      label: Does Settings show a "Secure Input is on" warning?
+      options:
+        - "No"
+        - "Yes"
+        - Not sure
+      default: 0
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        **Logs (optional).** Reproduce the problem, then run this in Terminal and paste the output below. It holds MacJi's diagnostics only, never your keystrokes.
+        ```sh
+        log show --last 5m --predicate 'subsystem BEGINSWITH "io.github.mayank-devac.macji"'
+        ```
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (optional)
+      render: shell
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshot or anything else (optional)
+      description: Drag an image or screen recording here.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you send
+      options:
+        - label: I searched the existing issues and this isn't one of them.
+          required: true
+        - label: I'm on the latest MacJi (Settings › Updates › Check Now).
