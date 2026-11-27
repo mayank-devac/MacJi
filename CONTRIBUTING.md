@@ -5,7 +5,7 @@
 
 # Contributing to MacJi
 
-Thanks for helping. MacJi is small on purpose: two features, two dependencies, no network access
+Thanks for helping. MacJi is small on purpose: a few focused features, two dependencies, no network access
 other than update checks. Changes that keep it that way are the easiest to accept.
 
 ## Before you start
