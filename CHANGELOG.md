@@ -6,6 +6,8 @@ Write notes under **Unreleased**; `scripts/bump-version.sh` moves them under a d
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-27
+
 Feedback from inside the app 💬
 
 ### Added

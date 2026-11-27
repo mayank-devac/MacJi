@@ -6,6 +6,34 @@
     <description>Signed MacJi updates.</description>
     <language>en</language>
     <item>
+      <title>MacJi 0.4.0</title>
+      <pubDate>Fri, 27 Nov 2026 11:11:19 GMT</pubDate>
+      <sparkle:version>5</sparkle:version>
+      <sparkle:shortVersionString>0.4.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+      <description sparkle:format="plain-text">Feedback from inside the app 💬
+
+### Added
+- 💬 Send Feedback: Settings › About › Send Feedback… sends a bug, a feature idea or anything else
+  by email (no account needed) or as a filled-in GitHub issue. Tick **Include technical details**
+  to add only the MacJi and macOS versions and the Accessibility and Secure Input state; the form
+  shows exactly what will be sent.
+- 📮 If your default email reader is a browser, or you have none, Send Email opens Gmail's compose
+  page with the draft filled in.
+- 🌐 A feedback page on the website does the same without the app, with its own **Compose in Gmail**
+  button, and replaces the website's "Report an issue" link.
+- 🙂 On that page a face made of dots wears the mood you pick, watches you type and winks when your
+  draft opens.
+- 🌠 Type `::` or `##` anywhere on the website's home page to open the panel and stick your pick
+  on the page.
+
+### Changed
+- 👋 Quit MacJi in Settings is now a power icon in the About section.
+- 📝 Bug reports and feature requests on GitHub are now short forms that ask for what's needed.
+- 🔒 Security problems can also be reported privately by email, without a GitHub account.</description>
+      <enclosure url="https://github.com/mayank-devac/MacJi/releases/download/v0.4.0/MacJi-0.4.0.zip" length="2429821" type="application/octet-stream" sparkle:edSignature="eKUot/oK9vK3yK5yb5gy9XGc+tRpezEvSwfOyz8VUEV1mmhK+qR/NKnR5Pqp/S+aIJlp068ww6oIHdrzZka0Ag==" />
+    </item>
+    <item>
       <title>MacJi 0.3.0</title>
       <pubDate>Thu, 26 Nov 2026 22:16:24 GMT</pubDate>
       <sparkle:version>4</sparkle:version>
