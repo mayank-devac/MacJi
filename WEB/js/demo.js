@@ -1,33 +1,20 @@
 /*
   demo.js · MacJi website · Created: 2026-11-26
   A working copy of MacJi's inline panels in the hero: type ::term for emoji or ##term for symbols
-  in the note and pick one. Uses the app's own emoji.json and symbols.json and the same trigger
-  rule and ranking as GlyphSearch.swift.
+  in the note and pick one, with the app's trigger rule. Data and ranking are in glyphs.js.
 */
 
 (function () {
   "use strict";
 
-  /// One entry per panel: its data file, what an empty term shows, and the word for its glyphs.
-  var PANELS = {
-    "::": {
-      url: "assets/data/emoji.json", noun: "emoji",
-      favourites: ["🚀", "🎉", "❤️", "👍", "😂", "✨", "🔥", "✅", "👀", "🙏", "🥳", "💯", "👋", "🤔", "😎", "🫶"],
-    },
-    "##": {
-      url: "assets/data/symbols.json", noun: "symbols",
-      favourites: ["→", "←", "↔", "⇒", "≠", "≈", "±", "×", "÷", "°", "€", "£", "©", "™", "⌘", "⌥"],
-    },
-  };
-  var COLUMNS = 8;
-  var RESULT_LIMIT = 64;
-  var QUERY_MAX = 32;
+  var glyphs = window.MacJiGlyphs;
+  var PANELS = glyphs.PANELS;
   var OPENING = "Tell the team we ship today ";
   /// Typed when GitHub can't name the latest release, or is too slow to hold the demo up for.
   var FALLBACK_VERSION = "0.3.0";
   var VERSION = /^\d+\.\d+\.\d+$/;
   var RELEASE_WAIT_MS = 1500;
-  var TRIGGER = new RegExp("(^|[^A-Za-z0-9:#])(::|##)([A-Za-z0-9_+\\-]{0," + QUERY_MAX + "})$");
+  var TRIGGER = new RegExp("(^|[^A-Za-z0-9:#])(::|##)([A-Za-z0-9_+\\-]{0," + glyphs.QUERY_MAX + "})$");
 
   var demo = document.getElementById("demo");
   if (!demo) return;
@@ -36,70 +23,23 @@
   var panel = document.getElementById("demo-panel");
   var grid = document.getElementById("demo-grid");
   var termLabel = document.getElementById("demo-term");
-  var countLabel = document.getElementById("demo-count");
-  var pickEmoji = document.getElementById("demo-pick-emoji");
-  var pickName = document.getElementById("demo-pick-name");
   var copied = document.getElementById("demo-copied");
   var hint = document.getElementById("demo-hint");
   var live = document.getElementById("demo-live");
   var doc = document.getElementById("demo-doc");
   var reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  var state = { open: false, panel: null, start: -1, results: [], selected: 0, dismissedAt: -1 };
+  var state = { open: false, start: -1, dismissedAt: -1 };
   var autoplay = { running: false, timers: [] };
-
-  ////////////////////
-  //// Catalog and ranking
-  /// Mirrors GlyphCatalog + GlyphSearch: 0 exact alias · 1 alias prefix · 2 word prefix · 3 anywhere.
-  /// Each panel's data loads once; the symbols wait until autoplay or the visitor needs them.
-  // Buckets keep catalog order inside each rank, exactly like the app, so "roc" shows 🪨 then 🚀.
-
-  function load(panel) {
-    if (panel.loading) return panel.loading;
-    panel.loading = fetch(panel.url)
-      .then(function (response) {
-        if (!response.ok) throw new Error(panel.url + " " + response.status);
-        return response.json();
-      })
-      .then(function (items) {
-        panel.byGlyph = {};
-        panel.catalog = items.map(function (item) {
-          var words = [item.description].concat(item.tags).join(" ").toLowerCase();
-          var entry = {
-            emoji: item.emoji,
-            name: item.description.charAt(0).toUpperCase() + item.description.slice(1),
-            aliases: item.aliases.map(function (alias) { return alias.toLowerCase(); }),
-            keywords: [item.description].concat(item.aliases, item.tags).join(" ").toLowerCase(),
-            words: words.split(/[^a-z0-9]+/).filter(Boolean),
-          };
-          panel.byGlyph[item.emoji] = entry;
-          return entry;
-        });
-      });
-    return panel.loading;
-  }
-
-  function rank(entry, term) {
-    if (entry.aliases.indexOf(term) > -1) return 0;
-    if (entry.aliases.some(function (alias) { return alias.indexOf(term) === 0; })) return 1;
-    if (entry.words.some(function (word) { return word.indexOf(term) === 0; })) return 2;
-    return 3;
-  }
-
-  function search(panel, query) {
-    var term = query.toLowerCase();
-    if (!term) {
-      return panel.favourites.map(function (glyph) { return panel.byGlyph[glyph]; }).filter(Boolean);
-    }
-    var buckets = [[], [], [], []];
-    panel.catalog.forEach(function (entry) {
-      if (entry.keywords.indexOf(term) > -1) buckets[rank(entry, term)].push(entry);
-    });
-    return buckets[0].concat(buckets[1], buckets[2], buckets[3]).slice(0, RESULT_LIMIT);
-  }
-
-  //// One term only: the trigger ends at the first space, so multi-term queries can't happen inline.
-  //////////////////
+  var results = window.MacJiPanelGrid({
+    grid: grid,
+    input: input,
+    count: document.getElementById("demo-count"),
+    pickEmoji: document.getElementById("demo-pick-emoji"),
+    pickName: document.getElementById("demo-pick-name"),
+    announce: announce,
+    pick: insert,
+  });
 
   ////////////////////
   //// Trigger tracking
@@ -123,15 +63,12 @@
     }
     var panelData = PANELS[trigger.trigger];
     if (!panelData.catalog) {
-      load(panelData).then(update, close);
+      glyphs.load(panelData).then(update, close);
       return;
     }
-    state.panel = panelData;
     state.start = trigger.start;
-    state.results = search(panelData, trigger.term);
-    state.selected = 0;
     termLabel.textContent = trigger.trigger + trigger.term;
-    render();
+    results.render(glyphs.search(panelData, trigger.term), panelData.noun);
     open();
     place(trigger.start);
   }
@@ -141,67 +78,6 @@
 
   ////////////////////
   //// Panel
-
-  function render() {
-    grid.textContent = "";
-    countLabel.textContent = state.results.length || "";
-    if (!state.results.length) {
-      var empty = document.createElement("p");
-      empty.className = "panel-empty";
-      empty.textContent = "No " + state.panel.noun + " match. Keep typing or press Esc.";
-      grid.appendChild(empty);
-      pickEmoji.textContent = "";
-      pickName.textContent = "";
-      announce("No " + state.panel.noun + " match");
-      return;
-    }
-    state.results.forEach(function (entry, index) {
-      var cell = document.createElement("button");
-      cell.type = "button";
-      cell.className = "cell";
-      cell.id = "demo-cell-" + index;
-      cell.tabIndex = -1;
-      cell.setAttribute("role", "option");
-      cell.setAttribute("aria-label", entry.name);
-      cell.textContent = entry.emoji;
-      cell.addEventListener("mousedown", function (event) {
-        event.preventDefault();
-        state.selected = index;
-        insert();
-      });
-      grid.appendChild(cell);
-    });
-    select(0);
-    announce(state.results.length + " " + state.panel.noun + ". " + state.results[0].name + " selected.");
-  }
-
-  function select(index) {
-    var previous = grid.querySelector(".cell.on");
-    if (previous) previous.classList.remove("on");
-    state.selected = index;
-    var cell = document.getElementById("demo-cell-" + index);
-    if (!cell) return;
-    cell.classList.add("on");
-    cell.setAttribute("aria-selected", "true");
-    if (previous && previous !== cell) previous.removeAttribute("aria-selected");
-    input.setAttribute("aria-activedescendant", cell.id);
-    var entry = state.results[index];
-    pickEmoji.textContent = entry.emoji;
-    pickName.textContent = entry.name;
-    var top = cell.offsetTop - grid.offsetTop;
-    if (top < grid.scrollTop) grid.scrollTop = top;
-    if (top + cell.offsetHeight > grid.scrollTop + grid.clientHeight) {
-      grid.scrollTop = top + cell.offsetHeight - grid.clientHeight;
-    }
-  }
-
-  function move(dx, dy) {
-    var count = state.results.length;
-    if (!count) return;
-    var next = state.selected + dx + dy * COLUMNS;
-    if (dy !== 0 && (next < 0 || next >= count)) return;
-    select(Math.max(0, Math.min(count - 1, next)));
-  }
 
   function open() {
     if (state.open) return;
@@ -237,7 +113,7 @@
   //// Actions: Return inserts, Shift-Return copies, Esc closes
 
   function insert() {
-    var entry = state.results[state.selected];
+    var entry = results.current();
     if (!entry) return;
     var caret = input.selectionStart;
     var value = input.value;
@@ -250,7 +126,7 @@
   }
 
   function copy() {
-    var entry = state.results[state.selected];
+    var entry = results.current();
     if (!entry) return;
     var done = function (ok) {
       copied.textContent = ok ? "Copied " + entry.emoji : "Couldn't copy";
@@ -291,18 +167,13 @@
   input.addEventListener("keydown", function (event) {
     if (autoplay.running && event.isTrusted) stopAutoplay();
     if (!state.open) return;
-    var handled = true;
-    if (event.key === "ArrowLeft") move(-1, 0);
-    else if (event.key === "ArrowRight") move(1, 0);
-    else if (event.key === "ArrowUp") move(0, -1);
-    else if (event.key === "ArrowDown") move(0, 1);
-    else if (event.key === "Enter" && event.shiftKey) copy();
+    if (event.key === "Enter" && event.shiftKey) copy();
     else if (event.key === "Enter") insert();
     else if (event.key === "Escape") {
       state.dismissedAt = state.start;
       close();
-    } else handled = false;
-    if (handled) event.preventDefault();
+    } else if (!results.arrow(event.key)) return;
+    event.preventDefault();
   });
 
   input.addEventListener("input", update);
@@ -394,8 +265,7 @@
   }
 
   function pick(glyph, done) {
-    var index = state.results.findIndex(function (entry) { return entry.emoji === glyph; });
-    if (index > state.selected) {
+    if (results.indexOf(glyph) > results.index()) {
       press("ArrowRight");
       later(function () { pick(glyph, done); }, 380);
       return;
@@ -471,7 +341,7 @@
     return document.activeElement !== input && !input.value;
   }
 
-  load(PANELS["::"])
+  glyphs.load(PANELS["::"])
     .then(function () {
       demo.classList.add("ready");
       if (reduceMotion || !("IntersectionObserver" in window)) {
@@ -484,7 +354,7 @@
         if (!entries[0].isIntersecting) return;
         seen.disconnect();
         // Symbols load first, so the "##" panel never opens late under the script.
-        Promise.all([latestVersions(), load(PANELS["##"])]).then(function (ready) {
+        Promise.all([latestVersions(), glyphs.load(PANELS["##"])]).then(function (ready) {
           if (untouched()) play(ready[0]);
         }, finish);
       }, { threshold: 0.6 });

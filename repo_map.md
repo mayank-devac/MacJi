@@ -257,6 +257,7 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
     icon/ — favicon and app icon from assets/icon (written by scripts/make-web-assets.sh)
     screenshots/ — WebP screenshots plus the link-preview PNG (written by scripts/make-web-assets.sh)
   css/ — stylesheets
+    anywhere.css — type-anywhere on the home page: floating panel, die-cut stickers and the corner dock
     base.css — design tokens (light + dark), page glow, nav, buttons, keycaps, footer, motion, confetti canvas
     demo.css — the hero's note window, inline emoji panel and "try it" chips
     feedback.css — Send Feedback page: dot face placement, mood faces, kind chips, send button
@@ -266,14 +267,18 @@ WEB/ — product website, served by GitHub Pages (static, no build step)
   feedback.html — Send Feedback: name, mood, kind and message as a mail draft or GitHub issue
   index.html — landing page with the live ::term demo
   js/ — scripts, no dependencies
+    anywhere.js — type :: or ## anywhere on the home page to open the panel; the dock that says so
     confetti-sprites.js — confetti shapes with their glow, painted once and cached
     confetti.js — click-anywhere confetti on every page, side poppers, the 🎉 party shower and pointer collisions
-    demo.js — working copy of the inline panel (trigger rule + GlyphSearch ranking)
+    demo.js — the hero's working inline panel: trigger rule, insert, copy and autoplay
     feedback.js — builds the feedback mail draft or prefilled issue; stores and sends nothing
+    glyphs.js — emoji and symbol catalogs and GlyphSearch ranking, shared by both website panels
     listener-face.js — the feedback page's dot face: each mood's expression and which dots it inks
     listener.js — draws and animates that face: mood, gaze, typing ripples, crash glitch, shake, wink
+    panel-grid.js — the website panels' result grid: selection, arrow keys, footer
     pointer.js — iPadOS-style pointer and button parallax, ported from the Octopus site
     release.js — latest release's .dmg from the GitHub API, Releases-page fallback
+    stickers.js — stickers on the page: stamp, drag, flick, delete, and the 🚀 🎉 ❤️ tricks
     thank-you.js — starts the download, fires the confetti
     theme.js — light/dark theme, scrolled nav and current section
   thank-you.html — after Download: starts the .dmg, confetti, first-launch steps

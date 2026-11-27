@@ -30,12 +30,17 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/home.css">
   <link rel="stylesheet" href="css/demo.css">
+  <link rel="stylesheet" href="css/anywhere.css">
   <link rel="stylesheet" href="css/pointer.css">
   <script src="js/theme.js"></script>
   <script src="js/release.js" defer></script>
+  <script src="js/glyphs.js" defer></script>
+  <script src="js/panel-grid.js" defer></script>
   <script src="js/demo.js" defer></script>
   <script src="js/confetti-sprites.js" defer></script>
   <script src="js/confetti.js" defer></script>
+  <script src="js/stickers.js" defer></script>
+  <script src="js/anywhere.js" defer></script>
   <script src="js/pointer.js" defer></script>
 </head>
 
@@ -393,6 +398,35 @@
       <p>Emoji data from gemoji (MIT), symbol names from Unicode, emoticons from wooorm/emoticon and netromdk/kaomojidict (MIT). Built on <a href="https://github.com/mayank-devac/octopus-mac">Octopus</a>. Not affiliated with Apple.</p>
     </div>
   </footer>
+
+  <!-- //// Type :: or ## anywhere on the page: the panel (js/anywhere.js) and the dock that says so -->
+  <div class="anywhere" id="anywhere" hidden>
+    <input class="anywhere-input" id="anywhere-input" type="text" size="3" autocomplete="off" autocapitalize="off"
+      spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="anywhere-grid"
+      aria-label="Emoji or symbol to stick on the page">
+    <div class="panel" id="anywhere-panel">
+      <div class="panel-head">
+        <span class="panel-app">MacJi</span>
+        <span class="panel-term" id="anywhere-term"></span>
+        <span class="panel-count" id="anywhere-count"></span>
+      </div>
+      <div class="grid" id="anywhere-grid" role="listbox" aria-label="Matches"></div>
+      <div class="panel-foot">
+        <span class="pick-emoji" id="anywhere-pick-emoji" aria-hidden="true"></span>
+        <span class="pick-name" id="anywhere-pick-name"></span>
+        <span class="hints" aria-hidden="true"><kbd>↩</kbd> Stick <kbd>⇧↩</kbd> Copy <kbd>esc</kbd></span>
+      </div>
+      <div class="copied" id="anywhere-copied" role="status"></div>
+    </div>
+  </div>
+  <p class="sr-only" id="anywhere-live" aria-live="polite"></p>
+  <aside class="dock away" id="dock" aria-label="Stickers" hidden>
+    <button class="dock-open" id="dock-open" type="button">
+      <span class="dock-keys" aria-hidden="true"><kbd>:</kbd><kbd>:</kbd></span>
+      <span id="dock-text">Type it anywhere</span>
+    </button>
+    <button class="dock-clear" id="dock-clear" type="button" hidden>Clear</button>
+  </aside>
 </body>
 
 </html>

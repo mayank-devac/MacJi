@@ -30,6 +30,8 @@
   var SETTLE_MS = 450;
   //// Large buttons never take hold of the pointer.
   var BUTTON = ".btn, button.popper";
+  //// Stickers are dragged by the dot itself, so they never get a platter.
+  var LOOSE = ".sticker";
   var PLATTER = "a, button, summary, [role='option']";
   var TEXT_AREA = ".doc";
 
@@ -44,6 +46,7 @@
   var hover = { mode: "dot" };
   var seen = false;
   var away = false;
+  var typing = false;
   var stale = false;
   var under = null;
   var now = { x: 0, y: 0, w: DOT, h: DOT, r: DOT / 2, o: 0 };
@@ -73,6 +76,11 @@
     });
   }
 
+  //// False once a node is removed, or hidden along with a closed panel.
+  function shown(node) {
+    return node.isConnected && node.getClientRects().length > 0;
+  }
+
   function contains(box) {
     return px >= box.left && px <= box.right && py >= box.top && py <= box.bottom;
   }
@@ -93,6 +101,7 @@
   function resolve(node) {
     if (!node || !node.closest) return { mode: "dot" };
     if (node.closest(BUTTON)) return { mode: "button" };
+    if (node.closest(LOOSE)) return { mode: "dot" };
     var control = node.closest(PLATTER);
     if (control) return { mode: "platter", el: control };
     var style = getComputedStyle(node);
@@ -113,7 +122,7 @@
   // The loop stops once everything has settled, so an idle page costs nothing.
 
   function target() {
-    var t = { x: px, y: py, w: DOT, h: DOT, r: DOT / 2, o: away || !seen ? 0 : 1 };
+    var t = { x: px, y: py, w: DOT, h: DOT, r: DOT / 2, o: away || typing || !seen ? 0 : 1 };
     if (hover.mode === "beam") {
       t.w = BEAM_WIDTH;
       t.h = hover.height;
@@ -145,7 +154,7 @@
     if (flicking) {
       hover = { mode: "dot" };
     } else {
-      var node = under && under.isConnected ? under : document.elementFromPoint(px, py);
+      var node = under && shown(under) ? under : document.elementFromPoint(px, py);
       hover = resolve(node);
     }
     //// A flick leaves the page unread, so look again once the pointer slows down.
@@ -163,7 +172,7 @@
     var elapsed = last ? Math.min(64, time - last) : FRAME_MS;
     last = time;
     var travelled = Math.hypot(px - anchor.x, py - anchor.y) * (FRAME_MS / elapsed);
-    if (stale || (hover.el && !hover.el.isConnected)) look(travelled > FLICK);
+    if (stale || (hover.el && !shown(hover.el))) look(travelled > FLICK);
     var t = target();
     if (t.el) {
       //// A control that moves (page scroll, its own spring) carries the pointer with it.
@@ -234,6 +243,7 @@
     px = event.clientX;
     py = event.clientY;
     away = false;
+    typing = false;
     if (!seen) {
       seen = true;
       now.x = anchor.x = px;
@@ -247,6 +257,13 @@
   window.addEventListener("scroll", function () {
     if (seen) point(null);
   }, { passive: true, capture: true });
+
+  //// Hidden while a page script says the visitor is typing; the next mouse move brings it back.
+  //// Either way, what is under it may have changed.
+  document.addEventListener("macji:typing", function (event) {
+    typing = event.detail;
+    if (seen) point(null);
+  });
 
   document.addEventListener("pointerdown", function (event) {
     if (event.pointerType === "touch") {

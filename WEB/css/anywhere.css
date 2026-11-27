@@ -1,0 +1,254 @@
+/*
+  anywhere.css · MacJi website · Created: 2026-11-27
+  Type-anywhere on the home page: the floating typed term and panel, the die-cut stickers and
+  their sparks, and the corner dock. The panel itself is styled in demo.css.
+*/
+
+/* ////////////////////
+   //// Floating panel
+   /// The typed term looks like selected text at a caret; the panel hangs under it, or sits
+   /// above it near the bottom of the window. */
+
+.anywhere {
+  position: fixed;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: min(320px, calc(100vw - 24px));
+}
+.anywhere.above {
+  flex-direction: column-reverse;
+}
+.anywhere-input {
+  max-width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  caret-color: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent), 0 8px 20px rgba(0, 0, 0, 0.14);
+  font: 600 16px/1 var(--font-mono);
+  outline: none;
+}
+/* //// The ring above marks focus; the shared outline would double it. */
+.anywhere-input:focus-visible {
+  outline: none;
+}
+/* //// It floats over page text, so it is nearly solid, unlike the demo's panel over a blank note. */
+.anywhere .panel {
+  position: relative;
+  width: 100%;
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+}
+.anywhere.above .panel {
+  transform-origin: 20px 100%;
+}
+.anywhere .panel.shown {
+  transform: none;
+}
+
+/* ////////////////// */
+
+/* ////////////////////
+   //// Stickers
+   /// Positioned in the document so they scroll with the page, under the nav bar. The white
+   /// die-cut edge is four hard shadows of the glyph's own shape. */
+
+.stickers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 15;
+  width: 100%;
+  height: 0;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+.sticker {
+  position: absolute;
+  translate: -50% -50%;
+  padding: 6px;
+  font-size: 56px;
+  line-height: 1.15;
+  letter-spacing: 0;
+  white-space: nowrap;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  filter:
+    drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff)
+    drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+    drop-shadow(0 5px 6px rgba(0, 0, 0, 0.24));
+  transition: scale 0.25s var(--spring), filter 0.2s var(--ease);
+  cursor: grab;
+}
+.sticker.symbol {
+  min-width: 68px;
+  padding: 2px 14px;
+  border-radius: 18px;
+  background: #fff;
+  color: #1d1d1f;
+  font-size: 42px;
+  font-weight: 600;
+  line-height: 1.5;
+  filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.24));
+}
+.sticker.held {
+  z-index: 1;
+  scale: 1.18;
+  cursor: grabbing;
+  filter:
+    drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff)
+    drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff)
+    drop-shadow(0 18px 14px rgba(0, 0, 0, 0.28));
+}
+.sticker.symbol.held {
+  filter: drop-shadow(0 18px 14px rgba(0, 0, 0, 0.28));
+}
+/* //// What to type to get it again, shown under a hovered or focused sticker. */
+.sticker::after {
+  content: attr(data-term);
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  translate: -50% 4px;
+  padding: 4px 8px;
+  border-radius: 7px;
+  background: #1d1d1f;
+  color: #fff;
+  font: 600 12px/1.2 var(--font-mono);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s var(--ease);
+}
+.sticker:focus-visible::after {
+  opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sticker:hover {
+    scale: 1.08;
+  }
+  .sticker.held {
+    scale: 1.18;
+  }
+  .sticker:hover::after {
+    opacity: 1;
+  }
+}
+.sticker.held::after {
+  opacity: 0;
+}
+.spark,
+.mini {
+  position: absolute;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+.spark {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.mini {
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* ////////////////// */
+
+/* ////////////////////
+   //// Dock
+   /// A material pill in the corner. Its two keys press down as the pair is typed. */
+
+.dock {
+  position: fixed;
+  right: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  z-index: 24;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--panel) 82%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06), 0 12px 28px rgba(0, 0, 0, 0.16);
+  transition: opacity 0.3s var(--ease), translate 0.4s var(--spring), visibility 0.3s;
+}
+.dock.away {
+  visibility: hidden;
+  opacity: 0;
+  translate: 0 16px;
+}
+.dock-open {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 0 12px 0 6px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.dock-keys {
+  display: flex;
+  gap: 4px;
+}
+.dock-keys kbd {
+  height: 28px;
+  min-width: 28px;
+  border-bottom-width: 3px;
+  font-size: 15px;
+  font-weight: 700;
+  transition: translate 0.12s var(--ease), background-color 0.12s var(--ease), color 0.12s var(--ease);
+}
+.dock.half kbd:first-child {
+  translate: 0 2px;
+  border-bottom-width: 1px;
+  background: var(--accent);
+  color: #fff;
+}
+/* //// Twice after the dock arrives, its keys show the gesture. */
+@keyframes tap {
+  8% {
+    translate: 0 3px;
+    background: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+  16% {
+    translate: 0 0;
+  }
+}
+.dock:not(.away) .dock-keys kbd {
+  animation: tap 2.4s var(--ease) 0.5s 2;
+}
+.dock:not(.away) .dock-keys kbd:nth-child(2) {
+  animation-delay: 0.75s;
+}
+.dock-clear {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--chip);
+  font-size: 14px;
+  font-weight: 600;
+}
+/* //// On narrow and touch screens there is no dock: typing :: stays a hidden surprise. */
+@media (max-width: 960px), (pointer: coarse) {
+  .dock {
+    display: none;
+  }
+}
+@media (max-width: 620px) {
+  .sticker {
+    font-size: 48px;
+  }
+}
+
+/* ////////////////// */

@@ -38,7 +38,7 @@
   var SWIPE_MAX = 8;
   var HIT_SPIN = 0.35;
   //// Controls and the demo's note keep their normal click.
-  var QUIET = "a, button, input, textarea, label, summary, kbd, code, .window";
+  var QUIET = "a, button, input, textarea, label, summary, kbd, code, .window, .anywhere, .dock";
 
   var canvas = document.createElement("canvas");
   canvas.className = "confetti";
