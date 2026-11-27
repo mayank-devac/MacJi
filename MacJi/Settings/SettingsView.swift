@@ -69,8 +69,8 @@ struct SettingsView: View {
             MenuBarSection(isShown: $settings.showMenuBarIcon)
             UpdatesSection(updates: updates)
             AboutSection(accessibilityGranted: permissions.accessibilityGranted,
-                         secureInputOn: permissions.secureInputHolder != nil)
-            QuitSection(onQuit: onQuit)
+                         secureInputOn: permissions.secureInputHolder != nil,
+                         onQuit: onQuit)
         }
         .formStyle(.grouped)
     }

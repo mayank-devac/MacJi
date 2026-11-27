@@ -19,6 +19,7 @@ Feedback from inside the app 💬
   draft opens.
 
 ### Changed
+- 👋 Quit MacJi in Settings is now a power icon in the About section.
 - 📝 Bug reports and feature requests on GitHub are now short forms that ask for what's needed.
 - 🔒 Security problems can also be reported privately by email, without a GitHub account.
 

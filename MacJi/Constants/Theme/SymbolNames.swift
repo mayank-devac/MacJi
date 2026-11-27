@@ -29,4 +29,5 @@ enum SymbolNames {
     static let hide = "eye.slash"
     static let makeFirst = "arrow.up.to.line"
     static let convertsTo = "arrow.right"
+    static let quit = "power"
 }

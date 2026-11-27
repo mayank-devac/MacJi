@@ -138,19 +138,21 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
     AppSettings.swift — typed accessors, registered defaults, change publishers
     Components/ — reusable Settings rows
       AliasRow.swift — one alias row: spellings → outputs, name, edit (yours), delete or hide, switch
+      QuitButton.swift — Quit MacJi icon button
       SettingsHint.swift — small explanatory or error line under a control
       SettingsStatusRow.swift — status row with symbol, explanation and optional fix-it button
       TriggerField.swift — trigger text field with live validation and the reason for a rejection
     Feedback/ — Send Feedback: the sheet and the report it builds
       FeedbackDetails.swift — the anonymous technical details: MacJi and macOS versions, Accessibility, Secure Input
-      FeedbackReport.swift — kind + message (+ details) as a mailto draft or a prefilled GitHub issue form
+      FeedbackMailRoute.swift — Send Email's target: the mail app, or Gmail when the email reader is a browser
+      FeedbackReport.swift — kind + message (+ details) as a mailto draft, a Gmail draft or a prefilled GitHub issue form
       FeedbackSheet.swift — kind, message, Include technical details, What will be sent, Email / GitHub
     LoginItem.swift — SMAppService wrapper with real status and errors
     Pages/ — Settings pages that slide in over the main Form
       AliasEditorSheet.swift — add or edit one of your aliases: name, group, + spellings, + outputs, live validation
       TextAliasesPage.swift — Aliases page: filter, groups with yours first, group switches, + to add, Turn All On, Show Hidden
     Sections/ — one view per Settings section
-      AboutSection.swift — version, Send Feedback…, links, Built on Octopus
+      AboutSection.swift — version, Send Feedback…, links, Built on Octopus, Quit icon
       AliasesSection.swift — Aliases switch, Customize…, show-in-search switch, and a note when nothing watches the keyboard
       EmojiPickerSection.swift — picker shortcut recorder and reset, Symbols and Emoticons tab switches
       EmoticonsSection.swift — Emoticons switch, "Suggest as you type" − N + stepper (with Off), optional trigger
@@ -158,7 +160,6 @@ MacJi/ — the app target (synchronised folder: new files are picked up automati
       LoginItemSection.swift — Open at login switch, under Accessibility, with approval and error hints
       MenuBarSection.swift — show/hide the menu-bar icon
       PermissionSection.swift — Accessibility and Secure Input status rows
-      QuitSection.swift — Quit MacJi button at the bottom of Settings
       UpdatesSection.swift — automatic updates, Check Now and the last check time
     SettingsMigrator.swift — schema version and ordered, idempotent migrations
     SettingsView.swift — the single grouped Form

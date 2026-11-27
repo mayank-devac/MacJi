@@ -3,8 +3,8 @@
 //  MacJi
 //
 //  Created: 2026-11-26
-//  App icon, version and build, Send Feedback, and links to GitHub, Octopus, the licence and
-//  privacy notes.
+//  App icon, version and build, Send Feedback, links to GitHub, Octopus, the licence and
+//  privacy notes, and Quit.
 //
 
 import SwiftUI
@@ -12,6 +12,7 @@ import SwiftUI
 struct AboutSection: View {
     let accessibilityGranted: Bool
     let secureInputOn: Bool
+    let onQuit: () -> Void
 
     private let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "–"
     private let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "–"
@@ -45,6 +46,8 @@ struct AboutSection: View {
                 Link(SettingsStrings.builtOnOctopus, destination: AppLinks.octopus)
                 Link(SettingsStrings.licence, destination: AppLinks.licence)
                 Link(SettingsStrings.privacy, destination: AppLinks.privacy)
+                Spacer()
+                QuitButton(onQuit: onQuit)
             }
             .font(.callout)
         } header: {
