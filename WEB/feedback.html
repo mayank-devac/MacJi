@@ -60,7 +60,8 @@
 
       <form id="feedback-form" class="rise d2" novalidate
         data-email="macji.app@proton.me"
-        data-issues="https://github.com/mayank-devac/MacJi/issues/new">
+        data-issues="https://github.com/mayank-devac/MacJi/issues/new"
+      data-gmail="https://mail.google.com/mail/">
         <label class="label" for="name">Name <span class="optional">(optional)</span></label>
         <input class="field" id="name" name="name" type="text" autocomplete="name" maxlength="80" placeholder="Your name">
 
@@ -94,6 +95,11 @@
           <p class="count" id="count">0 of 2,000 characters</p>
         </div>
 
+        <div class="routes">
+          <button class="route" id="open-gmail" type="button" data-fx="4">Compose in Gmail</button>
+          <button class="route" id="open-github" type="button" data-fx="4">Open a GitHub issue</button>
+        </div>
+
         <button class="send" type="submit" data-fx="6">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
             <path d="M4 4l17 8-17 8 3-8-3-8z" />
@@ -101,13 +107,13 @@
           </svg>
           Send Feedback
         </button>
-        <button class="github" id="open-github" type="button">Prefer GitHub? Open a public issue instead</button>
 
         <p class="status" id="status" role="status"></p>
         <button class="copy" id="copy-message" type="button" hidden>Copy message</button>
         <ul class="notes">
           <li>Send Feedback opens a draft to <a href="mailto:macji.app@proton.me">macji.app@proton.me</a> in your mail app, in a new tab if your mail app is a browser. Your text stays here, and nothing is sent until you send it.</li>
-          <li>Only the developer sees an email. A GitHub issue is public and needs a free account.</li>
+          <li>Compose in Gmail opens Gmail's compose page with everything filled in, for when your mail app is a browser.</li>
+        <li>Only the developer sees an email. A GitHub issue is public and needs a free account.</li>
           <li>This page stores nothing and has no tracking.</li>
         </ul>
       </form>

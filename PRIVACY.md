@@ -46,8 +46,10 @@ That's the only network traffic MacJi makes.
 **Settings › About › Send Feedback…** doesn't send anything itself. It hands your message to
 another app, which sends it only when you do:
 
-- **Send Email…** opens a draft in your mail app, addressed to `macji.app@proton.me`. The developer
-  sees your message and the address you send it from, as with any email.
+- **Send Email…** opens a draft in your mail app, addressed to `macji.app@proton.me`. When your
+  default email reader is a browser (or there is none), it opens Gmail's compose page in your browser
+  instead, with the same draft in its address; Google then handles it like any Gmail draft. The
+  developer sees your message and the address you send it from, as with any email.
 - **Open on GitHub…** opens a filled-in issue form in your browser. Issues are public and show your
   GitHub username.
 
@@ -59,7 +61,8 @@ kept in memory while Settings is open and never written to disk.
 
 The [feedback page](https://mayank-devac.github.io/MacJi/feedback.html) on the website works the
 same way: it builds the email draft or the issue in your browser from what you type there (an
-optional name, how MacJi feels, the kind and your message) and hands it to your mail app or GitHub.
+optional name, how MacJi feels, the kind and your message) and hands it to your mail app, Gmail's
+compose page or GitHub, whichever button you press.
 The page has no tracking, stores nothing and sends nothing itself.
 
 ## The clipboard

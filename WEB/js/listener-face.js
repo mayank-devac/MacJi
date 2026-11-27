@@ -16,7 +16,7 @@ window.MacJiFace = (function () {
     Meh: { curve: -0.2, open: 0, tilt: 0.09, width: 0.3, joy: 0, brow: 0 },
     Okay: { curve: 0, open: 0, tilt: 0, width: 0.28, joy: 0, brow: 0 },
     Good: { curve: 0.85, open: 0, tilt: 0, width: 0.38, joy: 0, brow: 0 },
-    Amazing: { curve: 0.5, open: 1, tilt: 0, width: 0.42, joy: 1, brow: 0 }
+    Amazing: { curve: 0.25, open: 0.6, tilt: 0, width: 0.44, joy: 1, brow: 0 }
   };
   var TEAR_MS = 1100;
   var TEARS = 3;

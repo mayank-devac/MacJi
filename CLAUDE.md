@@ -39,8 +39,9 @@ MacJi is an open-source macOS menu-bar app for emoji. Its features:
    in every panel's and the picker's search, by name or spelling (`AliasGlyphs`,
    `showAliasesInSearch`).
 8. **Send Feedback** – Settings › About › Send Feedback… (`FeedbackSheet`): Bug / Feature Idea /
-   Other and a message, sent by the user's mail app to `AppLinks.feedbackEmail` or as a prefilled
-   GitHub issue form (`FeedbackReport`). MacJi itself sends nothing. Technical details
+   Other and a message, sent by the user's mail app to `AppLinks.feedbackEmail` (Gmail compose when
+   the email reader is a browser, `FeedbackMailRoute`) or as a prefilled GitHub issue form
+   (`FeedbackReport`). MacJi itself sends nothing. Technical details
    (`FeedbackDetails`) are opt-in and anonymous. The website's `WEB/feedback.html` does the same in
    the browser (`WEB/js/feedback.js`).
 

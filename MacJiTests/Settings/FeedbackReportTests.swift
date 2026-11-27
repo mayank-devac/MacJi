@@ -32,6 +32,35 @@ struct FeedbackReportTests {
         #expect(url?.query?.contains("+") == false)
     }
 
+    @Test func gmailDraftCarriesAddressSubjectAndExactMessage() throws {
+        let report = FeedbackReport(kind: .feature, message: message, details: details)
+        let url = report.gmailURL(to: "x@example.com", compose: AppLinks.gmailCompose)
+
+        let items = try query(url)
+        #expect(url?.host() == AppLinks.gmailCompose.host())
+        #expect(items[FeedbackReport.GmailCompose.view] == FeedbackReport.GmailCompose.compose)
+        #expect(items[FeedbackReport.GmailCompose.to] == "x@example.com")
+        #expect(items[FeedbackReport.GmailCompose.subject] == FeedbackStrings.subject(.feature))
+        #expect(items[FeedbackReport.GmailCompose.body] == report.body)
+        #expect(url?.query?.contains("+") == false)
+    }
+
+    ////////////////////
+    //// Mail app or Gmail
+    /// A browser set as the email reader shows no draft for a mailto link, so Gmail opens instead.
+
+    @Test func browserOrMissingEmailReaderOpensGmail() {
+        let chrome = URL(filePath: "/Applications/Google Chrome.app")
+        let mail = URL(filePath: "/System/Applications/Mail.app")
+        let browsers = [URL(filePath: "/Applications/Safari.app"), chrome]
+
+        #expect(FeedbackMailRoute.choose(mailReader: chrome, webBrowsers: browsers) == .gmail)
+        #expect(FeedbackMailRoute.choose(mailReader: nil, webBrowsers: browsers) == .gmail)
+        #expect(FeedbackMailRoute.choose(mailReader: mail, webBrowsers: browsers) == .mailApp)
+    }
+
+    //////////////////
+
     @Test func technicalDetailsAreSentOnlyWhenIncluded() throws {
         let without = FeedbackReport(kind: .bug, message: message, details: nil)
         let with = FeedbackReport(kind: .bug, message: message, details: details)

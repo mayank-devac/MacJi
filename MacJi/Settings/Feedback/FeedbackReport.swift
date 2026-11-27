@@ -3,7 +3,8 @@
 //  MacJi
 //
 //  Created: 2026-11-27
-//  What a user writes in Send Feedback, as an email draft or a prefilled GitHub issue.
+//  What a user writes in Send Feedback, as an email draft, a Gmail draft or a prefilled GitHub
+//  issue.
 //
 
 import Foundation
@@ -36,6 +37,22 @@ struct FeedbackReport: Equatable, Sendable {
 
     //////////////////
 
+    ////////////////////
+    //// Gmail compose
+    /// Query names of mail.google.com/mail/?view=cm, which opens a filled-in draft.
+
+    enum GmailCompose {
+        static let view = "view"
+        static let compose = "cm"
+        static let fullScreen = "fs"
+        static let on = "1"
+        static let to = "to"
+        static let subject = "su"
+        static let body = "body"
+    }
+
+    //////////////////
+
     var trimmedMessage: String {
         message.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -57,6 +74,17 @@ struct FeedbackReport: Equatable, Sendable {
         return Self.url(components, query: [
             URLQueryItem(name: "subject", value: subject),
             URLQueryItem(name: "body", value: body),
+        ])
+    }
+
+    func gmailURL(to address: String, compose: URL) -> URL? {
+        guard let components = URLComponents(url: compose, resolvingAgainstBaseURL: false) else { return nil }
+        return Self.url(components, query: [
+            URLQueryItem(name: GmailCompose.view, value: GmailCompose.compose),
+            URLQueryItem(name: GmailCompose.fullScreen, value: GmailCompose.on),
+            URLQueryItem(name: GmailCompose.to, value: address),
+            URLQueryItem(name: GmailCompose.subject, value: subject),
+            URLQueryItem(name: GmailCompose.body, value: body),
         ])
     }
 

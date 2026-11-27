@@ -161,7 +161,7 @@ struct FeedbackSheet: View {
             Spacer()
             Group {
                 Button(FeedbackStrings.openGitHub) { open(report.issueURL(newIssue: newIssue)) }
-                Button(FeedbackStrings.sendEmail) { open(report.emailURL(to: emailAddress)) }
+                Button(FeedbackStrings.sendEmail) { sendEmail() }
                     .keyboardShortcut(.defaultAction)
             }
             .disabled(!report.hasMessage)
@@ -184,6 +184,18 @@ struct FeedbackSheet: View {
         let app = NSWorkspace.shared.urlForApplication(toOpen: url)
             .map { FileManager.default.displayName(atPath: $0.path) }
         outcome = .opened(in: app ?? FeedbackStrings.unknownApp)
+    }
+
+    //// The mail app when there is a real one, otherwise Gmail's compose page in the browser.
+    private func sendEmail() {
+        guard let mailto = report.emailURL(to: emailAddress) else {
+            outcome = .failed
+            return
+        }
+        switch FeedbackMailRoute.current(for: mailto) {
+        case .mailApp: open(mailto)
+        case .gmail: open(report.gmailURL(to: emailAddress, compose: AppLinks.gmailCompose))
+        }
     }
 
     //// The message with any technical details, exactly as the draft carries it.

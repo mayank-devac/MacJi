@@ -16,7 +16,7 @@ enum FeedbackStrings {
     static let title = String(localized: "Send Feedback")
     static let cancel = String(localized: "Cancel")
     static let done = String(localized: "Done")
-    static let copyMessage = String(localized: "Copy Message")
+    static let copyMessage = String(localized: "Copy")
     static let copied = String(localized: "Copied")
     static let unknownApp = String(localized: "another app")
     static let kindLabel = String(localized: "Kind")
@@ -63,7 +63,7 @@ enum FeedbackStrings {
     static let bullet = "•"
     static let anonymousNote = String(localized: "MacJi adds no name, device identifier, logs, keystrokes, settings or clipboard content. Nothing leaves your Mac until you send it yourself.")
     static func emailNote(_ address: String) -> String {
-        String(localized: "Email opens a draft to \(address) in your mail app. No account needed; only the developer sees your message and your email address.")
+        String(localized: "Email opens a draft to \(address) in your mail app, or in Gmail when your email reader is a browser. Only the developer sees your message and your email address.")
     }
     static let gitHubNote = String(localized: "GitHub opens a public issue form, filled in. It needs a free GitHub account and shows your username.")
 

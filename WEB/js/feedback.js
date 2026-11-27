@@ -1,7 +1,7 @@
 /*
   feedback.js · MacJi website · Created: 2026-11-27
-  Builds the feedback as a mail draft or a prefilled GitHub issue, the same way the app's Send
-  Feedback sheet does. Nothing is stored or sent by the page.
+  Builds the feedback as a mail draft, a Gmail draft or a prefilled GitHub issue, the same way
+  the app's Send Feedback sheet does. Nothing is stored or sent by the page.
 */
 
 (function () {
@@ -62,6 +62,12 @@
 
     function mailURL() {
       return "mailto:" + email + "?" + query({ subject: KINDS[picked("kind")].subject, body: body() });
+    }
+
+    function gmailURL() {
+      return form.dataset.gmail + "?" + query({
+        view: "cm", fs: "1", to: email, su: KINDS[picked("kind")].subject, body: body()
+      });
     }
 
     function issueURL() {
@@ -136,6 +142,12 @@
       if (!hasMessage()) return;
       window.open(mailURL(), "_blank", "noopener");
       opened("Your mail app should open with the draft.");
+    });
+
+    document.getElementById("open-gmail").addEventListener("click", function () {
+      if (!hasMessage()) return;
+      window.open(gmailURL(), "_blank", "noopener");
+      opened("Gmail opened in a new tab with the draft.");
     });
 
     document.getElementById("open-github").addEventListener("click", function () {
