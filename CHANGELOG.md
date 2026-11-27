@@ -13,10 +13,14 @@ Feedback from inside the app 💬
   by email (no account needed) or as a filled-in GitHub issue. Tick **Include technical details**
   to add only the MacJi and macOS versions and the Accessibility and Secure Input state; the form
   shows exactly what will be sent.
-- 🌐 A feedback page on the website does the same without the app, and replaces the website's
-  "Report an issue" link.
+- 📮 If your default email reader is a browser, or you have none, Send Email opens Gmail's compose
+  page with the draft filled in.
+- 🌐 A feedback page on the website does the same without the app, with its own **Compose in Gmail**
+  button, and replaces the website's "Report an issue" link.
 - 🙂 On that page a face made of dots wears the mood you pick, watches you type and winks when your
   draft opens.
+- 🌠 Type `::` or `##` anywhere on the website's home page to open the panel and stick your pick
+  on the page.
 
 ### Changed
 - 👋 Quit MacJi in Settings is now a power icon in the About section.

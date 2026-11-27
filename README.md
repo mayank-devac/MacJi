@@ -366,12 +366,12 @@ MacJi never adds anything else: no name, device identifier, logs, keystrokes or 
 
 Nothing leaves your Mac until you press Send in your mail app or submit the issue. Your text stays
 in the form until you press Done, and the form names the app the draft opened in. If it arrives
-empty, **Copy Message** and paste it in.
+empty, press **Copy** and paste it in.
 
 No MacJi at hand? The [feedback page](https://mayank-devac.github.io/MacJi/feedback.html) on the
 website does the same: pick how MacJi feels and the kind, write your message, and it opens the
-draft in your mail app, in Gmail (**Compose in Gmail**) or as a filled-in GitHub issue. A face made of dots wears the mood you pick and
-reads along as you type. The page stores and sends nothing.
+draft in your mail app, in Gmail (**Compose in Gmail**) or as a filled-in GitHub issue. A face made
+of dots wears the mood you pick and reads along as you type. The page stores and sends nothing.
 
 ## Contributing
 
