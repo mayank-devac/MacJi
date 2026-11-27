@@ -10,9 +10,13 @@ reports about it seriously.
 
 ## Reporting a vulnerability
 
-Please **don't open a public issue.** Report it privately through GitHub instead: open the
-repository's **Security** tab and choose **Report a vulnerability**. Include the MacJi version, your
-macOS version and the steps to reproduce.
+Please **don't open a public issue.** Report it privately, in either of these ways:
+
+- **GitHub:** open the repository's **Security** tab and choose **Report a vulnerability**.
+- **Email**, if you don't have a GitHub account: write to
+  [macji.app@proton.me](mailto:macji.app@proton.me) with "Security" in the subject.
+
+Include the MacJi version, your macOS version and the steps to reproduce.
 
 You'll get a reply within a week. Once a fix is released, the report is credited in the release
 notes unless you'd rather stay anonymous.
